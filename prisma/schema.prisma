@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Processing {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  unit        String
+  batchOCR    String?
+  expiryOCR   String?
+  orderOCR    String?
+  status      Status   @default(OK)
+  errors      String?  // Serialized JSON with failure details (ROI, ERP, etc.)
+  imageURL    String?  // Where the image is stored (later: Blob Storage)
+  // Relationship with detected ROIs
+  rois        ROI[]
+}
+
+model ROI {
+  id               String   @id @default(cuid())
+  processingId     String
+  type             String   // {batch|expiry|order|barcode|datamatrix|legend}
+  valueRead        String?
+  isValid          Boolean  @default(false)
+  bbox             String?  // "[x,y,w,h]" or JSON
+  Processing       Processing @relation(fields: [processingId], references: [id])
+}
+
+enum Status {
+  OK
+  ERROR
+}
