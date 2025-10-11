@@ -22,7 +22,7 @@ export default function ExpectedData() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:4000/expected")
+    fetch("/api/expected")
       .then((r) => r.json())
       .then(setData);
   }, []);

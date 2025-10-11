@@ -38,3 +38,10 @@ pnpm start
 ```bash
 pnpm dlx shadcn@latest add tabs
 ```
+
+# ngrok (mobile)
+
+```bash
+https://dashboard.ngrok.com/get-started/setup/windows
+ngrok http 3000
+```

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:next": "next dev --turbopack",
-    "dev:mock": "json-server --watch mocks/db.json --port 4000 --delay 300 --routes mocks/routes.json",
+    "dev:next": "next dev --hostname 0.0.0.0 --turbopack -p 3000",
+    "dev:mock": "json-server --watch mocks/db.json --port 4000 --delay 300 --routes mocks/routes.json --host 0.0.0.0",
     "dev": "run-s docker:up dev:start",
     "dev:start": "concurrently -n NEXT,MOCK -c auto \"pnpm dev:next\" \"pnpm dev:mock\"",
     "docker:up": "docker compose -f docker/docker-compose.yml up -d",
