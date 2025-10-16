@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { useAppStore } from "@/lib/store";
+import { compressImageFile } from "@/lib/image";
 
 export default function CameraCapture() {
   const ref = useRef<Webcam>(null);
@@ -15,8 +16,16 @@ export default function CameraCapture() {
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     const f = new File([blob], "captura.jpg", { type: blob.type });
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
+
+    // achicar + comprimir antes de guardarlo
+    const { file: compact, previewUrl } = await compressImageFile(f, {
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 0.82, // solo aplica a JPEG/WebP
+    });
+
+    setFile(compact);
+    setPreview(previewUrl);
   };
 
   return (

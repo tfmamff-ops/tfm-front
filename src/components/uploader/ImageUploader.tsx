@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/lib/store";
+import { compressImageFile } from "@/lib/image";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -12,12 +13,30 @@ export default function ImageUploader() {
   const [error, setError] = useState<string>("");
 
   const onDropAccepted = useCallback(
-    (accepted: File[]) => {
+    async (accepted: File[]) => {
       setError("");
       const f = accepted[0];
       if (!f) return;
-      setFile(f);
-      setPreview(URL.createObjectURL(f));
+
+      try {
+        // achicar + comprimir antes de guardarlo
+        const { file: compact, previewUrl } = await compressImageFile(f, {
+          maxWidth: 800,
+          maxHeight: 800,
+          quality: 0.82, // solo aplica a JPEG/WebP
+        });
+
+        // guardar la versión comprimida
+        setFile(compact);
+        setPreview(previewUrl);
+
+        // Si querés saber el tamaño final:
+        // console.log("original:", f.type, f.size, "bytes");
+        // console.log("compacto:", compact.type, compact.size, "bytes");
+      } catch (e: any) {
+        console.error(e);
+        setError("No se pudo procesar la imagen.");
+      }
     },
     [setFile, setPreview]
   );
@@ -71,7 +90,7 @@ export default function ImageUploader() {
             ? "Suelte la imagen…"
             : "Arrastre y suelte una imagen aquí"}
         </p>
-        <Button variant="secondary" type="button" onClick={() => open()}>
+        <Button type="button" onClick={() => open()}>
           Elegir del sistema
         </Button>
       </div>
