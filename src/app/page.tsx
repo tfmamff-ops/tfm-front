@@ -1,6 +1,6 @@
 "use client";
 import LeftSidebar from "@/components/layout/LeftSidebar";
-import OcrResultCard from "@/components/OcrResultCard";
+import ResultCard from "@/components/ResultCard";
 import Preview from "@/components/Preview";
 import SelectedData from "@/components/SelectedData";
 import StatusSummary from "@/components/StatusSummary";
@@ -13,15 +13,15 @@ export default function Page() {
         <LeftSidebar />
       </section>
 
-      <section className="col-span-12 lg:col-span-5 space-y-4">
-        <SelectedData />
+      <section className="col-span-12 lg:col-span-4 space-y-4">
         <Preview />
         <SendToAzureButton />
       </section>
 
-      <section className="col-span-12 lg:col-span-3 space-y-6">
+      <section className="col-span-12 lg:col-span-4 space-y-6">
         <StatusSummary />
-        <OcrResultCard />
+        <SelectedData />
+        <ResultCard />
       </section>
     </main>
   );

@@ -43,8 +43,13 @@ export default function SendToAzureButton() {
       }
 
       const data = await res.json();
+      const { ocrResult, imageUrl } = data;
+
+      useAppStore.getState().setProcessedImageUrl?.(imageUrl);
+
+      // Tus líneas de OCR (adapta a tu schema)
       const lines: string[] =
-        data?.readResult?.blocks
+        ocrResult?.readResult?.blocks
           ?.flatMap(
             (b: any) => b?.lines?.map((l: any) => l?.text).filter(Boolean) ?? []
           )
@@ -66,7 +71,7 @@ export default function SendToAzureButton() {
       disabled={!hasImage || clicking}
       className="w-full"
     >
-      {clicking ? "Analizando..." : "Enviar a Azure"}
+      {clicking ? "Analizando..." : "Procesar"}
     </Button>
   );
 }

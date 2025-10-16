@@ -48,6 +48,8 @@ type AppState = {
   /** State of the OCR process: items, error and loading */
   ocr: OcrState;
 
+  processedImgUrl?: string;
+
   /** Actions */
   setImageSource: (src: ImageSource) => void;
   setFile: (f?: File) => void;
@@ -59,6 +61,7 @@ type AppState = {
   setOcrLoading: (v: boolean) => void;
   clearOcr: () => void;
   incCounter: (key: keyof Counters, by?: number) => void;
+  setProcessedImageUrl: (url: string) => void;
   reset: () => void;
 };
 
@@ -159,6 +162,9 @@ export const useAppStore = create<AppState>()(
             "setOcrLoading"
           ),
 
+        setProcessedImageUrl: (url) =>
+          set({ processedImgUrl: url }, false, "setProcessedImageUrl"),
+
         clearOcr: () =>
           set(
             (s) => ({ ocr: { items: [], error: undefined, loading: false } }),
@@ -184,6 +190,8 @@ export const useAppStore = create<AppState>()(
               file: undefined,
               expected: {},
               counters: { inspected: 0, ok: 0, rejected: 0 },
+              ocr: { items: [], error: undefined, loading: false },
+              processedImgUrl: undefined,
             },
             false,
             "reset"

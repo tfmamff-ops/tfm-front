@@ -19,14 +19,14 @@ export default function SelectedData() {
               aria-hidden="true"
             />
             <h3 className="text-lg font-semibold tracking-tight text-green-900">
-              Datos esperados
+              Datos configurados
             </h3>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-4">
             <FieldChip
               label="Lote"
               value={expected.batch}

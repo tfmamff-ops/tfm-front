@@ -4,10 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AppSkeleton() {
   return (
-    <div
-      className="container mx-auto p-6 grid grid-cols-12 gap-6"
-      style={{ background: "red" }}
-    >
+    <div className="container mx-auto p-6 grid grid-cols-12 gap-6">
       {/* Left column (filters / selects) */}
       <section className="col-span-12 lg:col-span-4 space-y-4">
         <Skeleton className="h-10 w-1/2" />

@@ -39,13 +39,15 @@ export default function ImageUploader() {
     setError([...reasons].join(" "));
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive, isDragReject } =
+  const { getRootProps, getInputProps, isDragActive, isDragReject, open } =
     useDropzone({
       accept: { "image/jpeg": [], "image/png": [] },
       maxSize: MAX_SIZE,
       multiple: false,
       onDropAccepted,
       onDropRejected,
+      // Desactivar el click en el área para que solo el botón dispare el selector
+      noClick: true,
     });
 
   return (
@@ -62,13 +64,14 @@ export default function ImageUploader() {
           {...getInputProps()}
           // Extra hint for native file picker
           accept="image/jpeg,image/png"
+          className="hidden"
         />
         <p className="mb-2 text-sm">
           {isDragActive
             ? "Suelte la imagen…"
             : "Arrastre y suelte una imagen aquí"}
         </p>
-        <Button variant="secondary" type="button">
+        <Button variant="secondary" type="button" onClick={() => open()}>
           Elegir del sistema
         </Button>
       </div>

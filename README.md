@@ -6,6 +6,7 @@
 ```bash
 # ESTO ES LO ÚNICO QUE DEBO EJECUTAR PARA LEVANTAR LA APP.
 # Ejecuta la aplicación local, levantando docker, la aplicación, los api mocks, etc.
+# obs: pnpm install puede ser necesario
 pnpm dev
 ```
 
