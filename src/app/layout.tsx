@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TFM Rotulado",
+  title: "Rotulado",
   description: "Verificación Automática de Rotulado",
   icons: { icon: "/favicon.ico" },
   themeColor: "#10b981",

@@ -20,7 +20,7 @@ export default function AppHeader() {
               Verificación Automática de Rotulado
             </h1>
             <span className="text-xs sm:text-sm text-muted-foreground truncate">
-              TFM • Visión &amp; OCR
+              Visión Artificial &amp; OCR
             </span>
           </div>
         </Link>
