@@ -1,10 +1,8 @@
 "use client";
 import LeftSidebar from "@/components/layout/LeftSidebar";
-import ResultCard from "@/components/ResultCard";
 import Preview from "@/components/Preview";
-import SelectedData from "@/components/SelectedData";
-import StatusSummary from "@/components/StatusSummary";
 import SendToAzureButton from "@/components/uploader/SendToAzureButton";
+import RightSidebar from "@/components/layout/RightSidebar";
 
 export default function Page() {
   return (
@@ -19,9 +17,7 @@ export default function Page() {
       </section>
 
       <section className="col-span-12 lg:col-span-4 space-y-6">
-        <StatusSummary />
-        <SelectedData />
-        <ResultCard />
+        <RightSidebar />
       </section>
     </main>
   );

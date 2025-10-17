@@ -7,7 +7,7 @@ import { useAppStore } from "@/lib/store";
 import HighlightedText from "@/components/HighlightedText";
 import type { Pattern } from "@/lib/ocr-utils";
 import Link from "next/link";
-import { PanelsTopLeft } from "lucide-react";
+import { ExternalLink, PanelsTopLeft, Image } from "lucide-react";
 
 export default function ResultCard() {
   const { items, error, loading } = useAppStore((s) => s.ocr);
@@ -48,9 +48,11 @@ export default function ResultCard() {
             href={processedImgUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-block text-sm text-blue-600 underline"
+            className="mt-2 inline-flex items-center gap-1 text-sm text-green-600 underline hover:text-green-700"
           >
+            <Image className="h-4 w-4" />
             Imagen procesada
+            <ExternalLink className="h-3 w-3 opacity-70 ml-1" />
           </Link>
         ) : null}
       </div>
@@ -75,7 +77,7 @@ export default function ResultCard() {
                 aria-hidden="true"
               />
               <h3 className="text-lg font-semibold tracking-tight text-green-900">
-                Resultado procesamiento
+                Procesamiento
               </h3>
             </div>
           </div>
