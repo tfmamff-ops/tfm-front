@@ -3,7 +3,8 @@
 import Section from "@/components/ui/Section";
 import ExpectedData from "@/components/ExpectedData";
 import ImageSourcePanel from "@/components/uploader/ImageSourcePanel";
-import { Settings, Upload } from "lucide-react";
+import { BarChart3, Settings, Upload } from "lucide-react";
+import StatusSummary from "../StatusSummary";
 
 export default function LeftSidebar() {
   return (
@@ -14,6 +15,14 @@ export default function LeftSidebar() {
         icon={<Settings className="h-4 w-4 text-slate-500" />}
       >
         <ExpectedData />
+      </Section>
+
+      <Section
+        title="Estado"
+        defaultOpen
+        icon={<BarChart3 className="h-4 w-4 text-slate-500" />}
+      >
+        <StatusSummary />
       </Section>
 
       <Section

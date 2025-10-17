@@ -69,11 +69,9 @@ const isDev = process.env.NODE_ENV !== "production";
 
 // SSR-safe storage: return localStorage in browser, otherwise a noop storage
 const getStorage = () => {
-  if (
-    typeof window !== "undefined" &&
-    typeof window.localStorage !== "undefined"
-  ) {
-    return localStorage;
+  const storage = (globalThis as any)?.localStorage as Storage | undefined;
+  if (storage !== undefined) {
+    return storage;
   }
   // noop storage for server-side where localStorage is not available
   const noop: Storage = {
@@ -109,9 +107,12 @@ export const useAppStore = create<AppState>()(
                   imageSource: src,
                   file: undefined,
                   imagePreview: undefined,
-                };
+                  // Also reset OCR and processed image when changing source
+                  ocr: { items: [], error: undefined, loading: false },
+                  processedImgUrl: undefined,
+                } as Partial<AppState>;
               }
-              return { imageSource: src };
+              return { imageSource: src } as Partial<AppState>;
             },
             false,
             "setImageSource"
@@ -129,7 +130,12 @@ export const useAppStore = create<AppState>()(
               } catch (e) {
                 console.debug("revokeObjectURL failed", e);
               }
-              return { imagePreview };
+              // When preview changes, reset OCR and processed image so UI returns to initial state
+              return {
+                imagePreview,
+                ocr: { items: [], error: undefined, loading: false },
+                processedImgUrl: undefined,
+              } as Partial<AppState>;
             },
             false,
             "setPreview"

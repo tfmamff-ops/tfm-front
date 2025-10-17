@@ -9,64 +9,68 @@ export default function StatusSummary() {
   const { inspected, ok, rejected } = useAppStore((s) => s.counters);
 
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <section
+      aria-label="Resumen de estado"
+      className="grid grid-cols-3 gap-3 text-center"
+    >
       <StatCard
-        icon={<ClipboardList className="h-5 w-5" aria-hidden="true" />}
+        icon={<ClipboardList className="h-4 w-4" aria-hidden="true" />}
         label="Inspected"
         value={inspected}
         tone="default"
       />
       <StatCard
-        icon={<BadgeCheck className="h-5 w-5" aria-hidden="true" />}
+        icon={<BadgeCheck className="h-4 w-4" aria-hidden="true" />}
         label="OK"
         value={ok}
         tone="success"
       />
       <StatCard
-        icon={<XCircle className="h-5 w-5" aria-hidden="true" />}
+        icon={<XCircle className="h-4 w-4" aria-hidden="true" />}
         label="Rejected"
         value={rejected}
         tone="danger"
       />
-    </div>
+    </section>
   );
 }
 
 type Tone = "default" | "success" | "danger";
 
-function StatCard(
-  props: Readonly<{
-    icon: ReactNode;
-    label: string;
-    value: number | string;
-    tone?: Tone;
-  }>
-) {
-  const tone = props.tone ?? "default";
+const toneClasses: Record<Tone, string> = {
+  default:
+    "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300",
+  success:
+    "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300",
+  danger:
+    "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300",
+};
 
-  let toneClasses = "bg-muted text-foreground";
-  if (tone === "success") {
-    toneClasses =
-      "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300";
-  } else if (tone === "danger") {
-    toneClasses =
-      "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300";
-  }
+function StatCard({
+  icon,
+  label,
+  value,
+  tone = "default",
+}: Readonly<{
+  icon: ReactNode;
+  label: string;
+  value: number | string;
+  tone?: Tone;
+}>) {
+  const toneStyle = toneClasses[tone];
 
   return (
-    <Card className="rounded-2xl">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span
-            className={`inline-flex items-center justify-center rounded-md ${toneClasses} h-8 w-8`}
-          >
-            {props.icon}
+    <Card
+      className={`rounded-2xl border ${toneStyle} shadow-sm hover:shadow-md transition-shadow`}
+    >
+      <CardContent className="p-3 flex flex-col items-center justify-center gap-1">
+        <div className="flex flex-col items-center justify-center">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-white/60 dark:bg-white/10 shadow-sm">
+            {icon}
           </span>
-          <span>{props.label}</span>
+          <span className="mt-1 text-xs font-medium opacity-80">{label}</span>
         </div>
-        <div className="mt-2 text-2xl font-semibold tabular-nums">
-          {props.value}
-        </div>
+        <div className="text-2xl font-semibold tabular-nums mt-1">{value}</div>
       </CardContent>
     </Card>
   );

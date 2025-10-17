@@ -11,6 +11,7 @@ export default function SendToAzureButton() {
   const setOcrError = useAppStore((s) => s.setOcrError);
   const setOcrLoading = useAppStore((s) => s.setOcrLoading);
   const incCounter = useAppStore((s) => s.incCounter);
+  const clearOcr = useAppStore((s) => s.clearOcr);
 
   const [clicking, setClicking] = useState(false);
 
@@ -21,8 +22,7 @@ export default function SendToAzureButton() {
     if (!file) return;
 
     setClicking(true);
-    setOcrError(undefined);
-    setOcrItems([]);
+    clearOcr();
     setOcrLoading(true);
 
     try {

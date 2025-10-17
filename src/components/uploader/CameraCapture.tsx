@@ -29,7 +29,7 @@ export default function CameraCapture() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 flex flex-col items-center">
       <Webcam
         ref={ref}
         screenshotFormat="image/jpeg"
