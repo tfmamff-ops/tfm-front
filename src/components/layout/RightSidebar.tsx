@@ -8,7 +8,7 @@ import StatusSummary from "../StatusSummary";
 
 export default function RightSidebar() {
   return (
-    <aside className="lg:sticky lg:top-6 self-start col-span-12 lg:col-span-4 space-y-4 border rounded-2xl p-4 lg:p-6 shadow-sm">
+    <aside className="lg:sticky lg:top-6 self-start col-span-12 lg:col-span-4 space-y-4">
       <Section
         title="Estado"
         defaultOpen
