@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 export default function Preview() {
   const imagePreview = useAppStore((s) => s.imagePreview);
   const imageSource = useAppStore((s) => s.imageSource);
+  const filename = useAppStore((s) => s.filename);
 
   return (
     <div className="relative rounded-2xl border p-3 min-h-[260px] flex items-center justify-center bg-muted/30">
       <div className="absolute top-1">
         <Badge variant="secondary" className="uppercase">
-          {imageSource === "camera" ? "Origen: Cámara" : "Origen: Archivo"}
+          {imageSource === "camera" ? "Cámara" : "Archivo"}
+          {filename ? ` - ${filename}` : ""}
         </Badge>
       </div>
 

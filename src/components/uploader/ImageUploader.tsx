@@ -9,7 +9,7 @@ import { compressImageFile } from "@/lib/image";
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export default function ImageUploader() {
-  const { setFile, setPreview } = useAppStore();
+  const { setFile, setFilename, setPreview } = useAppStore();
   const [error, setError] = useState<string>("");
 
   const onDropAccepted = useCallback(
@@ -20,13 +20,10 @@ export default function ImageUploader() {
 
       try {
         // achicar + comprimir antes de guardarlo
-        const { file: compact, previewUrl } = await compressImageFile(f, {
-          maxWidth: 800,
-          maxHeight: 800,
-          quality: 0.82, // solo aplica a JPEG/WebP
-        });
+        const { file: compact, previewUrl } = await compressImageFile(f);
 
         // guardar la versión comprimida
+        setFilename(f.name);
         setFile(compact);
         setPreview(previewUrl);
 

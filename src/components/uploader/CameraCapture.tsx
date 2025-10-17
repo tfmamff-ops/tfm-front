@@ -8,7 +8,7 @@ import { compressImageFile } from "@/lib/image";
 
 export default function CameraCapture() {
   const ref = useRef<Webcam>(null);
-  const { setFile, setPreview } = useAppStore();
+  const { setFile, setFilename, setPreview } = useAppStore();
 
   const snap = async () => {
     const dataUrl = ref.current?.getScreenshot();
@@ -18,12 +18,8 @@ export default function CameraCapture() {
     const f = new File([blob], "captura.jpg", { type: blob.type });
 
     // achicar + comprimir antes de guardarlo
-    const { file: compact, previewUrl } = await compressImageFile(f, {
-      maxWidth: 800,
-      maxHeight: 800,
-      quality: 0.82, // solo aplica a JPEG/WebP
-    });
-
+    const { file: compact, previewUrl } = await compressImageFile(f);
+    setFilename(f.name);
     setFile(compact);
     setPreview(previewUrl);
   };

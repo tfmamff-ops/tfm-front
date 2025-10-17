@@ -35,6 +35,7 @@ type AppState = {
 
   /** File uploaded or captured from the camera */
   file?: File;
+  filename?: string;
 
   /** Object URL for the current image preview */
   imagePreview?: string;
@@ -53,6 +54,7 @@ type AppState = {
   /** Actions */
   setImageSource: (src: ImageSource) => void;
   setFile: (f?: File) => void;
+  setFilename: (name?: string) => void;
   setPreview: (url?: string) => void;
   setExpected: (patch: Partial<Expected>) => void;
   setCounters: (patch: Partial<Counters>) => void;
@@ -92,6 +94,7 @@ export const useAppStore = create<AppState>()(
       (set, get) => ({
         imageSource: "upload",
         file: undefined,
+        filename: undefined,
         imagePreview: undefined,
         expected: {},
         counters: { inspected: 0, ok: 0, rejected: 0 },
@@ -106,19 +109,22 @@ export const useAppStore = create<AppState>()(
                 return {
                   imageSource: src,
                   file: undefined,
+                  filename: undefined,
                   imagePreview: undefined,
                   // Also reset OCR and processed image when changing source
                   ocr: { items: [], error: undefined, loading: false },
                   processedImgUrl: undefined,
-                } as Partial<AppState>;
+                };
               }
-              return { imageSource: src } as Partial<AppState>;
+              return { imageSource: src };
             },
             false,
             "setImageSource"
           ),
 
         setFile: (file) => set({ file }, false, "setFile"),
+
+        setFilename: (name) => set({ filename: name }, false, "setFilename"),
 
         setPreview: (imagePreview) =>
           set(
@@ -135,7 +141,7 @@ export const useAppStore = create<AppState>()(
                 imagePreview,
                 ocr: { items: [], error: undefined, loading: false },
                 processedImgUrl: undefined,
-              } as Partial<AppState>;
+              };
             },
             false,
             "setPreview"
@@ -194,6 +200,7 @@ export const useAppStore = create<AppState>()(
             {
               imagePreview: undefined,
               file: undefined,
+              filename: undefined,
               expected: {},
               counters: { inspected: 0, ok: 0, rejected: 0 },
               ocr: { items: [], error: undefined, loading: false },
