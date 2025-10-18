@@ -78,7 +78,7 @@ export default function Page() {
                 </TooltipTrigger>
                 {isDisabled && (
                   <TooltipContent>
-                    Suba una imagen para habilitar el procesamiento.
+                    Suba una imagen para procesar.
                   </TooltipContent>
                 )}
               </Tooltip>
