@@ -51,7 +51,7 @@ export default function BarcodeSection({
             <BoolBadge value={!!barcodeLegible} />
           </dd>
         </div>
-        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 w-full">
+        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 w-full col-span-2">
           <dt className="text-sm text-slate-600 mb-1 md:mb-0 md:mr-2">
             Valor decodificado
           </dt>
@@ -81,6 +81,7 @@ export default function BarcodeSection({
             )}
           </dd>
         </div>
+
         <div className="flex items-center gap-2">
           <dt className="text-sm text-slate-600">Simbología</dt>
           <dd className="text-base">
