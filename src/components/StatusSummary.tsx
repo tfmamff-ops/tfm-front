@@ -61,18 +61,20 @@ function StatCard({
 
   return (
     <Card
-      className={`rounded-2xl border ${toneStyle} shadow-sm hover:shadow-md transition-shadow`}
+      className={`rounded-2xl border ${toneStyle} shadow-sm hover:shadow-md transition-shadow py-2 md:py-6`}
     >
       <CardContent className="p-3 flex flex-col items-center justify-center gap-1">
         <div className="flex flex-col items-center justify-center">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-white/60 dark:bg-white/10 shadow-sm">
+          <span className="inline-flex h-6 w-6 md:h-7 md:w-7 items-center justify-center rounded-md bg-white/60 dark:bg-white/10 shadow-sm">
             {icon}
           </span>
           <span className="hidden md:inline-block mt-1 text-base font-medium opacity-80">
             {label}
           </span>
         </div>
-        <div className="text-2xl font-semibold tabular-nums mt-1">{value}</div>
+        <div className="text-xl md:text-2xl font-semibold tabular-nums mt-1">
+          {value}
+        </div>
       </CardContent>
     </Card>
   );

@@ -46,8 +46,7 @@ export default function Page() {
                 </TooltipTrigger>
                 {isDisabledConfig && (
                   <TooltipContent>
-                    No se puede editar la configuración durante el
-                    procesamiento.
+                    No disponible durante el proceso
                   </TooltipContent>
                 )}
               </Tooltip>
