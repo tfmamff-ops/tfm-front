@@ -40,7 +40,7 @@ export default function RootLayout({
 
         {/* Contenido (client components adentro) */}
         <HydrationGate fallback={<AppSkeleton />}>
-          <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+          <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6">
             <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/5 shadow-lg shadow-emerald-900/5 p-4 sm:p-6 lg:p-8 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md">
               {children}
             </div>
