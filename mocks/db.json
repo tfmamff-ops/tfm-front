@@ -3,17 +3,5 @@
     "batch": ["L 97907", "L 97807", "L 87907"],
     "order": ["M-AR-23-00219", "25-00218", "23-00219"],
     "expiry": ["V JUN/2026", "JUN/2026", "JUN/2025", "JUN/2028"]
-  },
-  "history": [
-    {
-      "id": "1",
-      "unit": "M-AR-23-00219",
-      "batch": "L 97907",
-      "expiry": "JUN/2026",
-      "datamatrix": true,
-      "erp": true,
-      "result": "OK",
-      "createdAt": "2025-10-10T12:00:00Z"
-    }
-  ]
+  }
 }

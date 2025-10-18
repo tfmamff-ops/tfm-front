@@ -12,12 +12,15 @@ export type TextSegment = {
 };
 
 export function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\\$&`);
 }
 
 export function hashString(s: string): string {
   let h = 0;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  for (const ch of s) {
+    const cp = ch.codePointAt(0) ?? 0;
+    h = Math.trunc((h << 5) - h + cp);
+  }
   return `k${Math.abs(h)}`;
 }
 
@@ -73,4 +76,20 @@ export function computeHighlightSegments(
   }
 
   return out;
+}
+
+// Human-friendly descriptions for common barcode symbologies
+const SYMBOLOGY_DESCRIPTIONS: Record<string, string> = {
+  QR: "QR Code",
+  EAN13: "EAN-13 (retail)",
+  EAN8: "EAN-8 (retail)",
+  CODE128: "Code 128 (alfanumérico)",
+  CODE39: "Code 39",
+  PDF417: "PDF417",
+  DATAMATRIX: "Data Matrix",
+};
+
+export function describeSymbology(symbology?: string): string | undefined {
+  if (!symbology) return undefined;
+  return SYMBOLOGY_DESCRIPTIONS[symbology] ?? undefined;
 }
