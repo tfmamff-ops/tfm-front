@@ -68,7 +68,9 @@ function StatCard({
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-white/60 dark:bg-white/10 shadow-sm">
             {icon}
           </span>
-          <span className="mt-1 text-base font-medium opacity-80">{label}</span>
+          <span className="hidden md:inline-block mt-1 text-base font-medium opacity-80">
+            {label}
+          </span>
         </div>
         <div className="text-2xl font-semibold tabular-nums mt-1">{value}</div>
       </CardContent>

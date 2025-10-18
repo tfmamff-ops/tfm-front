@@ -28,7 +28,9 @@ export default function Section({
       >
         <div className="flex items-center gap-2">
           {icon}
-          <span className="font-medium">{title}</span>
+          <span className="text-xs md:text-sm font-semibold tracking-tight text-green-900">
+            {title}
+          </span>
         </div>
         {open ? (
           <ChevronDown className="h-4 w-4 opacity-70" />

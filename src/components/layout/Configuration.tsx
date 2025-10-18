@@ -12,7 +12,7 @@ export default function Configuration() {
       <Section
         title="Seleccione la línea de producción"
         defaultOpen
-        icon={<Settings className="h-4 w-4 text-slate-500" />}
+        icon={<Settings className="h-4 w-4 text-green-700" />}
       >
         <ExpectedData />
       </Section>
@@ -20,7 +20,7 @@ export default function Configuration() {
       <Section
         title="Seleccione la fuente de la imagen"
         defaultOpen
-        icon={<Upload className="h-4 w-4 text-slate-500" />}
+        icon={<Upload className="h-4 w-4 text-green-700" />}
       >
         <ImageSourcePanel />
       </Section>

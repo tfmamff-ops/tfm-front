@@ -16,11 +16,11 @@ export default function ImageSourcePanel() {
         onValueChange={(v) => setImageSource(v as "upload" | "camera")}
       >
         <TabsList className="grid w-full grid-cols-2 bg-green-200/80">
-          <TabsTrigger value="upload" className="gap-2">
+          <TabsTrigger value="upload" className="text-xs md:text-sm gap-2">
             <Upload className="h-4 w-4" />
             Subir archivo
           </TabsTrigger>
-          <TabsTrigger value="camera" className="gap-2">
+          <TabsTrigger value="camera" className="text-xs md:text-sm gap-2">
             <Camera className="h-4 w-4" />
             Cámara
           </TabsTrigger>

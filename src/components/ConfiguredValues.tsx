@@ -18,7 +18,7 @@ export default function ConfiguredValues() {
               className="h-4 w-4 text-green-700"
               aria-hidden="true"
             />
-            <h3 className="text-lg font-semibold tracking-tight text-green-900">
+            <h3 className="text-xs md:text-sm font-semibold tracking-tight text-green-900">
               Línea de producción configurada
             </h3>
           </div>

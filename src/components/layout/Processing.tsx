@@ -15,7 +15,7 @@ export default function Processing() {
       <Section
         title="Estado"
         defaultOpen
-        icon={<BarChart3 className="h-4 w-4 text-slate-500" />}
+        icon={<BarChart3 className="h-4 w-4 text-green-700" />}
       >
         <StatusSummary />
       </Section>
