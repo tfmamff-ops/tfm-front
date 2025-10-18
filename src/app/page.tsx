@@ -30,7 +30,7 @@ export default function Page() {
                       <TabsTrigger
                         value="config"
                         disabled={isDisabledConfig}
-                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-200
+                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs md:text-base font-semibold transition-all duration-200
                         data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
                         data-[state=inactive]:text-slate-500
                         ${
@@ -62,7 +62,7 @@ export default function Page() {
                       <TabsTrigger
                         value="processing"
                         disabled={isDisabled}
-                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-200
+                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs md:text-base font-semibold transition-all duration-200
                         data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
                         data-[state=inactive]:text-slate-500
                         ${
