@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useAppStore } from "@/lib/store";
 import HighlightedText from "@/components/HighlightedText";
@@ -19,11 +20,15 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Small title for content sections
-function SectionTitle({ children }: Readonly<{ children: React.ReactNode }>) {
+// Section header with icon and title
+function SectionHeader({
+  icon,
+  title,
+}: Readonly<{ icon: React.ReactNode; title: string }>) {
   return (
-    <div className="text-xs font-semibold uppercase tracking-wide text-green-800/80">
-      {children}
+    <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-green-900/80">
+      {icon}
+      <span>{title}</span>
     </div>
   );
 }
@@ -102,17 +107,17 @@ export default function ProcessingCard() {
   // (helper components moved to module scope to satisfy linter)
 
   if (loading) {
-    content = <p className="text-sm text-muted-foreground">Procesando…</p>;
+    content = <p className="text-base text-muted-foreground">Procesando…</p>;
   } else if (error) {
-    content = <p className="text-red-600 text-sm">{error}</p>;
+    content = <p className="text-red-600 text-base">{error}</p>;
   } else if (!items || items.length === 0) {
-    content = <p className="text-sm text-muted-foreground">Sin datos</p>;
+    content = <p className="text-base text-muted-foreground">Sin datos</p>;
   } else {
     const lines = items.map((item) => (
       <Badge
         key={item.id}
         variant="outline"
-        className="text-sm font-mono whitespace-pre-wrap py-1 px-2 block text-left w-full justify-start"
+        className="text-base font-mono whitespace-pre-wrap py-1.5 px-2.5 block text-left w-full justify-start"
       >
         <HighlightedText text={item.text} patterns={patterns} />
       </Badge>
@@ -123,32 +128,40 @@ export default function ProcessingCard() {
       Boolean(barcodeRoiImgUrl);
 
     content = (
-      <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* OCR section */}
-        <div className="space-y-2">
-          <SectionTitle>OCR</SectionTitle>
-          <div className="max-h-48 overflow-y-auto space-y-1">{lines}</div>
+        <div className="rounded-xl border border-green-100 bg-white/70 p-4">
+          <SectionHeader
+            icon={<PanelsTopLeft className="h-4 w-4 text-green-700" />}
+            title="OCR"
+          />
+          <Separator className="my-3" />
+          <div className="max-h-56 overflow-y-auto space-y-1.5">{lines}</div>
         </div>
 
         {/* Barcode section */}
-        <div className="space-y-2">
-          <SectionTitle>Código de barras</SectionTitle>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+        <div className="rounded-xl border border-green-100 bg-white/70 p-4">
+          <SectionHeader
+            icon={<Scan className="h-4 w-4 text-green-700" />}
+            title="Código de barras"
+          />
+          <Separator className="my-3" />
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
             <div className="flex items-center gap-2">
-              <dt className="text-xs text-slate-600">Detectado</dt>
+              <dt className="text-sm text-slate-600">Detectado</dt>
               <dd>
                 <BoolBadge value={!!barcodeDetected} />
               </dd>
             </div>
             <div className="flex items-center gap-2">
-              <dt className="text-xs text-slate-600">Legible</dt>
+              <dt className="text-sm text-slate-600">Legible</dt>
               <dd>
                 <BoolBadge value={!!barcodeLegible} />
               </dd>
             </div>
             <div className="flex items-center gap-2">
-              <dt className="text-xs text-slate-600">Valor decodificado</dt>
-              <dd className="text-sm flex items-center gap-2">
+              <dt className="text-sm text-slate-600">Valor decodificado</dt>
+              <dd className="text-base flex items-center gap-2">
                 {decodedValue?.trim() ? (
                   <>
                     <span className="font-mono">{decodedValue}</span>
@@ -173,8 +186,8 @@ export default function ProcessingCard() {
               </dd>
             </div>
             <div className="flex items-center gap-2">
-              <dt className="text-xs text-slate-600">Simbología</dt>
-              <dd className="text-sm">
+              <dt className="text-sm text-slate-600">Simbología</dt>
+              <dd className="text-base">
                 {barcodeSymbology?.trim() ? (
                   <span
                     title={
@@ -201,10 +214,14 @@ export default function ProcessingCard() {
           </dl>
         </div>
 
-        {/* Processed images section */}
+        {/* Processed images section (full width) */}
         {hasAnyLink && (
-          <div className="space-y-2">
-            <SectionTitle>Imágenes del proceso</SectionTitle>
+          <div className="rounded-xl border border-green-100 bg-white/70 p-4 lg:col-span-2">
+            <SectionHeader
+              icon={<Image className="h-4 w-4 text-green-700" />}
+              title="Imágenes del proceso"
+            />
+            <Separator className="my-3" />
             <div className="flex flex-col gap-1">
               {renderExternalLink(
                 processedImgUrl,
@@ -224,7 +241,7 @@ export default function ProcessingCard() {
             </div>
           </div>
         )}
-      </>
+      </div>
     );
   }
 
