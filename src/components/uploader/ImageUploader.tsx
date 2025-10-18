@@ -84,7 +84,7 @@ export default function ImageUploader() {
           accept="image/jpeg,image/png"
           className="hidden"
         />
-        <p className="mb-2 text-sm">
+        <p className="hidden md:block mb-2 text-sm">
           {isDragActive
             ? "Suelte la imagen…"
             : "Arrastre y suelte una imagen aquí"}

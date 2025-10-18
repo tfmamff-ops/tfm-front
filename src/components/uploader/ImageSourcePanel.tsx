@@ -18,7 +18,8 @@ export default function ImageSourcePanel() {
         <TabsList className="grid w-full grid-cols-2 bg-green-200/80">
           <TabsTrigger value="upload" className="text-xs md:text-sm gap-2">
             <Upload className="h-4 w-4" />
-            Subir archivo
+            <span className="inline md:hidden">Archivo</span>
+            <span className="hidden md:inline">Subir archivo</span>
           </TabsTrigger>
           <TabsTrigger value="camera" className="text-xs md:text-sm gap-2">
             <Camera className="h-4 w-4" />
