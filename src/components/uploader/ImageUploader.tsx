@@ -13,29 +13,31 @@ export default function ImageUploader() {
   const [error, setError] = useState<string>("");
 
   const onDropAccepted = useCallback(
-    async (accepted: File[]) => {
+    (accepted: File[]) => {
       setError("");
       const f = accepted[0];
       if (!f) return;
 
-      try {
-        // achicar + comprimir antes de guardarlo
-        const { file: compact, previewUrl } = await compressImageFile(f);
+      void (async () => {
+        try {
+          // achicar + comprimir antes de guardarlo
+          const { file: compact, previewUrl } = await compressImageFile(f);
 
-        // guardar la versión comprimida
-        setFilename(f.name);
-        setFile(compact);
-        setPreview(previewUrl);
+          // guardar la versión comprimida
+          setFilename(f.name);
+          setFile(compact);
+          setPreview(previewUrl);
 
-        // Si querés saber el tamaño final:
-        // console.log("original:", f.type, f.size, "bytes");
-        // console.log("compacto:", compact.type, compact.size, "bytes");
-      } catch (e: any) {
-        console.error(e);
-        setError("No se pudo procesar la imagen.");
-      }
+          // Si querés saber el tamaño final:
+          // console.log("original:", f.type, f.size, "bytes");
+          // console.log("compacto:", compact.type, compact.size, "bytes");
+        } catch (e: any) {
+          console.error(e);
+          setError("No se pudo procesar la imagen.");
+        }
+      })();
     },
-    [setFile, setPreview]
+    [setFile, setFilename, setPreview]
   );
 
   const onDropRejected = useCallback((rejections: FileRejection[]) => {
