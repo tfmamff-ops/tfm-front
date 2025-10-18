@@ -1,4 +1,5 @@
 // Server-only helpers for Azure Function interactions
+import type { Expected } from "@/lib/store";
 
 export async function getSasUrlForRead(params: {
   host: string;
@@ -89,15 +90,18 @@ export async function startPipeline(params: {
   functionKey: string;
   container: string;
   blobName: string;
+  expectedData: Expected;
 }): Promise<string> {
-  const { host, functionKey, container, blobName } = params;
+  const { host, functionKey, container, blobName, expectedData } = params;
+  const payload = { container, blobName, expectedData } as const;
+
   const res = await fetch(`https://${host}/api/process`, {
     method: "POST",
     headers: {
       "x-functions-key": functionKey,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ container, blobName }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const text = await res.text();

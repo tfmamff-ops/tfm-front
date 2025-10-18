@@ -31,6 +31,13 @@ export default function SendToAzureButton() {
     try {
       const form = new FormData();
       form.append("file", file);
+      // Include expected values from the store as JSON
+      const expected = useAppStore.getState().expected ?? {};
+      try {
+        form.append("expected", JSON.stringify(expected));
+      } catch {
+        // Ignore serialization issues; backend will treat as absent
+      }
 
       const res = await fetch("/api/azure-analyze", {
         method: "POST",

@@ -7,12 +7,25 @@ import {
 } from "@/server/azure";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
+import type { Expected } from "@/lib/store";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
 const KEY_START = process.env.AZURE_FUNC_KEY_HTTP_START!;
 const TIMEOUT_MS = Number(process.env.AZURE_PIPELINE_TIMEOUT_MS ?? 90000);
 const POLL_MS = Number(process.env.AZURE_PIPELINE_POLL_MS ?? 2000);
+
+function parseExpectedFromForm(form: FormData): Expected | undefined {
+  try {
+    const expectedRaw = form.get("expected");
+    if (typeof expectedRaw === "string" && expectedRaw.trim().length > 0) {
+      return JSON.parse(expectedRaw) as Expected;
+    }
+  } catch (e) {
+    console.warn("Failed to parse expected from form-data:", e);
+  }
+  return undefined;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,7 +72,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4) Iniciar pipeline con la referencia al blob
+    // 4) Iniciar pipeline con la referencia al blob (+ expected opcional)
+    const expectedParsed = parseExpectedFromForm(form);
+    if (expectedParsed === undefined) {
+      return NextResponse.json(
+        { error: "Missing expected payload" },
+        { status: 400 }
+      );
+    }
     let statusUrl: string;
     try {
       statusUrl = await startPipeline({
@@ -67,6 +87,7 @@ export async function POST(req: NextRequest) {
         functionKey: KEY_START,
         container: "input",
         blobName,
+        expectedData: expectedParsed,
       });
     } catch (e: any) {
       return NextResponse.json(
