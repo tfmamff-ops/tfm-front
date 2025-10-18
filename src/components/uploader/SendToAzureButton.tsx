@@ -10,8 +10,10 @@ export default function SendToAzureButton() {
   const setOcrItems = useAppStore((s) => s.setOcrItems);
   const setOcrError = useAppStore((s) => s.setOcrError);
   const setOcrLoading = useAppStore((s) => s.setOcrLoading);
+  const setBarcodeState = useAppStore((s) => s.setBarcodeState);
   const incCounter = useAppStore((s) => s.incCounter);
   const clearOcr = useAppStore((s) => s.clearOcr);
+  const clearBarcode = useAppStore((s) => s.clearBarcode);
 
   const [clicking, setClicking] = useState(false);
 
@@ -23,6 +25,7 @@ export default function SendToAzureButton() {
 
     setClicking(true);
     clearOcr();
+    clearBarcode();
     setOcrLoading(true);
 
     try {
@@ -43,11 +46,19 @@ export default function SendToAzureButton() {
       }
 
       const data = await res.json();
-      const { ocrResult, imageUrl } = data;
+      const {
+        imageUrl,
+        barcodeOverlayImageUrl,
+        barcodeRoiImageUrl,
+        ocrResult,
+        barcodeData,
+      } = data;
 
       useAppStore.getState().setProcessedImageUrl?.(imageUrl);
+      useAppStore.getState().setBarcodeOverlayImgUrl?.(barcodeOverlayImageUrl);
+      useAppStore.getState().setBarcodeRoiImgUrl?.(barcodeRoiImageUrl);
 
-      // Tus líneas de OCR (adapta a tu schema)
+      // Líneas de OCR (adapta a tu schema)
       const lines: string[] =
         ocrResult?.readResult?.blocks
           ?.flatMap(
@@ -56,6 +67,7 @@ export default function SendToAzureButton() {
           ?.filter(Boolean) ?? [];
 
       setOcrItems(buildOcrItems(lines.length ? lines : ["(No text detected)"]));
+      setBarcodeState(barcodeData);
       incCounter("inspected");
     } catch (e: any) {
       setOcrError(e?.message || "Unexpected error");

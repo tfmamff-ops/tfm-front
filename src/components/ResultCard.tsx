@@ -10,9 +10,13 @@ import Link from "next/link";
 import { ExternalLink, PanelsTopLeft, Image } from "lucide-react";
 
 export default function ResultCard() {
-  const { items, error, loading } = useAppStore((s) => s.ocr);
   const expected = useAppStore((s) => s.expected);
+  const { items, error, loading } = useAppStore((s) => s.ocr);
+  const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
+    useAppStore((s) => s.barcode);
   const processedImgUrl = useAppStore((s) => s.processedImgUrl);
+  const barcodeOverlayImgUrl = useAppStore((s) => s.barcodeOverlayImgUrl);
+  const barcodeRoiImgUrl = useAppStore((s) => s.barcodeRoiImgUrl);
 
   const patterns = useMemo<Pattern[]>(
     () => [
@@ -24,6 +28,28 @@ export default function ResultCard() {
   );
 
   let content: React.ReactNode = null;
+
+  // Reusable renderer for external links with consistent styling
+  const renderExternalLink = (
+    href?: string,
+    label: string = "Imagen procesada",
+    icon: React.ReactNode = <Image className="h-4 w-4" />
+  ) => (
+    <>
+      {href ? (
+        <Link
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex items-center gap-1 text-sm text-green-600 underline hover:text-green-700"
+        >
+          {icon}
+          {label}
+          <ExternalLink className="h-3 w-3 opacity-70 ml-1" />
+        </Link>
+      ) : null}
+    </>
+  );
 
   if (loading) {
     content = <p className="text-sm text-muted-foreground">Procesando…</p>;
@@ -41,26 +67,18 @@ export default function ResultCard() {
         <HighlightedText text={item.text} patterns={patterns} />
       </Badge>
     ));
-    const imgUrl = (
-      <div className="py-3">
-        {processedImgUrl ? (
-          <Link
-            href={processedImgUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-1 text-sm text-green-600 underline hover:text-green-700"
-          >
-            <Image className="h-4 w-4" />
-            Imagen procesada
-            <ExternalLink className="h-3 w-3 opacity-70 ml-1" />
-          </Link>
-        ) : null}
-      </div>
+    const imgUrl = renderExternalLink(processedImgUrl, "Imagen procesada");
+    const overlayUrl = renderExternalLink(
+      barcodeOverlayImgUrl,
+      "Código de barras detectado"
     );
+    const roiUrl = renderExternalLink(barcodeRoiImgUrl, "ROI");
     content = (
       <>
         <div className="max-h-48 overflow-y-auto space-y-1">{lines}</div>
         {imgUrl}
+        {overlayUrl}
+        {roiUrl}
       </>
     );
   }
