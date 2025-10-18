@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { ExternalLink, Image, Scan, Crop } from "lucide-react";
 import SectionHeader from "@/components/processing/SectionHeader";
 import { Separator } from "@/components/ui/separator";
+import { Crop, ExternalLink, Image, ScanBarcode, Wand2 } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
 export default function ProcessImagesSection({
   processedImgUrl,
@@ -22,7 +23,7 @@ export default function ProcessImagesSection({
 
   const renderExternalLink = (
     href?: string,
-    label: string = "Imagen procesada",
+    label: ReactNode = "Imagen procesada",
     icon: React.ReactNode = <Image className="h-4 w-4" />
   ) => (
     <>
@@ -52,12 +53,15 @@ export default function ProcessImagesSection({
         {renderExternalLink(
           processedImgUrl,
           "Imagen procesada",
-          <Image className="h-4 w-4" />
+          <Wand2 className="h-4 w-4" />
         )}
         {renderExternalLink(
           barcodeOverlayImgUrl,
-          "Código de barras detectado",
-          <Scan className="h-4 w-4" />
+          <>
+            <span className="md:hidden">Código de barras</span>
+            <span className="hidden md:inline">Código de barras detectado</span>
+          </>,
+          <ScanBarcode className="h-4 w-4" />
         )}
         {renderExternalLink(
           barcodeRoiImgUrl,
