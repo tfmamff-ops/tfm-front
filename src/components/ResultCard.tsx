@@ -1,13 +1,48 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import type React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAppStore } from "@/lib/store";
 import HighlightedText from "@/components/HighlightedText";
 import type { Pattern } from "@/lib/ocr-utils";
 import Link from "next/link";
-import { ExternalLink, PanelsTopLeft, Image } from "lucide-react";
+import {
+  ExternalLink,
+  PanelsTopLeft,
+  Image,
+  Copy,
+  Check,
+  Scan,
+  Crop,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Small title for content sections
+function SectionTitle({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <div className="text-xs font-semibold uppercase tracking-wide text-green-800/80">
+      {children}
+    </div>
+  );
+}
+
+// Boolean badge with clear color semantics
+function BoolBadge({ value }: Readonly<{ value: boolean }>) {
+  return (
+    <Badge
+      variant="outline"
+      className={
+        value
+          ? "border-green-300 bg-green-50 text-green-700"
+          : "border-slate-300 bg-slate-50 text-slate-600"
+      }
+    >
+      {value ? "Sí" : "No"}
+    </Badge>
+  );
+}
 
 export default function ResultCard() {
   const expected = useAppStore((s) => s.expected);
@@ -28,6 +63,19 @@ export default function ResultCard() {
   );
 
   let content: React.ReactNode = null;
+
+  // Copy to clipboard feedback for decoded value
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
 
   // Reusable renderer for external links with consistent styling
   const renderExternalLink = (
@@ -51,6 +99,8 @@ export default function ResultCard() {
     </>
   );
 
+  // (helper components moved to module scope to satisfy linter)
+
   if (loading) {
     content = <p className="text-sm text-muted-foreground">Procesando…</p>;
   } else if (error) {
@@ -67,18 +117,113 @@ export default function ResultCard() {
         <HighlightedText text={item.text} patterns={patterns} />
       </Badge>
     ));
-    const imgUrl = renderExternalLink(processedImgUrl, "Imagen procesada");
-    const overlayUrl = renderExternalLink(
-      barcodeOverlayImgUrl,
-      "Código de barras detectado"
-    );
-    const roiUrl = renderExternalLink(barcodeRoiImgUrl, "ROI");
+    const hasAnyLink =
+      Boolean(processedImgUrl) ||
+      Boolean(barcodeOverlayImgUrl) ||
+      Boolean(barcodeRoiImgUrl);
+
     content = (
       <>
-        <div className="max-h-48 overflow-y-auto space-y-1">{lines}</div>
-        {imgUrl}
-        {overlayUrl}
-        {roiUrl}
+        {/* OCR section */}
+        <div className="space-y-2">
+          <SectionTitle>OCR</SectionTitle>
+          <div className="max-h-48 overflow-y-auto space-y-1">{lines}</div>
+        </div>
+
+        {/* Barcode section */}
+        <div className="space-y-2">
+          <SectionTitle>Código de barras</SectionTitle>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+            <div className="flex items-center gap-2">
+              <dt className="text-xs text-slate-600">Detectado</dt>
+              <dd>
+                <BoolBadge value={!!barcodeDetected} />
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-xs text-slate-600">Legible</dt>
+              <dd>
+                <BoolBadge value={!!barcodeLegible} />
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-xs text-slate-600">Valor decodificado</dt>
+              <dd className="text-sm flex items-center gap-2">
+                {decodedValue?.trim() ? (
+                  <>
+                    <span className="font-mono">{decodedValue}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-2"
+                      onClick={() => handleCopy(decodedValue)}
+                      aria-label={copied ? "Copiado" : "Copiar"}
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </>
+                ) : (
+                  <span className="text-slate-500">—</span>
+                )}
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-xs text-slate-600">Simbología</dt>
+              <dd className="text-sm">
+                {barcodeSymbology?.trim() ? (
+                  <span
+                    title={
+                      (
+                        {
+                          QR: "QR Code",
+                          EAN13: "EAN-13 (retail)",
+                          EAN8: "EAN-8 (retail)",
+                          CODE128: "Code 128 (alfanumérico)",
+                          CODE39: "Code 39",
+                          PDF417: "PDF417",
+                          DATAMATRIX: "Data Matrix",
+                        } as Record<string, string>
+                      )[barcodeSymbology] || barcodeSymbology
+                    }
+                  >
+                    {barcodeSymbology}
+                  </span>
+                ) : (
+                  <span className="text-slate-500">—</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        {/* Processed images section */}
+        {hasAnyLink && (
+          <div className="space-y-2">
+            <SectionTitle>Imágenes del proceso</SectionTitle>
+            <div className="flex flex-col gap-1">
+              {renderExternalLink(
+                processedImgUrl,
+                "Imagen procesada",
+                <Image className="h-4 w-4" />
+              )}
+              {renderExternalLink(
+                barcodeOverlayImgUrl,
+                "Código de barras detectado",
+                <Scan className="h-4 w-4" />
+              )}
+              {renderExternalLink(
+                barcodeRoiImgUrl,
+                "ROI",
+                <Crop className="h-4 w-4" />
+              )}
+            </div>
+          </div>
+        )}
       </>
     );
   }
