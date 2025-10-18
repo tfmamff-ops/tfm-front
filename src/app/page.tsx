@@ -25,11 +25,11 @@ export default function Page() {
             return (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <TabsTrigger
                       value="config"
                       disabled={isDisabledConfig}
-                      className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs md:text-base font-semibold transition-all duration-200
+                      className={`flex w-full items-center justify-center gap-1 md:gap-2 px-3 py-2 md:px-6 md:py-3 rounded-lg text-[11px] sm:text-xs md:text-base font-semibold text-center leading-tight whitespace-normal break-words transition-all duration-200
                         data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
                         data-[state=inactive]:text-slate-500
                         ${
@@ -38,8 +38,9 @@ export default function Page() {
                             : ""
                         }`}
                     >
-                      <Settings className="h-5 w-5 mr-1" />
-                      Configuración
+                      <Settings className="h-4 w-4 md:h-5 md:w-5 mr-1 shrink-0" />
+                      <span className="md:hidden">Config</span>
+                      <span className="hidden md:inline">Configuración</span>
                     </TabsTrigger>
                   </div>
                 </TooltipTrigger>
@@ -57,11 +58,11 @@ export default function Page() {
             return (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <TabsTrigger
                       value="processing"
                       disabled={isDisabled}
-                      className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs md:text-base font-semibold transition-all duration-200
+                      className={`flex w-full items-center justify-center gap-1 md:gap-2 px-3 py-2 md:px-6 md:py-3 rounded-lg text-[11px] sm:text-xs md:text-base font-semibold text-center leading-tight whitespace-normal break-words transition-all duration-200
                         data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
                         data-[state=inactive]:text-slate-500
                         ${
@@ -70,8 +71,9 @@ export default function Page() {
                             : ""
                         }`}
                     >
-                      <Cpu className="h-5 w-5 mr-1" />
-                      Procesamiento
+                      <Cpu className="h-4 w-4 md:h-5 md:w-5 mr-1 shrink-0" />
+                      <span className="md:hidden">Proceso</span>
+                      <span className="hidden md:inline">Procesamiento</span>
                     </TabsTrigger>
                   </div>
                 </TooltipTrigger>
