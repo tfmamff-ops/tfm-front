@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { CalendarDays, Tag, ClipboardList, PanelsTopLeft } from "lucide-react";
 
-export default function SelectedData() {
+export default function ConfiguredValues() {
   const expected = useAppStore((s) => s.expected);
 
   return (
@@ -19,14 +19,14 @@ export default function SelectedData() {
               aria-hidden="true"
             />
             <h3 className="text-lg font-semibold tracking-tight text-green-900">
-              Datos configurados
+              Línea de producción configurada
             </h3>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-4">
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FieldChip
               label="Lote"
               value={expected.batch}

@@ -1,17 +1,17 @@
 "use client";
 
 import { BarChart3 } from "lucide-react";
-import ResultCard from "../ResultCard";
+import ProcessingCard from "../ProcessingCard";
 import Section from "@/components/ui/Section";
-import SelectedData from "../SelectedData";
+import ConfiguredValues from "../ConfiguredValues";
 import StatusSummary from "../StatusSummary";
 import SendToAzureButton from "../uploader/SendToAzureButton";
 import Preview from "../Preview";
 
-export default function RightSidebar() {
+export default function Processing() {
   return (
     <aside className="lg:sticky lg:top-6 self-start col-span-12 lg:col-span-4 space-y-4">
-      <SelectedData />
+      <ConfiguredValues />
       <Section
         title="Estado"
         defaultOpen
@@ -21,7 +21,7 @@ export default function RightSidebar() {
       </Section>
       <Preview />
       <SendToAzureButton />
-      <ResultCard />
+      <ProcessingCard />
     </aside>
   );
 }

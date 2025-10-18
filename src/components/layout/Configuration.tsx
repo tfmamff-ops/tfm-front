@@ -6,11 +6,11 @@ import ImageSourcePanel from "@/components/uploader/ImageSourcePanel";
 import { Settings, Upload } from "lucide-react";
 import Preview from "../Preview";
 
-export default function LeftSidebar() {
+export default function Configuration() {
   return (
     <aside className="lg:sticky lg:top-6 self-start col-span-12 lg:col-span-4 space-y-4">
       <Section
-        title="Configuración"
+        title="Seleccione la línea de producción"
         defaultOpen
         icon={<Settings className="h-4 w-4 text-slate-500" />}
       >
@@ -18,7 +18,7 @@ export default function LeftSidebar() {
       </Section>
 
       <Section
-        title="Imagen"
+        title="Seleccione la fuente de la imagen"
         defaultOpen
         icon={<Upload className="h-4 w-4 text-slate-500" />}
       >

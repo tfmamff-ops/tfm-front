@@ -1,39 +1,100 @@
 "use client";
 
-import { useState } from "react";
-import LeftSidebar from "@/components/layout/LeftSidebar";
-import RightSidebar from "@/components/layout/RightSidebar";
-import { Button } from "@/components/ui/button"; // o reemplazá por <button>
+import Configuration from "@/components/layout/Configuration";
+import Processing from "@/components/layout/Processing";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAppStore } from "@/lib/store";
+import { Cpu, Settings } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Page() {
-  const [view, setView] = useState<"left" | "right">("left");
+  const imagePreview = useAppStore((s) => s.imagePreview);
+  const ocrLoading = useAppStore((s) => s.ocr.loading);
 
   return (
     <main className="container mx-auto p-4 space-y-4">
-      <div className="flex gap-2">
-        <Button
-          variant={view === "left" ? "default" : "outline"}
-          onClick={() => setView("left")}
-        >
-          Ver izquierda
-        </Button>
-        <Button
-          variant={view === "right" ? "default" : "outline"}
-          onClick={() => setView("right")}
-        >
-          Ir a derecha
-        </Button>
-      </div>
+      <TooltipProvider>
+        <Tabs defaultValue="config" className="w-full">
+          <TabsList className="flex w-full max-w-lg mx-auto rounded-xl bg-white border border-green-100 shadow-sm p-1 gap-2">
+            {(() => {
+              const isDisabledConfig = ocrLoading === true;
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex-1">
+                      <TabsTrigger
+                        value="config"
+                        disabled={isDisabledConfig}
+                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-200
+                        data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
+                        data-[state=inactive]:text-slate-500
+                        ${
+                          isDisabledConfig
+                            ? "opacity-50 cursor-not-allowed pointer-events-none"
+                            : ""
+                        }`}
+                      >
+                        <Settings className="h-5 w-5 mr-1" />
+                        Configuración
+                      </TabsTrigger>
+                    </div>
+                  </TooltipTrigger>
+                  {isDisabledConfig && (
+                    <TooltipContent>
+                      Procesando… No se puede editar la configuración durante el
+                      procesamiento.
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              );
+            })()}
+            {(() => {
+              const isDisabled = !imagePreview;
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex-1">
+                      <TabsTrigger
+                        value="processing"
+                        disabled={isDisabled}
+                        className={`flex w-full items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-200
+                        data-[state=active]:bg-green-50 data-[state=active]:shadow data-[state=active]:border-green-300 data-[state=active]:text-green-900
+                        data-[state=inactive]:text-slate-500
+                        ${
+                          isDisabled
+                            ? "opacity-50 cursor-not-allowed pointer-events-none"
+                            : ""
+                        }`}
+                      >
+                        <Cpu className="h-5 w-5 mr-1" />
+                        Procesamiento
+                      </TabsTrigger>
+                    </div>
+                  </TooltipTrigger>
+                  {isDisabled && (
+                    <TooltipContent>
+                      Subí una imagen para habilitar el procesamiento.
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              );
+            })()}
+          </TabsList>
 
-      {view === "left" ? (
-        <section className="space-y-6">
-          <LeftSidebar />
-        </section>
-      ) : (
-        <section className="space-y-6">
-          <RightSidebar />
-        </section>
-      )}
+          <TabsContent value="config" className="space-y-6 mt-6">
+            <Configuration />
+          </TabsContent>
+
+          <TabsContent value="processing" className="space-y-6 mt-6">
+            <Processing />
+          </TabsContent>
+        </Tabs>
+      </TooltipProvider>
     </main>
   );
 }

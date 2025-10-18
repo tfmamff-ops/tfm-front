@@ -44,7 +44,7 @@ function BoolBadge({ value }: Readonly<{ value: boolean }>) {
   );
 }
 
-export default function ResultCard() {
+export default function ProcessingCard() {
   const expected = useAppStore((s) => s.expected);
   const { items, error, loading } = useAppStore((s) => s.ocr);
   const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
