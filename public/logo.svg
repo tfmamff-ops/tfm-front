@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="126" height="110" viewBox="0 0 63 55">
+  <!-- Transparent background (no rect) -->
+  <title>Rx logo (green circle, white letters)</title>
+  <circle cx="31.5" cy="26.5" r="24.5" fill="#00A541"/>
+  <text x="31.5" y="26.5"
+        font-family="Inter, Arial, Helvetica, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Noto Sans', 'Liberation Sans', sans-serif"
+        font-weight="800"
+        font-size="22"
+        fill="#FFFFFF"
+        text-anchor="middle"
+        dominant-baseline="central"
+        letter-spacing="0">
+    Rx
+  </text>
+</svg>
