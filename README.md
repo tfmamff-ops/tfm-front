@@ -34,13 +34,13 @@ pnpm lint
 pnpm start
 ```
 
-# npmp
+## npmp
 
 ```bash
 pnpm dlx shadcn@latest add tabs
 ```
 
-# ngrok (mobile)
+## ngrok (mobile)
 
 ```bash
 https://dashboard.ngrok.com/get-started/setup/windows

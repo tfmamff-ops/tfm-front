@@ -1,13 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = global as unknown as { prisma?: PrismaClient };
+// Ensure a single PrismaClient instance across hot-reloads (dev) and SSR
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
 
 export const prisma =
-  globalForPrisma.prisma ||
+  globalThis.prisma ??
   new PrismaClient({
     // log: ["query"], // enable if you want to debug queries
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
 
 export default prisma;
