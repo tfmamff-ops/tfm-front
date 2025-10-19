@@ -83,6 +83,11 @@ export default function SendToAzureButton() {
       setBarcodeState(barcodeData);
       setValidation(data.validationData);
       incCounter("inspected");
+      if (data.validationData.validationSummary) {
+        incCounter("ok");
+      } else {
+        incCounter("rejected");
+      }
     } catch (e: any) {
       setError(e?.message || "Unexpected error");
     } finally {
