@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppStore } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
+import { useAppStore } from "@/lib/store";
 
 export default function Preview() {
   const imagePreview = useAppStore((s) => s.imagePreview);

@@ -2,16 +2,25 @@
 
 import SectionHeader from "@/components/processing/SectionHeader";
 import { Separator } from "@/components/ui/separator";
-import { Crop, ExternalLink, Image, ScanBarcode, Wand2 } from "lucide-react";
+import {
+  Crop,
+  ExternalLink,
+  Image,
+  ScanBarcode,
+  ScanText,
+  Wand2,
+} from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 export default function ProcessImagesSection({
   processedImgUrl,
+  ocrOverlayImgUrl,
   barcodeOverlayImgUrl,
   barcodeRoiImgUrl,
 }: Readonly<{
   processedImgUrl?: string;
+  ocrOverlayImgUrl?: string;
   barcodeOverlayImgUrl?: string;
   barcodeRoiImgUrl?: string;
 }>) {
@@ -55,6 +64,12 @@ export default function ProcessImagesSection({
           "Imagen procesada",
           <Wand2 className="h-4 w-4" />
         )}
+        {renderExternalLink(
+          ocrOverlayImgUrl,
+          "ROI OCR",
+          <ScanText className="h-4 w-4" />
+        )}
+
         {renderExternalLink(
           barcodeOverlayImgUrl,
           <>

@@ -16,6 +16,7 @@ export default function ProcessingCard() {
   const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
     useAppStore((s) => s.barcode);
   const processedImgUrl = useAppStore((s) => s.processedImgUrl);
+  const ocrOverlayImgUrl = useAppStore((s) => s.ocrOverlayImgUrl);
   const barcodeOverlayImgUrl = useAppStore((s) => s.barcodeOverlayImgUrl);
   const barcodeRoiImgUrl = useAppStore((s) => s.barcodeRoiImgUrl);
   const validation = useAppStore((s) => s.validation);
@@ -31,6 +32,7 @@ export default function ProcessingCard() {
   } else {
     const hasAnyLink =
       Boolean(processedImgUrl) ||
+      Boolean(ocrOverlayImgUrl) ||
       Boolean(barcodeOverlayImgUrl) ||
       Boolean(barcodeRoiImgUrl);
 
@@ -46,6 +48,7 @@ export default function ProcessingCard() {
         {hasAnyLink && (
           <ProcessImagesSection
             processedImgUrl={processedImgUrl}
+            ocrOverlayImgUrl={ocrOverlayImgUrl}
             barcodeOverlayImgUrl={barcodeOverlayImgUrl}
             barcodeRoiImgUrl={barcodeRoiImgUrl}
           />

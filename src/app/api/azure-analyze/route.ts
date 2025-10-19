@@ -15,6 +15,18 @@ const KEY_START = process.env.AZURE_FUNC_KEY_HTTP_START!;
 const TIMEOUT_MS = Number(process.env.AZURE_PIPELINE_TIMEOUT_MS ?? 90000);
 const POLL_MS = Number(process.env.AZURE_PIPELINE_POLL_MS ?? 2000);
 
+class HttpError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function toMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
 function parseExpectedFromForm(form: FormData): Expected | undefined {
   try {
     const expectedRaw = form.get("expected");
@@ -25,6 +37,90 @@ function parseExpectedFromForm(form: FormData): Expected | undefined {
     console.warn("Failed to parse expected from form-data:", e);
   }
   return undefined;
+}
+
+async function getUploadSasOrFail(params: {
+  host: string;
+  functionKey: string;
+  container: string;
+  blobName: string;
+  minutes: number;
+  contentType: string;
+}): Promise<string> {
+  try {
+    return await getSasUrlForUpload(params);
+  } catch (e) {
+    throw new HttpError(502, toMessage(e));
+  }
+}
+
+async function uploadToSasOrFail(
+  sasUrl: string,
+  arrayBuf: ArrayBuffer
+): Promise<void> {
+  try {
+    await uploadBlobToSasUrl(sasUrl, arrayBuf);
+  } catch (e) {
+    throw new HttpError(502, toMessage(e));
+  }
+}
+
+async function startPipelineOrFail(params: {
+  host: string;
+  functionKey: string;
+  container: string;
+  blobName: string;
+  expectedData: Expected;
+}): Promise<string> {
+  try {
+    return await startPipeline(params);
+  } catch (e) {
+    throw new HttpError(502, toMessage(e));
+  }
+}
+
+async function pollPipelineOrFail(
+  statusUrl: string,
+  timeoutMs: number,
+  pollMs: number
+): Promise<unknown> {
+  try {
+    return await pollPipeline(statusUrl, timeoutMs, pollMs);
+  } catch (e) {
+    throw new HttpError(502, toMessage(e));
+  }
+}
+
+async function getReadSasOrFail(blobName: string): Promise<string> {
+  try {
+    return await getSasUrlForRead({
+      host: HOST,
+      functionKey: KEY_GET_SAS,
+      container: "output",
+      blobName,
+      minutes: 15,
+    });
+  } catch (e) {
+    throw new HttpError(502, toMessage(e));
+  }
+}
+
+async function getReadSasOrWarn(
+  blobName?: string
+): Promise<string | undefined> {
+  if (!blobName) return undefined;
+  try {
+    return await getSasUrlForRead({
+      host: HOST,
+      functionKey: KEY_GET_SAS,
+      container: "output",
+      blobName,
+      minutes: 15,
+    });
+  } catch (e) {
+    console.warn("Failed to fetch read SAS:", e);
+    return undefined;
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -45,32 +141,17 @@ export async function POST(req: NextRequest) {
       : "";
     const blobName = `uploads/${randomUUID()}${ext}`;
 
-    let sasUrl: string;
-    try {
-      sasUrl = await getSasUrlForUpload({
-        host: HOST,
-        functionKey: KEY_GET_SAS,
-        container: "input",
-        blobName,
-        minutes: 15,
-        contentType,
-      });
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: e?.message || String(e) },
-        { status: 502 }
-      );
-    }
+    const sasUrl = await getUploadSasOrFail({
+      host: HOST,
+      functionKey: KEY_GET_SAS,
+      container: "input",
+      blobName,
+      minutes: 15,
+      contentType,
+    });
 
     // Upload the file to the SAS URL (PUT)
-    try {
-      await uploadBlobToSasUrl(sasUrl, arrayBuf);
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: e?.message || String(e) },
-        { status: 502 }
-      );
-    }
+    await uploadToSasOrFail(sasUrl, arrayBuf);
 
     // Start the pipeline with the blob reference and expected data
     const expectedParsed = parseExpectedFromForm(form);
@@ -80,32 +161,20 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    let statusUrl: string;
-    try {
-      statusUrl = await startPipeline({
-        host: HOST,
-        functionKey: KEY_START,
-        container: "input",
-        blobName,
-        expectedData: expectedParsed,
-      });
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: e?.message || String(e) },
-        { status: 502 }
-      );
-    }
+    const statusUrl = await startPipelineOrFail({
+      host: HOST,
+      functionKey: KEY_START,
+      container: "input",
+      blobName,
+      expectedData: expectedParsed,
+    });
 
     // Poll until Completed (or timeout)
-    let output: any;
-    try {
-      output = await pollPipeline(statusUrl, TIMEOUT_MS, POLL_MS);
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: e?.message || String(e) },
-        { status: 502 }
-      );
-    }
+    const output: any = await pollPipelineOrFail(
+      statusUrl,
+      TIMEOUT_MS,
+      POLL_MS
+    );
 
     // Read final blob (SAS read)
     const outBlob = output?.processedImageBlob?.blobName as string | undefined;
@@ -122,36 +191,9 @@ export async function POST(req: NextRequest) {
       | undefined;
 
     // Get SAS URLs for the final blobs
-    let imageUrl: string;
-    try {
-      imageUrl = await getSasUrlForRead({
-        host: HOST,
-        functionKey: KEY_GET_SAS,
-        container: "output",
-        blobName: outBlob,
-        minutes: 15,
-      });
-    } catch (e: any) {
-      return NextResponse.json(
-        { error: e?.message || String(e) },
-        { status: 502 }
-      );
-    }
+    const imageUrl = await getReadSasOrFail(outBlob);
 
-    let ocrOverlayImageUrl: string | undefined;
-    if (outOverlayBlob) {
-      try {
-        ocrOverlayImageUrl = await getSasUrlForRead({
-          host: HOST,
-          functionKey: KEY_GET_SAS,
-          container: "output",
-          blobName: outOverlayBlob,
-          minutes: 15,
-        });
-      } catch (e) {
-        console.warn("Failed to fetch ocrOverlayImageUrl:", e);
-      }
-    }
+    const ocrOverlayImageUrl = await getReadSasOrWarn(outOverlayBlob);
 
     // Read OCR result
     const ocrResult = output?.ocrResult;
@@ -160,28 +202,12 @@ export async function POST(req: NextRequest) {
     let barcodeOverlayImageUrl: string | undefined;
     let barcodeRoiImageUrl: string | undefined;
     if (output?.barcode?.barcodeData?.barcodeDetected) {
-      try {
-        barcodeOverlayImageUrl = await getSasUrlForRead({
-          host: HOST,
-          functionKey: KEY_GET_SAS,
-          container: "output",
-          blobName: output?.barcode?.barcodeOverlayBlob?.blobName,
-          minutes: 15,
-        });
-      } catch (e) {
-        console.warn("Failed to fetch barcodeOverlayImageUrl:", e);
-      }
-      try {
-        barcodeRoiImageUrl = await getSasUrlForRead({
-          host: HOST,
-          functionKey: KEY_GET_SAS,
-          container: "output",
-          blobName: output?.barcode?.barcodeRoiBlob?.blobName,
-          minutes: 15,
-        });
-      } catch (e) {
-        console.warn("Failed to fetch barcodeRoiImageUrl:", e);
-      }
+      barcodeOverlayImageUrl = await getReadSasOrWarn(
+        output?.barcode?.barcodeOverlayBlob?.blobName
+      );
+      barcodeRoiImageUrl = await getReadSasOrWarn(
+        output?.barcode?.barcodeRoiBlob?.blobName
+      );
     }
 
     // Read other barcode info
@@ -204,10 +230,13 @@ export async function POST(req: NextRequest) {
 
     // Respond to the client
     return NextResponse.json(jsonResp);
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e);
+    if (e instanceof HttpError) {
+      return NextResponse.json({ error: e.message }, { status: e.status });
+    }
     return NextResponse.json(
-      { error: e?.message ?? "Unexpected error" },
+      { error: toMessage(e) ?? "Unexpected error" },
       { status: 500 }
     );
   }
