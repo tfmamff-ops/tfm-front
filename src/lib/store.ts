@@ -25,11 +25,9 @@ export type Counters = {
 /** OCR item */
 export type OcrItem = { id: string; text: string };
 
-/** State of the OCR process: items, error and loading */
-export type OcrState = {
+/** OCR result from processing */
+export type Ocr = {
   items: OcrItem[];
-  error?: string;
-  loading: boolean;
 };
 
 export type BarcodeState = {
@@ -68,14 +66,18 @@ type AppState = {
   /** Totals shown in the dashboard */
   counters: Counters;
 
-  /** State of the OCR process: items, error and loading */
-  ocr: OcrState;
+  /** OCR result from processing */
+  ocr: Ocr;
 
   /** State of the Barcode process */
   barcode: BarcodeState;
 
   /** Validation results */
   validation: Validation;
+
+  /** Processing state: error and loading */
+  error?: string;
+  loading: boolean;
 
   /** URLs of processed images returned from the backend */
   processedImgUrl?: string;
@@ -116,11 +118,9 @@ type AppState = {
 
 const isDev = process.env.NODE_ENV !== "production";
 
-/** Initial state for OCR */
-const INITIAL_OCR_STATE: OcrState = {
+/** Initial OCR result */
+const INITIAL_OCR: Ocr = {
   items: [],
-  error: undefined,
-  loading: false,
 };
 
 /** Initial counters */
@@ -200,9 +200,11 @@ export const useAppStore = create<AppState>()(
         imagePreview: undefined,
         expected: {},
         counters: INITIAL_COUNTERS,
-        ocr: INITIAL_OCR_STATE,
+        ocr: INITIAL_OCR,
         barcode: INITIAL_BARCODE_STATE,
         validation: INITIAL_VALIDATION_STATE,
+        error: undefined,
+        loading: false,
 
         // ========================================================================
         // IMAGE SOURCE & FILE ACTIONS
@@ -219,9 +221,11 @@ export const useAppStore = create<AppState>()(
                   file: undefined,
                   filename: undefined,
                   imagePreview: undefined,
-                  ocr: INITIAL_OCR_STATE,
+                  ocr: INITIAL_OCR,
                   barcode: INITIAL_BARCODE_STATE,
                   validation: INITIAL_VALIDATION_STATE,
+                  error: undefined,
+                  loading: false,
                   ...getCleanProcessedImagesState(),
                 };
               }
@@ -245,9 +249,11 @@ export const useAppStore = create<AppState>()(
               // When preview changes, reset OCR and processed images
               return {
                 imagePreview,
-                ocr: INITIAL_OCR_STATE,
+                ocr: INITIAL_OCR,
                 barcode: INITIAL_BARCODE_STATE,
                 validation: INITIAL_VALIDATION_STATE,
+                error: undefined,
+                loading: false,
                 ...getCleanProcessedImagesState(),
               };
             },
@@ -285,21 +291,17 @@ export const useAppStore = create<AppState>()(
         // ========================================================================
         // OCR ACTIONS
         // ========================================================================
-
         setOcrItems: (items) =>
           set((s) => ({ ocr: { ...s.ocr, items } }), false, "setOcrItems"),
+        setOcrError: (msg) => set({ error: msg }, false, "setOcrError"),
+        setOcrLoading: (v) => set({ loading: v }, false, "setOcrLoading"),
 
-        setOcrError: (msg) =>
-          set((s) => ({ ocr: { ...s.ocr, error: msg } }), false, "setOcrError"),
-
-        setOcrLoading: (v) =>
+        clearOcr: () =>
           set(
-            (s) => ({ ocr: { ...s.ocr, loading: v } }),
+            { ocr: INITIAL_OCR, error: undefined, loading: false },
             false,
-            "setOcrLoading"
+            "clearOcr"
           ),
-
-        clearOcr: () => set({ ocr: INITIAL_OCR_STATE }, false, "clearOcr"),
 
         // ========================================================================
         // PROCESSED IMAGE URLS
@@ -396,7 +398,9 @@ export const useAppStore = create<AppState>()(
               filename: undefined,
               expected: {},
               counters: INITIAL_COUNTERS,
-              ocr: INITIAL_OCR_STATE,
+              ocr: INITIAL_OCR,
+              error: undefined,
+              loading: false,
               barcode: INITIAL_BARCODE_STATE,
               validation: INITIAL_VALIDATION_STATE,
               ...getCleanProcessedImagesState(),

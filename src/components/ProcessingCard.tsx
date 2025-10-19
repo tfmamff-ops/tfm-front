@@ -9,7 +9,9 @@ import { PanelsTopLeft } from "lucide-react";
 import type React from "react";
 
 export default function ProcessingCard() {
-  const { items, error, loading } = useAppStore((s) => s.ocr);
+  const items = useAppStore((s) => s.ocr.items);
+  const error = useAppStore((s) => s.error);
+  const loading = useAppStore((s) => s.loading);
   const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
     useAppStore((s) => s.barcode);
   const processedImgUrl = useAppStore((s) => s.processedImgUrl);

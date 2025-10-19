@@ -14,7 +14,7 @@ import {
 
 export default function Page() {
   const imagePreview = useAppStore((s) => s.imagePreview);
-  const ocrLoading = useAppStore((s) => s.ocr.loading);
+  const ocrLoading = useAppStore((s) => s.loading);
 
   return (
     <TooltipProvider>
