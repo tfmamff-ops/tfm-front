@@ -1,32 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
-import type React from "react";
+import BarcodeSection from "@/components/processing/BarcodeSection";
+import OcrSection from "@/components/processing/OcrSection";
+import ProcessImagesSection from "@/components/processing/ProcessImagesSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
-import type { Pattern } from "@/lib/ocr-utils";
 import { PanelsTopLeft } from "lucide-react";
-import OcrSection from "@/components/processing/OcrSection";
-import BarcodeSection from "@/components/processing/BarcodeSection";
-import ProcessImagesSection from "@/components/processing/ProcessImagesSection";
+import type React from "react";
 
 export default function ProcessingCard() {
-  const expected = useAppStore((s) => s.expected);
   const { items, error, loading } = useAppStore((s) => s.ocr);
   const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
     useAppStore((s) => s.barcode);
   const processedImgUrl = useAppStore((s) => s.processedImgUrl);
   const barcodeOverlayImgUrl = useAppStore((s) => s.barcodeOverlayImgUrl);
   const barcodeRoiImgUrl = useAppStore((s) => s.barcodeRoiImgUrl);
-
-  const patterns = useMemo<Pattern[]>(
-    () => [
-      { value: expected?.batch ?? "", className: "bg-sky-200" },
-      { value: expected?.expiry ?? "", className: "bg-green-200" },
-      { value: expected?.order ?? "", className: "bg-purple-200" },
-    ],
-    [expected?.batch, expected?.expiry, expected?.order]
-  );
 
   let content: React.ReactNode = null;
 
@@ -44,7 +32,7 @@ export default function ProcessingCard() {
 
     content = (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <OcrSection items={items} patterns={patterns} />
+        <OcrSection items={items} />
         <BarcodeSection
           barcodeDetected={!!barcodeDetected}
           barcodeLegible={!!barcodeLegible}
