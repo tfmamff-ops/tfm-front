@@ -1,3 +1,5 @@
+// This API route exists to ensure that /api/expected returns the same shape as json-server in development.
+// It allows the frontend to consume expected batch/order/expiry data identically in both local and production (Netlify) environments.
 export async function GET() {
   try {
     // Absolute path to db.json file
