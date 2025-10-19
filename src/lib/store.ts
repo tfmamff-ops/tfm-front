@@ -81,6 +81,7 @@ type AppState = {
 
   /** URLs of processed images returned from the backend */
   processedImgUrl?: string;
+  ocrOverlayImgUrl?: string;
   barcodeOverlayImgUrl?: string;
   barcodeRoiImgUrl?: string;
 
@@ -97,6 +98,7 @@ type AppState = {
   clearOcr: () => void;
   incCounter: (key: keyof Counters, by?: number) => void;
   setProcessedImageUrl: (url: string) => void;
+  setOcrOverlayImgUrl: (url: string) => void;
   setBarcodeOverlayImgUrl: (url: string) => void;
   setBarcodeRoiImgUrl: (url: string) => void;
   setBarcodeState: (barcode: BarcodeState) => void;
@@ -154,6 +156,7 @@ const INITIAL_VALIDATION_STATE: Validation = {
 /** Helper to create a clean processed images state (all URLs undefined) */
 const getCleanProcessedImagesState = () => ({
   processedImgUrl: undefined,
+  ocrOverlayImgUrl: undefined,
   barcodeOverlayImgUrl: undefined,
   barcodeRoiImgUrl: undefined,
 });
@@ -314,6 +317,9 @@ export const useAppStore = create<AppState>()(
 
         setProcessedImageUrl: (url) =>
           set({ processedImgUrl: url }, false, "setProcessedImageUrl"),
+
+        setOcrOverlayImgUrl: (url) =>
+          set({ ocrOverlayImgUrl: url }, false, "setOcrOverlayImgUrl"),
 
         setBarcodeOverlayImgUrl: (url) =>
           set({ barcodeOverlayImgUrl: url }, false, "setBarcodeOverlayImgUrl"),

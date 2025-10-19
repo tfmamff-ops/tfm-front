@@ -16,6 +16,7 @@ export default function SendToAzureButton() {
   const clearBarcode = useAppStore((s) => s.clearBarcode);
   const clearValidation = useAppStore((s) => s.clearValidation);
   const setProcessedImageUrl = useAppStore((s) => s.setProcessedImageUrl);
+  const setOcrOverlayImgUrl = useAppStore((s) => s.setOcrOverlayImgUrl);
   const setBarcodeOverlayImgUrl = useAppStore((s) => s.setBarcodeOverlayImgUrl);
   const setBarcodeRoiImgUrl = useAppStore((s) => s.setBarcodeRoiImgUrl);
   const setValidation = useAppStore((s) => s.setValidation);
@@ -62,12 +63,14 @@ export default function SendToAzureButton() {
       const {
         imageUrl,
         barcodeOverlayImageUrl,
+        ocrOverlayImageUrl,
         barcodeRoiImageUrl,
         ocrResult,
         barcodeData,
       } = data;
 
       setProcessedImageUrl(imageUrl);
+      setOcrOverlayImgUrl(ocrOverlayImageUrl);
       setBarcodeOverlayImgUrl(barcodeOverlayImageUrl);
       setBarcodeRoiImgUrl(barcodeRoiImageUrl);
 
