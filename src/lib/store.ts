@@ -40,6 +40,16 @@ export type BarcodeState = {
   barcodeBox: number[];
 };
 
+export type Validation = {
+  orderOK: boolean;
+  batchOK: boolean;
+  expiryOK: boolean;
+  barcodeDetectedOK: boolean;
+  barcodeLegibleOK: boolean;
+  barcodeOK: boolean;
+  validationSummary: boolean;
+};
+
 /** Global application state (Zustand store) */
 type AppState = {
   /** How the current image was provided */
@@ -64,6 +74,9 @@ type AppState = {
   /** State of the Barcode process */
   barcode: BarcodeState;
 
+  /** Validation results */
+  validation: Validation;
+
   /** URLs of processed images returned from the backend */
   processedImgUrl?: string;
   barcodeOverlayImgUrl?: string;
@@ -86,6 +99,14 @@ type AppState = {
   setBarcodeRoiImgUrl: (url: string) => void;
   setBarcodeState: (barcode: BarcodeState) => void;
   clearBarcode: () => void;
+  setOrderOk: (ok: boolean) => void;
+  setBatchOk: (ok: boolean) => void;
+  setExpiryOk: (ok: boolean) => void;
+  setBarcodeDetectedOk: (ok: boolean) => void;
+  setBarcodeLegibleOk: (ok: boolean) => void;
+  setBarcodeOk: (ok: boolean) => void;
+  setValidationSummary: (ok: boolean) => void;
+  clearValidation: () => void;
   reset: () => void;
 };
 
@@ -116,6 +137,17 @@ const INITIAL_BARCODE_STATE: BarcodeState = {
   decodedValue: "",
   barcodeSymbology: "",
   barcodeBox: [],
+};
+
+/** Initial state for Validation */
+const INITIAL_VALIDATION_STATE: Validation = {
+  orderOK: false,
+  batchOK: false,
+  expiryOK: false,
+  barcodeDetectedOK: false,
+  barcodeLegibleOK: false,
+  barcodeOK: false,
+  validationSummary: false,
 };
 
 /** Helper to create a clean processed images state (all URLs undefined) */
@@ -170,6 +202,7 @@ export const useAppStore = create<AppState>()(
         counters: INITIAL_COUNTERS,
         ocr: INITIAL_OCR_STATE,
         barcode: INITIAL_BARCODE_STATE,
+        validation: INITIAL_VALIDATION_STATE,
 
         // ========================================================================
         // IMAGE SOURCE & FILE ACTIONS
@@ -188,6 +221,7 @@ export const useAppStore = create<AppState>()(
                   imagePreview: undefined,
                   ocr: INITIAL_OCR_STATE,
                   barcode: INITIAL_BARCODE_STATE,
+                  validation: INITIAL_VALIDATION_STATE,
                   ...getCleanProcessedImagesState(),
                 };
               }
@@ -213,6 +247,7 @@ export const useAppStore = create<AppState>()(
                 imagePreview,
                 ocr: INITIAL_OCR_STATE,
                 barcode: INITIAL_BARCODE_STATE,
+                validation: INITIAL_VALIDATION_STATE,
                 ...getCleanProcessedImagesState(),
               };
             },
@@ -290,6 +325,65 @@ export const useAppStore = create<AppState>()(
           set({ barcode: INITIAL_BARCODE_STATE }, false, "clearBarcode"),
 
         // ========================================================================
+        // VALIDATION ACTIONS
+        // ========================================================================
+
+        setOrderOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, orderOK: ok } }),
+            false,
+            "setOrderOk"
+          ),
+
+        setBatchOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, batchOK: ok } }),
+            false,
+            "setBatchOk"
+          ),
+
+        setExpiryOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, expiryOK: ok } }),
+            false,
+            "setExpiryOk"
+          ),
+
+        setBarcodeDetectedOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, barcodeDetectedOK: ok } }),
+            false,
+            "setBarcodeDetectedOk"
+          ),
+
+        setBarcodeLegibleOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, barcodeLegibleOK: ok } }),
+            false,
+            "setBarcodeLegibleOk"
+          ),
+
+        setBarcodeOk: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, barcodeOK: ok } }),
+            false,
+            "setBarcodeOk"
+          ),
+
+        setValidationSummary: (ok: boolean) =>
+          set(
+            (s) => ({ validation: { ...s.validation, validationSummary: ok } }),
+            false,
+            "setValidationSummary"
+          ),
+        clearValidation: () =>
+          set(
+            { validation: INITIAL_VALIDATION_STATE },
+            false,
+            "clearValidation"
+          ),
+
+        // ========================================================================
         // RESET
         // ========================================================================
 
@@ -304,6 +398,7 @@ export const useAppStore = create<AppState>()(
               counters: INITIAL_COUNTERS,
               ocr: INITIAL_OCR_STATE,
               barcode: INITIAL_BARCODE_STATE,
+              validation: INITIAL_VALIDATION_STATE,
               ...getCleanProcessedImagesState(),
             },
             false,
