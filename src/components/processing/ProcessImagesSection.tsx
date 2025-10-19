@@ -58,14 +58,19 @@ export default function ProcessImagesSection({
         {renderExternalLink(
           barcodeOverlayImgUrl,
           <>
-            <span className="md:hidden">Código de barras</span>
-            <span className="hidden md:inline">Código de barras detectado</span>
+            <span className="md:hidden">ROI Código</span>
+            <span className="hidden md:inline">ROI Código de barras</span>
           </>,
           <ScanBarcode className="h-4 w-4" />
         )}
         {renderExternalLink(
           barcodeRoiImgUrl,
-          "ROI",
+          <>
+            <span className="md:hidden">Recorte Código</span>
+            <span className="hidden md:inline">
+              Recorte del código de barras
+            </span>
+          </>,
           <Crop className="h-4 w-4" />
         )}
       </div>
