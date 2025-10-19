@@ -1,40 +1,39 @@
 
 # Scripts
 
-## Scripts básicos
+## Basic scripts
 
 ```bash
-# ESTO ES LO ÚNICO QUE DEBO EJECUTAR PARA LEVANTAR LA APP.
-# Ejecuta la aplicación local, levantando docker, la aplicación, los api mocks, etc.
-# obs: pnpm install puede ser necesario
+# THIS IS THE ONLY COMMAND TO START THE APP.
+# Runs the local app, docker, json-server API mocks, etc.
+# Note: pnpm install may be required
 pnpm dev
 ```
 
-## Scripts útiles
+## Useful scripts
 
 ```bash
-# Levanta contenedor con la base
+# Start DB container
 pnpm docker:up
 
-# Baja contenedor con la base
+# Stop DB container
 pnpm docker: down
 
-# Genera esquema y cliente. 
-# Permite usar UI (prisma studio) o puedo usar dbeaver.
+# Generate schema and client.
+# Then you can use the UI (Prisma Studio) or any DB client (e.g., DBeaver).
 pnpm prisma:push
 pnpm prisma:generate
 pnpm prisma:studio
 ```
 
-## Prod
+## Production
 
 ```bash
 pnpm build
-pnpm lint
 pnpm start
 ```
 
-## npmp
+## shadcn (example)
 
 ```bash
 pnpm dlx shadcn@latest add tabs
