@@ -73,10 +73,13 @@ export async function getSasUrlForUpload(params: {
   return json.sasUrl;
 }
 
-export async function uploadBlobToSasUrl(sasUrl: string, body: any) {
+export async function uploadBlobToSasUrl(
+  sasUrl: string,
+  body: BodyInit
+): Promise<void> {
   const res = await fetch(sasUrl, {
     method: "PUT",
-    headers: { "x-ms-blob-type": "BlockBlob" } as any,
+    headers: { "x-ms-blob-type": "BlockBlob" } as Record<string, string>,
     body,
   });
   if (!res.ok) {
@@ -123,7 +126,6 @@ export async function pollPipeline(
   pollMs: number
 ) {
   const t0 = Date.now();
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const statusRes = await fetch(statusUrl);
     if (!statusRes.ok) {

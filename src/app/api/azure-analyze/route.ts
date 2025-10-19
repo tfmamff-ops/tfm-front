@@ -15,6 +15,19 @@ const KEY_START = process.env.AZURE_FUNC_KEY_HTTP_START!;
 const TIMEOUT_MS = Number(process.env.AZURE_PIPELINE_TIMEOUT_MS ?? 90000);
 const POLL_MS = Number(process.env.AZURE_PIPELINE_POLL_MS ?? 2000);
 
+// Minimal structure we rely on from the pipeline output
+type PipelineOutput = {
+  processedImageBlob?: { blobName?: string };
+  ocrOverlayBlob?: { blobName?: string };
+  ocrResult?: unknown;
+  barcode?: {
+    barcodeData?: { barcodeDetected?: boolean };
+    barcodeOverlayBlob?: { blobName?: string };
+    barcodeRoiBlob?: { blobName?: string };
+  };
+  validation?: unknown;
+};
+
 class HttpError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -83,9 +96,9 @@ async function pollPipelineOrFail(
   statusUrl: string,
   timeoutMs: number,
   pollMs: number
-): Promise<unknown> {
+): Promise<PipelineOutput> {
   try {
-    return await pollPipeline(statusUrl, timeoutMs, pollMs);
+    return (await pollPipeline(statusUrl, timeoutMs, pollMs)) as PipelineOutput;
   } catch (e) {
     throw new HttpError(502, toMessage(e));
   }
@@ -170,14 +183,10 @@ export async function POST(req: NextRequest) {
     });
 
     // Poll until Completed (or timeout)
-    const output: any = await pollPipelineOrFail(
-      statusUrl,
-      TIMEOUT_MS,
-      POLL_MS
-    );
+    const output = await pollPipelineOrFail(statusUrl, TIMEOUT_MS, POLL_MS);
 
     // Read final blob (SAS read)
-    const outBlob = output?.processedImageBlob?.blobName as string | undefined;
+    const outBlob = output?.processedImageBlob?.blobName;
     if (!outBlob) {
       return NextResponse.json(
         { error: "Missing processedImageBlob in output", output },
@@ -186,9 +195,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Read final overlay ocr blob (SAS read)
-    const outOverlayBlob = output?.ocrOverlayBlob?.blobName as
-      | string
-      | undefined;
+    const outOverlayBlob = output?.ocrOverlayBlob?.blobName;
 
     // Get SAS URLs for the final blobs
     const imageUrl = await getReadSasOrFail(outBlob);

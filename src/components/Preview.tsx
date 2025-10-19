@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useAppStore } from "@/lib/store";
+import Image from "next/image";
 
 export default function Preview() {
   const imagePreview = useAppStore((s) => s.imagePreview);
@@ -18,10 +19,13 @@ export default function Preview() {
       </div>
 
       {imagePreview ? (
-        <img
+        <Image
           src={imagePreview}
-          alt="preview"
-          className="max-h-[360px] object-contain rounded-xl"
+          alt="Vista previa de la imagen seleccionada"
+          width={800}
+          height={600}
+          className="max-h-[360px] w-auto object-contain rounded-xl"
+          unoptimized
         />
       ) : (
         <span className="text-sm text-muted-foreground">

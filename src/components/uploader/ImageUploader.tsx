@@ -31,7 +31,7 @@ export default function ImageUploader() {
           // If you want to know the final size:
           // console.log("original:", f.type, f.size, "bytes");
           // console.log("compact:", compact.type, compact.size, "bytes");
-        } catch (e: any) {
+        } catch (e) {
           console.error(e);
           setError("Could not process image.");
         }

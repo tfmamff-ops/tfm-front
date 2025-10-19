@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Crop,
   ExternalLink,
-  Image,
+  Image as ImageIcon,
   ScanBarcode,
   ScanText,
   Wand2,
@@ -33,7 +33,7 @@ export default function ProcessImagesSection({
   const renderExternalLink = (
     href?: string,
     label: ReactNode = "Imagen procesada",
-    icon: React.ReactNode = <Image className="h-4 w-4" />
+    icon: React.ReactNode = <ImageIcon className="h-4 w-4" />
   ) => (
     <>
       {href ? (
@@ -54,7 +54,7 @@ export default function ProcessImagesSection({
   return (
     <div className="rounded-xl border border-green-100 bg-white/70 p-4 lg:col-span-2">
       <SectionHeader
-        icon={<Image className="h-4 w-4 text-green-700" />}
+        icon={<ImageIcon className="h-4 w-4 text-green-700" />}
         title="Imágenes del proceso"
       />
       <Separator className="my-3" />
