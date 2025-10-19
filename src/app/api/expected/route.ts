@@ -1,7 +1,4 @@
-import { NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
+export async function GET() {
   try {
     // Absolute path to db.json file
     const filePath = path.join(process.cwd(), "mocks", "db.json");
@@ -17,3 +14,6 @@ import path from "node:path";
     );
   }
 }
+import { NextResponse } from "next/server";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
