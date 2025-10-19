@@ -1,5 +1,11 @@
-// This API route exists to ensure that /api/expected returns the same shape as json-server in development.
+// This API route ensures that /api/expected returns the same shape as json-server in development.
 // It allows the frontend to consume expected batch/order/expiry data identically in both local and production (Netlify) environments.
+//
+// In development:
+//   - If json-server is running and next.config.ts rewrites /api/expected, requests go to json-server.
+//   - If json-server is NOT running, Next.js serves this API route as a fallback, so the frontend still works with mock data.
+// In production (Netlify):
+//   - This API route always serves the mock data from mocks/db.json.
 export async function GET() {
   try {
     // Absolute path to db.json file
