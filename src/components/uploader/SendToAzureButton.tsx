@@ -71,7 +71,7 @@ export default function SendToAzureButton() {
       setBarcodeOverlayImgUrl(barcodeOverlayImageUrl);
       setBarcodeRoiImgUrl(barcodeRoiImageUrl);
 
-      // Líneas de OCR (adapta a tu schema)
+      // OCR lines (adapt to your schema)
       const lines: string[] =
         ocrResult?.readResult?.blocks
           ?.flatMap(

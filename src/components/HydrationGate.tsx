@@ -13,7 +13,7 @@ export default function HydrationGate({
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // if persist finished already, hasHydrated() será true
+    // if persist finished already, hasHydrated() will be true
     if (useAppStore.persist.hasHydrated()) {
       setHydrated(true);
       return;

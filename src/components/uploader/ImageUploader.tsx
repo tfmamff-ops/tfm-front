@@ -20,20 +20,20 @@ export default function ImageUploader() {
 
       void (async () => {
         try {
-          // achicar + comprimir antes de guardarlo
+          // downscale + compress before storing
           const { file: compact, previewUrl } = await compressImageFile(f);
 
-          // guardar la versión comprimida
+          // store the compressed version
           setFilename(f.name);
           setFile(compact);
           setPreview(previewUrl);
 
-          // Si querés saber el tamaño final:
+          // If you want to know the final size:
           // console.log("original:", f.type, f.size, "bytes");
-          // console.log("compacto:", compact.type, compact.size, "bytes");
+          // console.log("compact:", compact.type, compact.size, "bytes");
         } catch (e: any) {
           console.error(e);
-          setError("No se pudo procesar la imagen.");
+          setError("Could not process image.");
         }
       })();
     },
@@ -64,7 +64,7 @@ export default function ImageUploader() {
       multiple: false,
       onDropAccepted,
       onDropRejected,
-      // Desactivar el click en el área para que solo el botón dispare el selector
+      // Disable click on the dropzone so only the button opens the picker
       noClick: true,
     });
 

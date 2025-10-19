@@ -48,22 +48,22 @@
 
 :root {
   --radius: 0.625rem;
-  /* Paleta A: Sage & Aubergine (profesional, orgánica) */
+  /* Palette A: Sage & Aubergine (professional, organic) */
   --background: #fbfdfb; /* very pale neutral */
   --foreground: #0f1b16; /* deep charcoal for text */
   --card: #ffffff;
   --card-foreground: #0f1b16;
   --popover: #ffffff;
   --popover-foreground: #0f1b16;
-  --primary: #4b7a5a; /* sage oscuro */
+  --primary: #4b7a5a; /* dark sage */
   --primary-foreground: #ffffff;
   --secondary: #eaf4ee;
   --secondary-foreground: #0f1b16;
   --muted: #f6faf7;
   --muted-foreground: #556b60;
-  --accent: #6c4a78; /* aubergine para acentos */
+  --accent: #6c4a78; /* aubergine for accents */
   --accent-foreground: #ffffff;
-  --destructive: #dc2626; /* estándar para errores */
+  --destructive: #dc2626; /* standard for errors */
   --border: #e6efe9;
   --input: #ffffff;
   --ring: #8bd3b1;
@@ -128,7 +128,7 @@
     font-size: 20px;
   }
 
-  /* Mantener legibilidad en pantallas chicas */
+  /* Keep readability on small screens */
   @media (max-width: 640px) {
     :root {
       font-size: 16px;

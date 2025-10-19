@@ -29,7 +29,7 @@ function parseExpectedFromForm(form: FormData): Expected | undefined {
 
 export async function POST(req: NextRequest) {
   try {
-    // 1) Leer el archivo del form-data
+    // 1) Read file from form-data
     const form = await req.formData();
     const file = form.get("file") as File | null;
     if (!file) {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const contentType = file.type || "application/octet-stream";
     const arrayBuf = await file.arrayBuffer();
 
-    // 2) Pedir SAS de upload (input/uploads/<uuid>.<ext>)
+    // 2) Request upload SAS (input/uploads/<uuid>.<ext>)
     const ext = file.name.includes(".")
       ? file.name.substring(file.name.lastIndexOf("."))
       : "";
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3) Subir el archivo al SAS URL (PUT)
+    // 3) Upload the file to the SAS URL (PUT)
     try {
       await uploadBlobToSasUrl(sasUrl, arrayBuf);
     } catch (e: any) {
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4) Iniciar pipeline con la referencia al blob (+ expected opcional)
+    // 4) Start the pipeline with the blob reference (+ optional expected)
     const expectedParsed = parseExpectedFromForm(form);
     if (expectedParsed === undefined) {
       return NextResponse.json(
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 5) Poll hasta Completed (o timeout)
+    // 5) Poll until Completed (or timeout)
     let output: any;
     try {
       output = await pollPipeline(statusUrl, TIMEOUT_MS, POLL_MS);
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 6) Leer blob final (SAS read)
+    // 6) Read final blob (SAS read)
     const outBlob = output?.processedImageBlob?.blobName as string | undefined;
     if (!outBlob) {
       return NextResponse.json(
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 7) Leer OCR
+    // 7) Read OCR
     const ocrResult = output?.ocrResult;
 
     let barcodeOverlayImageUrl: string | undefined;
@@ -162,24 +162,24 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 9) Leer resto de información de bardcode
+    // 9) Read other barcode info
     const barcodeData = output?.barcode?.barcodeData;
 
-    // 10) Leer resto de información de validation
+    // 10) Read other validation info
     const validationData = output?.validation;
 
     const jsonResp = {
-      imageUrl, // URL SAS temporal para ver/descargar la imagen final
-      barcodeOverlayImageUrl, // URL SAS temporal para ver/descargar la imagen con overlay de barcode
-      barcodeRoiImageUrl, // URL SAS temporal para ver/descargar la imagen con ROI de barcode
-      ocrResult, // JSON devuelto por el OCR
-      barcodeData, // JSON devuelto por el análisis de barcode
-      validationData, // JSON devuelto por la validación
+      imageUrl, // temporary SAS URL to view/download the final image
+      barcodeOverlayImageUrl, // temporary SAS URL to view/download the barcode overlay image
+      barcodeRoiImageUrl, // temporary SAS URL to view/download the barcode ROI image
+      ocrResult, // JSON returned by OCR
+      barcodeData, // JSON returned by barcode analysis
+      validationData, // JSON returned by validation
     };
 
     console.log("Pipeline output:", jsonResp);
 
-    // 7) Responder a tu cliente
+    // 7) Respond to the client
     return NextResponse.json(jsonResp);
   } catch (e: any) {
     console.error(e);

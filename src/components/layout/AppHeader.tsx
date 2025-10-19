@@ -15,7 +15,7 @@ export default function AppHeader() {
             Rx
           </span>
           <div className="flex flex-col leading-tight min-w-0">
-            {/* Responsive: móvil más chico, desktop grande */}
+            {/* Responsive: smaller on mobile, larger on desktop */}
             <h1 className="text-sm md:text-lg font-extrabold text-green-600 tracking-tight truncate">
               Verificación Automática de Rotulado
             </h1>
