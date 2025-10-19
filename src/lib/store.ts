@@ -168,9 +168,9 @@ const revokeObjectURL = (url?: string) => {
   }
 };
 
-/** SSR-safe storage: return localStorage in browser, otherwise a noop storage */
+/** SSR-safe storage: return sessionStorage in browser, otherwise a noop storage */
 const getStorage = (): Storage => {
-  const storage = (globalThis as any)?.localStorage as Storage | undefined;
+  const storage = (globalThis as any)?.sessionStorage as Storage | undefined;
   if (storage !== undefined) {
     return storage;
   }
