@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh flex flex-col bg-background text-foreground`}
       >
-        {/* Fondo */}
+        {/* Background */}
         <div
           aria-hidden
           className="fixed inset-0 -z-20 bg-[#e8f5f0] dark:bg-[#0a1a14]"
@@ -38,7 +38,7 @@ export default function RootLayout({
         {/* Header (client inside) */}
         <AppHeader />
 
-        {/* Contenido (client components adentro) */}
+        {/* Content (client components inside) */}
         <HydrationGate fallback={<AppSkeleton />}>
           <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6">
             <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/5 shadow-lg shadow-emerald-900/5 p-4 sm:p-6 lg:p-8 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md">

@@ -1,20 +1,20 @@
 type CompressOpts = {
-  maxWidth?: number; // ancho máximo
-  maxHeight?: number; // alto máximo
-  quality?: number; // 0..1 (solo JPEG/WebP)
+  maxWidth?: number; // max width
+  maxHeight?: number; // max height
+  quality?: number; // 0..1 (JPEG/WebP only)
   format?: "image/jpeg" | "image/png" | "image/webp";
-  targetMaxBytes?: number; // si querés limitar tamaño final (opcional)
+  targetMaxBytes?: number; // if you want to limit final size (optional)
 };
 
 async function fileToBitmap(file: File): Promise<ImageBitmap> {
-  // Usa EXIF orientation si el navegador lo soporta (Chrome/Edge/Firefox modernos)
+  // Use EXIF orientation if the browser supports it (modern Chrome/Edge/Firefox)
   try {
-    // @ts-ignore - createImageBitmap tiene options en browser
+    // createImageBitmap supports options like imageOrientation in browsers; TypeScript lib definitions may vary
     return await createImageBitmap(file, { imageOrientation: "from-image" });
   } catch {
-    // Fallback sin orientation si el browser no soporta la opción
-    // (en la mayoría de los casos modernos no se ejecuta este branch)
-    // Para un fallback total, usar <img> + onload.
+    // Fallback without orientation if the browser doesn't support the option
+    // (in most modern cases this branch won't run)
+    // For a fully compatible fallback, use <img> + onload.
     return await createImageBitmap(file);
   }
 }
@@ -41,8 +41,8 @@ async function canvasToBlob(
 }
 
 /**
- * Reduce resolución manteniendo proporción y comprime.
- * Devuelve un File nuevo (para subir/guardar) y una URL de preview.
+ * Reduce resolution while keeping aspect ratio and compresses it.
+ * Returns a new File (for upload/storage) and a preview URL.
  */
 export async function compressImageFile(
   file: File,
@@ -56,35 +56,42 @@ export async function compressImageFile(
 ): Promise<{ file: File; previewUrl: string; width: number; height: number }> {
   const bitmap = await fileToBitmap(file);
 
-  // calcular escala manteniendo aspecto
+  // compute scale keeping aspect ratio
   const { width, height } = bitmap;
-  const scale = Math.min(maxWidth / width, maxHeight / height, 1); // nunca agrandar
+  const scale = Math.min(maxWidth / width, maxHeight / height, 1); // never upscale
   const outW = Math.round(width * scale);
   const outH = Math.round(height * scale);
 
   const canvas = makeCanvas(outW, outH);
   const ctx = canvas.getContext("2d", { alpha: true })!;
-  // activar algo de suavizado
+  // enable smoothing
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(bitmap, 0, 0, outW, outH);
 
-  // decidir formato de salida
-  // - si entra PNG y querés preservar transparencia, quedate en PNG
-  // - si es foto (jpg), conviene JPEG para comprimir
-  const outType =
-    format ??
-    (file.type === "image/png" && scale === 1
-      ? "image/png"
-      : file.type === "image/png"
-      ? "image/jpeg" // convertir PNG a JPEG cuando reducimos (mejor tamaño)
-      : file.type || "image/jpeg");
+  // decide output format
+  // - if input is PNG and you want to preserve transparency, stay in PNG
+  // - if it's a photo (jpg), JPEG is better for compression
+  let outType: string;
+  if (format) {
+    outType = format;
+  } else if (file.type === "image/png" && scale === 1) {
+    // Preserve PNG when not downscaling (keep transparency, avoid recompression)
+    outType = "image/png";
+  } else if (file.type === "image/png") {
+    // Convert PNG to JPEG when downscaling (smaller size for photos)
+    outType = "image/jpeg";
+  } else if (file.type) {
+    outType = file.type;
+  } else {
+    outType = "image/jpeg";
+  }
 
   let q =
     outType === "image/jpeg" || outType === "image/webp" ? quality : undefined;
   let blob = await canvasToBlob(canvas, outType, q);
 
-  // si pediste un tamaño máximo en bytes, iteramos bajando quality
+  // if you requested a max size in bytes, iterate lowering quality
   if (
     targetMaxBytes &&
     (outType === "image/jpeg" || outType === "image/webp")
@@ -96,12 +103,14 @@ export async function compressImageFile(
   }
 
   const outName = (() => {
-    const ext =
-      outType === "image/png"
-        ? ".png"
-        : outType === "image/webp"
-        ? ".webp"
-        : ".jpg";
+    let ext: string;
+    if (outType === "image/png") {
+      ext = ".png";
+    } else if (outType === "image/webp") {
+      ext = ".webp";
+    } else {
+      ext = ".jpg";
+    }
     const base = file.name.replace(/\.[^.]+$/, "");
     return `${base}_compressed${ext}`;
   })();
