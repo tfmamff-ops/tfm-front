@@ -14,7 +14,7 @@ async function fileToBitmap(file: File): Promise<ImageBitmap> {
   } catch {
     // Fallback sin orientation si el browser no soporta la opción
     // (en la mayoría de los casos modernos no se ejecuta este branch)
-    // Para un fallback total, podrías usar <img> + onload.
+    // Para un fallback total, usar <img> + onload.
     return await createImageBitmap(file);
   }
 }
