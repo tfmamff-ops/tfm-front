@@ -3,8 +3,12 @@ export async function GET() {
     // Absolute path to db.json file
     const filePath = path.join(process.cwd(), "mocks", "db.json");
     const data = await readFile(filePath, "utf-8");
-    // If the file is an object, you can filter here if needed
-    return NextResponse.json(JSON.parse(data));
+    // Return the same shape as json-server: { batch, order, expiry }
+    const parsed = JSON.parse(data);
+    if (parsed && typeof parsed === "object" && parsed.expected) {
+      return NextResponse.json(parsed.expected);
+    }
+    return NextResponse.json(parsed);
   } catch (e) {
     // Log the error for debugging purposes
     console.error("Failed to read db.json:", e);
