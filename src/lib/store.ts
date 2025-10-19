@@ -92,8 +92,8 @@ type AppState = {
   setExpected: (patch: Partial<Expected>) => void;
   setCounters: (patch: Partial<Counters>) => void;
   setOcrItems: (items: OcrItem[]) => void;
-  setOcrError: (msg?: string) => void;
-  setOcrLoading: (v: boolean) => void;
+  setError: (msg?: string) => void;
+  setLoading: (v: boolean) => void;
   clearOcr: () => void;
   incCounter: (key: keyof Counters, by?: number) => void;
   setProcessedImageUrl: (url: string) => void;
@@ -108,6 +108,7 @@ type AppState = {
   setBarcodeLegibleOk: (ok: boolean) => void;
   setBarcodeOk: (ok: boolean) => void;
   setValidationSummary: (ok: boolean) => void;
+  setValidation: (validation: Validation) => void;
   clearValidation: () => void;
   reset: () => void;
 };
@@ -293,8 +294,6 @@ export const useAppStore = create<AppState>()(
         // ========================================================================
         setOcrItems: (items) =>
           set((s) => ({ ocr: { ...s.ocr, items } }), false, "setOcrItems"),
-        setOcrError: (msg) => set({ error: msg }, false, "setOcrError"),
-        setOcrLoading: (v) => set({ loading: v }, false, "setOcrLoading"),
 
         clearOcr: () =>
           set(
@@ -302,6 +301,12 @@ export const useAppStore = create<AppState>()(
             false,
             "clearOcr"
           ),
+
+        // ========================================================================
+        // PROCESS ACTIONS (global loading/error)
+        // ========================================================================
+        setError: (msg) => set({ error: msg || undefined }, false, "setError"),
+        setLoading: (v) => set({ loading: v }, false, "setLoading"),
 
         // ========================================================================
         // PROCESSED IMAGE URLS
@@ -378,6 +383,10 @@ export const useAppStore = create<AppState>()(
             false,
             "setValidationSummary"
           ),
+
+        setValidation: (validation: Validation) =>
+          set({ validation }, false, "setValidation"),
+
         clearValidation: () =>
           set(
             { validation: INITIAL_VALIDATION_STATE },

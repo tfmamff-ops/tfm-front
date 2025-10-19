@@ -1,6 +1,7 @@
 "use client";
 
 import BarcodeSection from "@/components/processing/BarcodeSection";
+import ValidationSection from "@/components/processing/ValidationSection";
 import OcrSection from "@/components/processing/OcrSection";
 import ProcessImagesSection from "@/components/processing/ProcessImagesSection";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +18,7 @@ export default function ProcessingCard() {
   const processedImgUrl = useAppStore((s) => s.processedImgUrl);
   const barcodeOverlayImgUrl = useAppStore((s) => s.barcodeOverlayImgUrl);
   const barcodeRoiImgUrl = useAppStore((s) => s.barcodeRoiImgUrl);
+  const validation = useAppStore((s) => s.validation);
 
   let content: React.ReactNode = null;
 
@@ -48,6 +50,15 @@ export default function ProcessingCard() {
             barcodeRoiImgUrl={barcodeRoiImgUrl}
           />
         )}
+        <ValidationSection
+          orderOK={validation.orderOK}
+          batchOK={validation.batchOK}
+          expiryOK={validation.expiryOK}
+          barcodeDetectedOK={validation.barcodeDetectedOK}
+          barcodeLegibleOK={validation.barcodeLegibleOK}
+          barcodeOK={validation.barcodeOK}
+          validationSummary={validation.validationSummary}
+        />
       </div>
     );
   }

@@ -165,12 +165,16 @@ export async function POST(req: NextRequest) {
     // 9) Leer resto de información de bardcode
     const barcodeData = output?.barcode?.barcodeData;
 
+    // 10) Leer resto de información de validation
+    const validationData = output?.validation;
+
     const jsonResp = {
       imageUrl, // URL SAS temporal para ver/descargar la imagen final
       barcodeOverlayImageUrl, // URL SAS temporal para ver/descargar la imagen con overlay de barcode
       barcodeRoiImageUrl, // URL SAS temporal para ver/descargar la imagen con ROI de barcode
       ocrResult, // JSON devuelto por el OCR
       barcodeData, // JSON devuelto por el análisis de barcode
+      validationData, // JSON devuelto por la validación
     };
 
     console.log("Pipeline output:", jsonResp);

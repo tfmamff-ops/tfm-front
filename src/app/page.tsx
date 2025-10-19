@@ -14,14 +14,14 @@ import {
 
 export default function Page() {
   const imagePreview = useAppStore((s) => s.imagePreview);
-  const ocrLoading = useAppStore((s) => s.loading);
+  const loading = useAppStore((s) => s.loading);
 
   return (
     <TooltipProvider>
       <Tabs defaultValue="config" className="w-full">
         <TabsList className="flex w-full max-w-lg mx-auto rounded-xl bg-white border border-green-100 shadow-sm p-1 gap-2">
           {(() => {
-            const isDisabledConfig = ocrLoading === true;
+            const isDisabledConfig = loading === true;
             return (
               <Tooltip>
                 <TooltipTrigger asChild>
