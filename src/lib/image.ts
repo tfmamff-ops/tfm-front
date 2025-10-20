@@ -6,6 +6,13 @@ type CompressOpts = {
   targetMaxBytes?: number; // if you want to limit final size (optional)
 };
 
+type CompressedImage = {
+  file: File;
+  previewUrl: string; // Remember to revoke with URL.revokeObjectURL(previewUrl) when done
+  width: number;
+  height: number;
+};
+
 async function fileToBitmap(file: File): Promise<ImageBitmap> {
   // Use EXIF orientation if the browser supports it (modern Chrome/Edge/Firefox)
   try {
@@ -41,19 +48,37 @@ async function canvasToBlob(
 }
 
 /**
+ * Check if canvas has any transparency (alpha channel < 255)
+ */
+function hasAlphaChannel(canvas: HTMLCanvasElement): boolean {
+  const ctx = canvas.getContext("2d")!;
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  // Sample every 10th pixel for performance (for very large images)
+  for (let i = 3; i < data.length; i += 40) {
+    if (data[i] < 255) return true;
+  }
+  return false;
+}
+
+/**
  * Reduce resolution while keeping aspect ratio and compresses it.
  * Returns a new File (for upload/storage) and a preview URL.
+ *
+ * IMPORTANT: Remember to call URL.revokeObjectURL(previewUrl) when you no longer need the URL
+ * to avoid memory leaks (e.g., in a useEffect cleanup or when replacing the image).
  */
 export async function compressImageFile(
   file: File,
   {
-    maxWidth = 2048,
-    maxHeight = 2048,
-    quality = 0.82,
+    maxWidth = 3040,
+    maxHeight = 3040,
+    quality,
     format,
     targetMaxBytes,
   }: CompressOpts = {}
-): Promise<{ file: File; previewUrl: string; width: number; height: number }> {
+): Promise<CompressedImage> {
   const bitmap = await fileToBitmap(file);
 
   // compute scale keeping aspect ratio
@@ -75,30 +100,40 @@ export async function compressImageFile(
   let outType: string;
   if (format) {
     outType = format;
-  } else if (file.type === "image/png" && scale === 1) {
-    // Preserve PNG when not downscaling (keep transparency, avoid recompression)
-    outType = "image/png";
   } else if (file.type === "image/png") {
-    // Convert PNG to JPEG when downscaling (smaller size for photos)
-    outType = "image/jpeg";
+    // Check if PNG has transparency; if so, preserve it
+    const hasAlpha = hasAlphaChannel(canvas);
+    if (hasAlpha) {
+      outType = "image/png"; // Preserve transparency
+    } else if (scale === 1) {
+      outType = "image/png"; // No downscaling, keep PNG
+    } else {
+      outType = "image/jpeg"; // Convert to JPEG for smaller size
+    }
   } else if (file.type) {
     outType = file.type;
   } else {
     outType = "image/jpeg";
   }
 
+  // Auto-adjust quality based on scale: higher quality for less downscaling
+  const autoQuality = scale > 0.8 ? 0.9 : 0.82;
   let q =
-    outType === "image/jpeg" || outType === "image/webp" ? quality : undefined;
+    outType === "image/jpeg" || outType === "image/webp"
+      ? quality ?? autoQuality
+      : undefined;
   let blob = await canvasToBlob(canvas, outType, q);
 
-  // if you requested a max size in bytes, iterate lowering quality
+  // if you requested a max size in bytes, iterate lowering quality (with a max of 10 attempts)
   if (
     targetMaxBytes &&
     (outType === "image/jpeg" || outType === "image/webp")
   ) {
-    while (blob.size > targetMaxBytes && (q ?? 1) > 0.5) {
-      q = Math.max(0.5, (q ?? 0.82) - 0.07);
+    let attempts = 0;
+    while (blob.size > targetMaxBytes && (q ?? 1) > 0.5 && attempts < 10) {
+      q = Math.max(0.5, (q ?? autoQuality) - 0.07);
       blob = await canvasToBlob(canvas, outType, q);
+      attempts++;
     }
   }
 
