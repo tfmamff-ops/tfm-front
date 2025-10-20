@@ -45,12 +45,6 @@ export default function ValidationSection({
       <Separator className="my-3" />
       <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
         <div className="flex items-center gap-2">
-          <dt className="text-sm text-slate-600">Orden</dt>
-          <dd>
-            <BoolBadge value={orderOK} />
-          </dd>
-        </div>
-        <div className="flex items-center gap-2">
           <dt className="text-sm text-slate-600">Lote</dt>
           <dd>
             <BoolBadge value={batchOK} />
@@ -60,6 +54,12 @@ export default function ValidationSection({
           <dt className="text-sm text-slate-600">Vencimiento</dt>
           <dd>
             <BoolBadge value={expiryOK} />
+          </dd>
+        </div>
+        <div className="flex items-center gap-2">
+          <dt className="text-sm text-slate-600">Orden</dt>
+          <dd>
+            <BoolBadge value={orderOK} />
           </dd>
         </div>
         <div className="flex items-center gap-2">
