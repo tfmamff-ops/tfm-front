@@ -1,3 +1,7 @@
+// Next.js API route for image analysis via Azure Functions.
+// Handles file upload to Azure Blob Storage, orchestrates the OCR/barcode/validation pipeline,
+// polls for completion, and returns temporary SAS (Shared Access Signature) URLs for processed images and analysis results.
+
 import {
   getSasUrlForRead,
   getSasUrlForUpload,
