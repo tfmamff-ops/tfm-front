@@ -47,8 +47,8 @@ async function canvasToBlob(
 export async function compressImageFile(
   file: File,
   {
-    maxWidth = 800,
-    maxHeight = 800,
+    maxWidth = 2048,
+    maxHeight = 2048,
     quality = 0.82,
     format,
     targetMaxBytes,
