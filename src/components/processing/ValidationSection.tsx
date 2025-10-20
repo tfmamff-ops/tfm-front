@@ -40,9 +40,19 @@ export default function ValidationSection({
             }
           />
         }
-        title="Validación"
+        title={
+          <span
+            className={validationSummary ? "text-green-700" : "text-rose-700"}
+          >
+            Validación
+          </span>
+        }
       />
-      <Separator className="my-3" />
+      <Separator
+        className={
+          "my-3 " + (validationSummary ? "bg-green-300" : "bg-rose-300")
+        }
+      />
       <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
         <div className="flex items-center gap-2">
           <dt className="text-sm text-slate-600">Lote</dt>
