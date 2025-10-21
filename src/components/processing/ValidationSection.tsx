@@ -1,9 +1,9 @@
 "use client";
 
-import SectionHeader from "@/components/processing/SectionHeader";
 import BoolBadge from "@/components/processing/BoolBadge";
+import SectionHeader from "@/components/processing/SectionHeader";
 import { Separator } from "@/components/ui/separator";
-import { ShieldCheck } from "lucide-react";
+import { ShieldAlert, ShieldCheck, ShieldEllipsis } from "lucide-react";
 
 export default function ValidationSection({
   orderOK,
@@ -22,6 +22,18 @@ export default function ValidationSection({
   barcodeOK: boolean;
   validationSummary: boolean;
 }>) {
+  const shieldIcon = validationSummary ? (
+    <ShieldEllipsis className="h-4 w-4 text-green-700" />
+  ) : (
+    <ShieldEllipsis className="h-4 w-4 text-rose-700" />
+  );
+
+  const shieldSummary = validationSummary ? (
+    <ShieldCheck className="h-4 w-4 text-green-700" />
+  ) : (
+    <ShieldAlert className="h-4 w-4 text-rose-700" />
+  );
+
   return (
     <div
       className={
@@ -32,14 +44,7 @@ export default function ValidationSection({
       }
     >
       <SectionHeader
-        icon={
-          <ShieldCheck
-            className={
-              "h-4 w-4 " +
-              (validationSummary ? "text-green-700" : "text-rose-700")
-            }
-          />
-        }
+        icon={shieldIcon}
         title={
           <span
             className={validationSummary ? "text-green-700" : "text-rose-700"}
@@ -142,13 +147,7 @@ export default function ValidationSection({
         aria-live="polite"
       >
         <div className="flex items-center gap-2">
-          <ShieldCheck
-            className={
-              "h-5 w-5 " +
-              (validationSummary ? "text-green-700" : "text-rose-700")
-            }
-            aria-hidden="true"
-          />
+          {shieldSummary}
           <span
             className={
               "text-sm font-semibold uppercase tracking-wide " +

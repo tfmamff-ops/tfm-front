@@ -1,12 +1,12 @@
 "use client";
 
 import BarcodeSection from "@/components/processing/BarcodeSection";
-import ValidationSection from "@/components/processing/ValidationSection";
 import OcrSection from "@/components/processing/OcrSection";
 import ProcessImagesSection from "@/components/processing/ProcessImagesSection";
+import ValidationSection from "@/components/processing/ValidationSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
-import { PanelsTopLeft } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import type React from "react";
 
 export default function ProcessingCard() {
@@ -73,7 +73,7 @@ export default function ProcessingCard() {
           {/* Accent header */}
           <div className="flex items-center justify-between rounded-t-2xl border-b bg-green-50/80 px-4 py-3">
             <div className="flex items-center gap-2">
-              <PanelsTopLeft
+              <SlidersHorizontal
                 className="h-4 w-4 text-green-700"
                 aria-hidden="true"
               />
