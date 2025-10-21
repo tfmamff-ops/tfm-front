@@ -6,7 +6,7 @@
 ```bash
 # THIS IS THE ONLY COMMAND TO START THE APP.
 # Runs the local app, docker, json-server API mocks, etc.
-# Note: pnpm install may be required
+# Note: pnpm install may be required and docker started
 pnpm dev
 ```
 
