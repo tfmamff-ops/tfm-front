@@ -4,13 +4,13 @@ import SectionHeader from "@/components/processing/SectionHeader";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { OcrItem } from "@/lib/store";
-import { PanelsTopLeft } from "lucide-react";
+import { TextSearch } from "lucide-react";
 
 export default function OcrSection({ items }: Readonly<{ items: OcrItem[] }>) {
   return (
     <div className="rounded-xl border border-green-100 bg-white/70 p-4">
       <SectionHeader
-        icon={<PanelsTopLeft className="h-4 w-4 text-green-700" />}
+        icon={<TextSearch className="h-4 w-4 text-green-700" />}
         title="OCR"
       />
       <Separator className="my-3" />

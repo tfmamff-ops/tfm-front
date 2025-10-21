@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Scan, Check, Copy } from "lucide-react";
+import { Barcode, Check, Copy } from "lucide-react";
 import SectionHeader from "@/components/processing/SectionHeader";
 import BoolBadge from "@/components/processing/BoolBadge";
 import { Separator } from "@/components/ui/separator";
@@ -34,7 +34,7 @@ export default function BarcodeSection({
   return (
     <div className="rounded-xl border border-green-100 bg-white/70 p-4">
       <SectionHeader
-        icon={<Scan className="h-4 w-4 text-green-700" />}
+        icon={<Barcode className="h-4 w-4 text-green-700" />}
         title="Código de barras"
       />
       <Separator className="my-3" />

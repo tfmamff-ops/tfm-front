@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
-  SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useAppStore } from "@/lib/store";
+import { useEffect, useState } from "react";
 
 type ExpectedResp = { batch: string[]; order: string[]; expiry: string[] };
 
@@ -20,68 +20,93 @@ export default function ExpectedData() {
     order: [],
     expiry: [],
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/expected")
       .then((r) => r.json())
-      .then(setData);
+      .then((resp) => {
+        setData(resp);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <Label>Lote esperado</Label>
-        <Select
-          value={expected.batch}
-          onValueChange={(v) => setExpected({ batch: v })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccionar…" />
-          </SelectTrigger>
-          <SelectContent>
-            {data.batch.map((x) => (
-              <SelectItem key={x} value={x}>
-                {x}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {loading ? (
+          <div className="flex items-center justify-left h-10 px-3 py-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
+          </div>
+        ) : (
+          <Select
+            value={expected.batch}
+            onValueChange={(v) => setExpected({ batch: v })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar…" />
+            </SelectTrigger>
+            <SelectContent>
+              {data.batch.map((x) => (
+                <SelectItem key={x} value={x}>
+                  {x}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       <div>
         <Label>Vencimiento esperado</Label>
-        <Select
-          value={expected.expiry}
-          onValueChange={(v) => setExpected({ expiry: v })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccionar…" />
-          </SelectTrigger>
-          <SelectContent>
-            {data.expiry.map((x) => (
-              <SelectItem key={x} value={x}>
-                {x}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {loading ? (
+          <div className="flex items-center justify-left h-10 px-3 py-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
+          </div>
+        ) : (
+          <Select
+            value={expected.expiry}
+            onValueChange={(v) => setExpected({ expiry: v })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar…" />
+            </SelectTrigger>
+            <SelectContent>
+              {data.expiry.map((x) => (
+                <SelectItem key={x} value={x}>
+                  {x}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       <div>
         <Label>Orden esperada</Label>
-        <Select
-          value={expected.order}
-          onValueChange={(v) => setExpected({ order: v })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccionar…" />
-          </SelectTrigger>
-          <SelectContent>
-            {data.order.map((x) => (
-              <SelectItem key={x} value={x}>
-                {x}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {loading ? (
+          <div className="flex items-center justify-left h-10 px-3 py-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
+          </div>
+        ) : (
+          <Select
+            value={expected.order}
+            onValueChange={(v) => setExpected({ order: v })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar…" />
+            </SelectTrigger>
+            <SelectContent>
+              {data.order.map((x) => (
+                <SelectItem key={x} value={x}>
+                  {x}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
     </div>
   );

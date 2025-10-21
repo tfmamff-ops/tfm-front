@@ -1,9 +1,9 @@
 "use client";
 
-import { useAppStore } from "@/lib/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { CalendarDays, Tag, ClipboardList, PanelsTopLeft } from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { CalendarDays, ClipboardList, Factory, Tag } from "lucide-react";
 
 export default function ConfiguredValues() {
   const expected = useAppStore((s) => s.expected);
@@ -14,10 +14,7 @@ export default function ConfiguredValues() {
         {/* Accent header */}
         <div className="flex items-center justify-between rounded-t-2xl border-b bg-green-50/80 px-4 py-3">
           <div className="flex items-center gap-2">
-            <PanelsTopLeft
-              className="h-4 w-4 text-green-700"
-              aria-hidden="true"
-            />
+            <Factory className="h-4 w-4 text-green-700" aria-hidden="true" />
             <h3 className="text-xs md:text-sm font-semibold tracking-tight text-green-900">
               Línea de producción configurada
             </h3>

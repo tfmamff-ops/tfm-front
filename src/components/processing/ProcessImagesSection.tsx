@@ -66,25 +66,23 @@ export default function ProcessImagesSection({
         )}
         {renderExternalLink(
           ocrOverlayImgUrl,
-          "ROI OCR",
+          "ROI - OCR",
           <ScanText className="h-4 w-4" />
         )}
 
         {renderExternalLink(
           barcodeOverlayImgUrl,
           <>
-            <span className="md:hidden">ROI Código</span>
-            <span className="hidden md:inline">ROI Código de barras</span>
+            <span className="md:hidden">ROI - Cód. Barras</span>
+            <span className="hidden md:inline">ROI - Código de Barras</span>
           </>,
           <ScanBarcode className="h-4 w-4" />
         )}
         {renderExternalLink(
           barcodeRoiImgUrl,
           <>
-            <span className="md:hidden">Recorte Código</span>
-            <span className="hidden md:inline">
-              Recorte del código de barras
-            </span>
+            <span className="md:hidden">Recorte - Cód. Barras</span>
+            <span className="hidden md:inline">Recorte - Código de Barras</span>
           </>,
           <Crop className="h-4 w-4" />
         )}
