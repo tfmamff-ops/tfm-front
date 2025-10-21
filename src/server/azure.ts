@@ -113,6 +113,7 @@ export async function startPipeline(params: {
   const json = await res.json();
   const statusUrl = json?.statusQueryGetUri as string | undefined;
   if (!statusUrl) throw new Error("Missing statusQueryGetUri");
+  console.log("Pipeline started, status URL:", statusUrl);
   return statusUrl;
 }
 
