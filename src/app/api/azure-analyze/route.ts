@@ -12,6 +12,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import type { Expected } from "@/lib/store";
+import { RequestContextUser } from "@/lib/auth-store";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
@@ -56,7 +57,9 @@ function parseExpectedFromForm(form: FormData): Expected | undefined {
   return undefined;
 }
 
-function parseRequestContextFromForm(form: FormData): unknown {
+function parseRequestContextFromForm(
+  form: FormData
+): RequestContextUser | undefined {
   try {
     const contextRaw = form.get("requestContext");
     if (typeof contextRaw === "string" && contextRaw.trim().length > 0) {
@@ -100,6 +103,7 @@ async function startPipelineOrFail(params: {
   container: string;
   blobName: string;
   expectedData: Expected;
+  requestContext: RequestContextUser;
 }): Promise<string> {
   try {
     return await startPipeline(params);
@@ -184,8 +188,8 @@ export async function POST(req: NextRequest) {
 
     // Start the pipeline with the blob reference, expected data and request context
     const expectedParsed = parseExpectedFromForm(form);
-    const requestContext = parseRequestContextFromForm(form);
-    if (expectedParsed === undefined || requestContext === undefined) {
+    const requestContextParsed = parseRequestContextFromForm(form);
+    if (expectedParsed === undefined || requestContextParsed === undefined) {
       return NextResponse.json(
         { error: "Missing expected payload or request context" },
         { status: 400 }
@@ -197,6 +201,7 @@ export async function POST(req: NextRequest) {
       container: "input",
       blobName,
       expectedData: expectedParsed,
+      requestContext: requestContextParsed,
     });
 
     // Poll until Completed (or timeout)
