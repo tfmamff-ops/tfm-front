@@ -48,6 +48,9 @@ export type Validation = {
   validationSummary: boolean;
 };
 
+/** Logged-in user and client context to send to backend APIs */
+// Auth/user types are defined in src/lib/auth-store.ts
+
 /** Global application state (Zustand store) */
 type AppState = {
   /** How the current image was provided */
@@ -112,6 +115,7 @@ type AppState = {
   setValidationSummary: (ok: boolean) => void;
   setValidation: (validation: Validation) => void;
   clearValidation: () => void;
+
   reset: () => void;
 };
 

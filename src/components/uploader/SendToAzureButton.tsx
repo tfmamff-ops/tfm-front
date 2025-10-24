@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/lib/store";
 import type { BarcodeState, Validation } from "@/lib/store";
 import { buildOcrItems } from "@/lib/ocr-utils";
+import { useAuthStore } from "@/lib/auth-store";
 
 type ApiResponse = {
   imageUrl?: string;
@@ -128,7 +129,7 @@ export default function SendToAzureButton() {
 
     try {
       const expected = useAppStore.getState().expected ?? {};
-      const requestContext = useAppStore.getState().requestContext ?? {};
+      const requestContext = useAuthStore.getState().requestContext ?? {};
       const form = buildFormData(file, expected, requestContext);
 
       const result = await postAnalyze(form);
