@@ -1,15 +1,15 @@
 "use client";
 
-import { useAuthStore } from "@/lib/auth-store";
-import Link from "next/link";
-import { useState } from "react";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { User, Mail, Shield, Globe, Monitor, MapPin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useAuthStore } from "@/lib/auth-store";
+import { Globe, Mail, MapPin, Monitor, Shield, User } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function AppHeader() {
   const requestContext = useAuthStore((s) => s.requestContext);
@@ -92,6 +92,14 @@ export default function AppHeader() {
                       {user?.name || "—"}
                     </dd>
                   </div>
+                  <div className="flex items-start gap-2">
+                    <dt className="text-slate-600 min-w-14 sm:min-w-16 text-xs sm:text-sm">
+                      ID:
+                    </dt>
+                    <dd className="font-medium text-slate-900 text-xs sm:text-sm">
+                      {user?.id || "—"}
+                    </dd>
+                  </div>
                   {user?.email && (
                     <div className="flex items-start gap-2">
                       <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
@@ -103,14 +111,6 @@ export default function AppHeader() {
                       </dd>
                     </div>
                   )}
-                  <div className="flex items-start gap-2">
-                    <dt className="text-slate-600 min-w-14 sm:min-w-16 text-xs sm:text-sm">
-                      ID:
-                    </dt>
-                    <dd className="font-mono text-[10px] sm:text-xs text-slate-700 break-all">
-                      {user?.id || "—"}
-                    </dd>
-                  </div>
                   {user?.role && (
                     <div className="flex items-start gap-2">
                       <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
@@ -159,7 +159,7 @@ export default function AppHeader() {
                     <div className="flex items-start gap-2">
                       <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
                         <Globe className="h-3 w-3" />
-                        Navegador:
+                        Browser:
                       </dt>
                       <dd className="text-[10px] sm:text-xs text-slate-700 break-all line-clamp-3 sm:line-clamp-2">
                         {client.userAgent}
