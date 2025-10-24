@@ -33,7 +33,8 @@ export function buildAnalyzeFormData(
     try {
       form.append("requestContext", JSON.stringify(requestContext));
     } catch {
-      // Ignore serialization issues; backend can treat it as absent
+      // If serialization fails, send empty object (backend should handle defaulting)
+      form.append("requestContext", "{}");
     }
   }
 
