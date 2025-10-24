@@ -33,9 +33,9 @@ export default function AppHeader() {
         {/* User capsule (placeholder) */}
         <div className="inline-flex items-center gap-2 rounded-full border px-2.5 py-1">
           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">
-            T
+            OP
           </span>
-          <span className="text-sm sm:text-lg font-medium">TFM</span>
+          <span className="text-sm sm:text-lg font-medium">Operador</span>
         </div>
       </div>
     </header>

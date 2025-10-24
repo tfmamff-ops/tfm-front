@@ -4,6 +4,7 @@ import BoolBadge from "@/components/processing/BoolBadge";
 import SectionHeader from "@/components/processing/SectionHeader";
 import { Separator } from "@/components/ui/separator";
 import { ShieldAlert, ShieldCheck, ShieldEllipsis } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function ValidationSection({
   orderOK,
@@ -77,7 +78,7 @@ export default function ValidationSection({
               <dd>
                 <BoolBadge
                   value={batchOK}
-                  text={batchOK ? "Correcto" : "No detectado"}
+                  text={batchOK ? "Correcto" : "Error"}
                 />
               </dd>
             </div>
@@ -86,7 +87,7 @@ export default function ValidationSection({
               <dd>
                 <BoolBadge
                   value={expiryOK}
-                  text={expiryOK ? "Correcto" : "No detectado"}
+                  text={expiryOK ? "Correcto" : "Error"}
                 />
               </dd>
             </div>
@@ -95,7 +96,7 @@ export default function ValidationSection({
               <dd>
                 <BoolBadge
                   value={orderOK}
-                  text={orderOK ? "Correcto" : "No detectado"}
+                  text={orderOK ? "Correcto" : "Error"}
                 />
               </dd>
             </div>
@@ -157,11 +158,23 @@ export default function ValidationSection({
             {validationSummary ? "Aprobado" : "No aprobado"}
           </span>
         </div>
-        <p className="mt-2 text-sm text-slate-600">
-          {validationSummary
-            ? "Todos los controles fueron exitosos."
-            : "Alguno de los controles no fue satisfactorio."}
-        </p>
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+          <p className="text-sm text-slate-600">
+            {validationSummary
+              ? "Todos los controles fueron exitosos."
+              : "Alguno de los controles no fue satisfactorio."}
+          </p>
+          <Button
+            type="button"
+            onClick={() => {
+              alert("No implementado aún");
+            }}
+            className="md:ml-auto"
+          >
+            Generar informe
+          </Button>
+        </div>
       </div>
     </div>
   );
