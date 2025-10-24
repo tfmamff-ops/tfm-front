@@ -10,6 +10,8 @@ export type RequestContextUser = {
   /** Stable unique ID from auth provider or local auth system */
   id: string;
   /** Optional email for audit/log display */
+  name: string;
+  /** Optional name for audit/log display */
   email?: string;
   /** Functional role (admin, auditor, operator, etc.) */
   role?: string;

@@ -19,6 +19,7 @@ export default function AuthBootstrap() {
       setRequestContext({
         user: {
           id: "local|anonymous",
+          name: "Operador",
           email: "anonymous@local",
           role: "qa_operator",
         },

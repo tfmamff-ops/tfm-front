@@ -6,6 +6,7 @@ import { useAppStore } from "@/lib/store";
 import type { BarcodeState, Validation } from "@/lib/store";
 import { buildOcrItems } from "@/lib/ocr-utils";
 import { useAuthStore } from "@/lib/auth-store";
+import { buildAnalyzeFormData } from "@/lib/payload";
 
 type ApiResponse = {
   imageUrl?: string;
@@ -17,21 +18,7 @@ type ApiResponse = {
   validationData?: Validation;
 };
 
-function buildFormData(
-  file: File,
-  expected: unknown,
-  requestContext: unknown
-): FormData {
-  const form = new FormData();
-  form.append("file", file);
-  try {
-    form.append("expected", JSON.stringify(expected ?? {}));
-    form.append("requestContext", JSON.stringify(requestContext ?? {}));
-  } catch {
-    // Ignore serialization issues; backend will treat as absent
-  }
-  return form;
-}
+// Payload building is centralized in src/lib/payload.ts
 
 async function postAnalyze(
   form: FormData
@@ -129,8 +116,8 @@ export default function SendToAzureButton() {
 
     try {
       const expected = useAppStore.getState().expected ?? {};
-      const requestContext = useAuthStore.getState().requestContext ?? {};
-      const form = buildFormData(file, expected, requestContext);
+      const requestContext = useAuthStore.getState().requestContext;
+      const form = buildAnalyzeFormData(file, expected, requestContext);
 
       const result = await postAnalyze(form);
       if (!result.ok) {
