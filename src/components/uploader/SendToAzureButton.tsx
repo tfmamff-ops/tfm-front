@@ -16,11 +16,16 @@ type ApiResponse = {
   validationData?: Validation;
 };
 
-function buildFormData(file: File, expected: unknown): FormData {
+function buildFormData(
+  file: File,
+  expected: unknown,
+  requestContext: unknown
+): FormData {
   const form = new FormData();
   form.append("file", file);
   try {
     form.append("expected", JSON.stringify(expected ?? {}));
+    form.append("requestContext", JSON.stringify(requestContext ?? {}));
   } catch {
     // Ignore serialization issues; backend will treat as absent
   }
@@ -123,7 +128,8 @@ export default function SendToAzureButton() {
 
     try {
       const expected = useAppStore.getState().expected ?? {};
-      const form = buildFormData(file, expected);
+      const requestContext = useAppStore.getState().requestContext ?? {};
+      const form = buildFormData(file, expected, requestContext);
 
       const result = await postAnalyze(form);
       if (!result.ok) {

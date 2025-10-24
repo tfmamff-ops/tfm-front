@@ -56,6 +56,18 @@ function parseExpectedFromForm(form: FormData): Expected | undefined {
   return undefined;
 }
 
+function parseRequestContextFromForm(form: FormData): unknown {
+  try {
+    const contextRaw = form.get("requestContext");
+    if (typeof contextRaw === "string" && contextRaw.trim().length > 0) {
+      return JSON.parse(contextRaw);
+    }
+  } catch (e) {
+    console.warn("Failed to parse request context from form-data:", e);
+  }
+  return undefined;
+}
+
 async function getUploadSasOrFail(params: {
   host: string;
   functionKey: string;
@@ -170,11 +182,12 @@ export async function POST(req: NextRequest) {
     // Upload the file to the SAS URL (PUT)
     await uploadToSasOrFail(sasUrl, arrayBuf);
 
-    // Start the pipeline with the blob reference and expected data
+    // Start the pipeline with the blob reference, expected data and request context
     const expectedParsed = parseExpectedFromForm(form);
-    if (expectedParsed === undefined) {
+    const requestContext = parseRequestContextFromForm(form);
+    if (expectedParsed === undefined || requestContext === undefined) {
       return NextResponse.json(
-        { error: "Missing expected payload" },
+        { error: "Missing expected payload or request context" },
         { status: 400 }
       );
     }
