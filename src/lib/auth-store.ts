@@ -9,9 +9,9 @@ import { persist, createJSONStorage, devtools } from "zustand/middleware";
 export type RequestContextUser = {
   /** Stable unique ID from auth provider or local auth system */
   id: string;
-  /** Optional email for audit/log display */
+  /** User's full name for audit/log display */
   name: string;
-  /** Optional name for audit/log display */
+  /** Optional email for audit/log display */
   email?: string;
   /** Functional role (admin, auditor, operator, etc.) */
   role?: string;

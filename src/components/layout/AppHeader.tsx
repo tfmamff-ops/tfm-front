@@ -1,7 +1,11 @@
-// src/components/layout/AppHeader.tsx
+"use client";
+
+import { useAuthStore } from "@/lib/auth-store";
 import Link from "next/link";
 
 export default function AppHeader() {
+  const user = useAuthStore((s) => s.requestContext?.user);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
@@ -33,9 +37,13 @@ export default function AppHeader() {
         {/* User capsule (placeholder) */}
         <div className="inline-flex items-center gap-2 rounded-full border px-2.5 py-1">
           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">
-            OP
+            {user?.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()}
           </span>
-          <span className="text-sm sm:text-lg font-medium">Operador</span>
+          <span className="text-sm sm:text-lg font-medium">{user?.name}</span>
         </div>
       </div>
     </header>
