@@ -11,11 +11,19 @@ import {
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
-type ExpectedResp = { batch: string[]; order: string[]; expiry: string[] };
+type ExpectedResp = {
+  item: [];
+  itemDesc: [];
+  batch: string[];
+  order: string[];
+  expiry: string[];
+};
 
 export default function ExpectedData() {
   const { expected, setExpected } = useAppStore();
   const [data, setData] = useState<ExpectedResp>({
+    item: [],
+    itemDesc: [],
     batch: [],
     order: [],
     expiry: [],

@@ -1,4 +1,3 @@
 {
-  "/api/expected": "/expected",
-  "/api/history": "/history"
+  "/api/expected": "/expected"
 }
