@@ -3,7 +3,7 @@
 import { BarChart3 } from "lucide-react";
 import ProcessingCard from "../ProcessingCard";
 import Section from "@/components/ui/Section";
-import ConfiguredValues from "../ConfiguredValues";
+import ConfiguredData from "../ConfiguredData";
 import StatusSummary from "../StatusSummary";
 import SendToAzureButton from "../uploader/SendToAzureButton";
 import Preview from "../Preview";
@@ -11,7 +11,7 @@ import Preview from "../Preview";
 export default function Processing() {
   return (
     <aside className="lg:sticky lg:top-6 self-start col-span-12 lg:col-span-4 space-y-4">
-      <ConfiguredValues />
+      <ConfiguredData />
       <Section
         title="Estado"
         defaultOpen
