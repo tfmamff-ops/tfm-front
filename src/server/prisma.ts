@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 // Ensure a single PrismaClient instance across hot-reloads (dev) and SSR
 declare global {
-  // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 

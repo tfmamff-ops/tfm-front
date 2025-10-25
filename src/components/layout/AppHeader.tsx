@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/lib/auth-store";
 import { Globe, Mail, MapPin, Monitor, Shield, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function AppHeader() {
@@ -26,13 +27,13 @@ export default function AppHeader() {
           className="flex items-center gap-3 min-w-0"
           aria-label="Inicio"
         >
-          <img
+          <Image
             src="/logo.svg"
             alt="App logo"
             className="h-10 w-10 rounded-full bg-green-600"
             width={40}
             height={40}
-            style={{ objectFit: "cover" }}
+            priority
           />
           <div className="flex flex-col leading-tight min-w-0">
             {/* Responsive: smaller on mobile, larger on desktop */}

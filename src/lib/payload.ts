@@ -44,7 +44,10 @@ export function buildRequestContextHeader(
   if (!requestContext) return {};
   try {
     const json = JSON.stringify(requestContext);
-    const hasWindow = (globalThis as any).window !== undefined;
+    // SSR-safe check without using `any` and preferring globalThis.window
+    const hasWindow =
+      typeof globalThis !== "undefined" &&
+      (globalThis as { window?: unknown }).window !== undefined;
     const b64 = hasWindow
       ? btoa(
           encodeURIComponent(json).replaceAll(

@@ -74,7 +74,7 @@ const getStorage = (): Storage => {
 export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         requestContext: undefined,
 
         setRequestContext: (ctx) =>
