@@ -17,6 +17,18 @@ export type Expected = {
   expiry?: string;
 };
 
+/** Item from ERP API response */
+export type ErpItem = { id: number; value: string };
+
+/** ERP response structure for expected data */
+export type ErpResp = {
+  item: ErpItem[];
+  itemDesc: ErpItem[];
+  batch: ErpItem[];
+  order: ErpItem[];
+  expiry: ErpItem[];
+};
+
 /** Aggregate counters displayed in the UI */
 export type Counters = {
   inspected: number;
@@ -68,6 +80,15 @@ type AppState = {
   /** Expected values (batch/order/expiry) selected by the operator */
   expected: Expected;
 
+  /** ERP response data cached to avoid redundant API calls */
+  erpResp?: ErpResp;
+
+  /** Flag to track if ERP data has been loaded */
+  isErpRespLoaded: boolean;
+
+  /** ID of the selected ERP item (medicamento) */
+  selectedErpId?: string;
+
   /** Totals shown in the dashboard */
   counters: Counters;
 
@@ -117,6 +138,10 @@ type AppState = {
   setValidationSummary: (ok: boolean) => void;
   setValidation: (validation: Validation) => void;
   clearValidation: () => void;
+
+  setErpResp: (data: ErpResp) => void;
+  setIsErpRespLoaded: (loaded: boolean) => void;
+  setSelectedErpId: (id?: string) => void;
 
   reset: () => void;
 };
@@ -209,6 +234,9 @@ export const useAppStore = create<AppState>()(
         filename: undefined,
         imagePreview: undefined,
         expected: {},
+        erpResp: undefined,
+        isErpRespLoaded: false,
+        selectedErpId: undefined,
         counters: INITIAL_COUNTERS,
         ocr: INITIAL_OCR,
         barcode: INITIAL_BARCODE_STATE,
@@ -407,6 +435,19 @@ export const useAppStore = create<AppState>()(
           ),
 
         // ========================================================================
+        // ERP DATA ACTIONS
+        // ========================================================================
+
+        setErpResp: (data: ErpResp) =>
+          set({ erpResp: data }, false, "setErpResp"),
+
+        setIsErpRespLoaded: (loaded: boolean) =>
+          set({ isErpRespLoaded: loaded }, false, "setIsErpRespLoaded"),
+
+        setSelectedErpId: (id?: string) =>
+          set({ selectedErpId: id }, false, "setSelectedErpId"),
+
+        // ========================================================================
         // RESET
         // ========================================================================
 
@@ -439,6 +480,9 @@ export const useAppStore = create<AppState>()(
           expected: s.expected,
           counters: s.counters,
           imageSource: s.imageSource,
+          erpResp: s.erpResp,
+          isErpRespLoaded: s.isErpRespLoaded,
+          selectedErpId: s.selectedErpId,
         }),
       }
     ),

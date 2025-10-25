@@ -10,48 +10,56 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppStore } from "@/lib/store";
-import { useEffect, useState } from "react";
+import type { ErpItem } from "@/lib/store";
+import { useEffect } from "react";
 import DataDetail from "./DataDetail";
 
-type ExpectedItem = { id: number; value: string };
-
-type ExpectedResp = {
-  item: ExpectedItem[];
-  itemDesc: ExpectedItem[];
-  batch: ExpectedItem[];
-  order: ExpectedItem[];
-  expiry: ExpectedItem[];
-};
-
 export default function ExpectedData() {
-  const { setExpected } = useAppStore();
-  const [data, setData] = useState<ExpectedResp>({
+  const {
+    setExpected,
+    erpResp,
+    isErpRespLoaded,
+    setErpResp,
+    setIsErpRespLoaded,
+    selectedErpId,
+    setSelectedErpId,
+  } = useAppStore();
+
+  useEffect(() => {
+    // Only fetch if data hasn't been loaded yet
+    if (isErpRespLoaded) {
+      return;
+    }
+
+    fetch("/api/expected")
+      .then((r) => r.json())
+      .then((resp) => {
+        console.log("expected data response", resp);
+        setErpResp(resp);
+        setIsErpRespLoaded(true);
+      })
+      .catch(() => {
+        // On error, mark as loaded to prevent infinite retries
+        setIsErpRespLoaded(true);
+      });
+  }, [isErpRespLoaded, setErpResp, setIsErpRespLoaded]);
+
+  // Note: We keep UI simple with a single combo for Medicamento and details below.
+
+  // Get data from store or use empty default
+  const data = erpResp || {
     item: [],
     itemDesc: [],
     batch: [],
     order: [],
     expiry: [],
-  });
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/expected")
-      .then((r) => r.json())
-      .then((resp) => {
-        console.log("expected data response", resp);
-        setData(resp);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  // Note: We keep UI simple with a single combo for Medicamento and details below.
+  };
 
   // Select a row by id and propagate textual values to the store
   const selectRow = (rowId: number) => {
-    const get = (arr: ExpectedItem[]) => arr.find((x) => x.id === rowId)?.value;
+    const get = (arr: ErpItem[]) => arr.find((x) => x.id === rowId)?.value;
     setExpected({
+      item: get(data.item),
       itemDesc: get(data.itemDesc),
       batch: get(data.batch),
       expiry: get(data.expiry),
@@ -63,15 +71,11 @@ export default function ExpectedData() {
     <div className="space-y-4">
       <div>
         <Label>Medicamento</Label>
-        {loading ? (
-          <div className="flex items-center h-9 mt-1 px-3 py-2">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
-          </div>
-        ) : (
+        {isErpRespLoaded ? (
           <Select
-            value={selectedId}
+            value={selectedErpId}
             onValueChange={(v) => {
-              setSelectedId(v);
+              setSelectedErpId(v);
               const id = Number(v);
               if (Number.isFinite(id)) selectRow(id);
             }}
@@ -100,6 +104,10 @@ export default function ExpectedData() {
               ))}
             </SelectContent>
           </Select>
+        ) : (
+          <div className="flex items-center h-9 mt-1 px-3 py-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
+          </div>
         )}
       </div>
 
