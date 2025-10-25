@@ -1,13 +1,10 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useAppStore } from "@/lib/store";
 import { Factory } from "lucide-react";
 import DataDetail from "./DataDetail";
 
 export default function ConfiguredData() {
-  const expected = useAppStore((s) => s.expected);
-
   return (
     <Card className="rounded-2xl border shadow-md bg-gradient-to-b from-white to-green-50/40 py-0">
       <CardContent className="p-0">
