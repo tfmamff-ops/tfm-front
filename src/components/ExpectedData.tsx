@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState } from "react";
-import DataDetail from "./ui/DataDetail";
+import DataDetail from "./DataDetail";
 
 type ExpectedItem = { id: number; value: string };
 

@@ -1,5 +1,5 @@
 import { CalendarDays, ClipboardList, Tag } from "lucide-react";
-import { FieldChip } from "./field-chip";
+import { FieldChip } from "./ui/field-chip";
 import { useAppStore } from "@/lib/store";
 
 export default function DataDetail() {

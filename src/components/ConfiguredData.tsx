@@ -1,11 +1,9 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-// Label is provided by FieldChip; no need to import here
-import { FieldChip } from "@/components/ui/field-chip";
 import { useAppStore } from "@/lib/store";
-import { CalendarDays, ClipboardList, Factory, Tag } from "lucide-react";
-import DataDetail from "./ui/DataDetail";
+import { Factory } from "lucide-react";
+import DataDetail from "./DataDetail";
 
 export default function ConfiguredData() {
   const expected = useAppStore((s) => s.expected);

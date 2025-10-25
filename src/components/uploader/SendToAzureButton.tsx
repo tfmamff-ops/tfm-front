@@ -18,8 +18,6 @@ type ApiResponse = {
   validationData?: Validation;
 };
 
-// Payload building is centralized in src/lib/payload.ts
-
 async function postAnalyze(
   form: FormData
 ): Promise<{ ok: true; data: ApiResponse } | { ok: false; error: string }> {
