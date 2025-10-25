@@ -97,13 +97,6 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 - El layout raíz monta un _Hydration Gate_ y `AuthBootstrap` para preparar un contexto de usuario temporal hasta integrar un proveedor real.
 - Se fomenta el diseño responsivo: los paneles laterales son _sticky_ en escritorio y se apilan en pantallas pequeñas.
 
-## Próximos pasos sugeridos
-
-- Integrar autenticación real y reemplazar el `AuthBootstrap` temporal.
-- Conectar Prisma con los resultados del pipeline para historizar inspecciones y métricas.
-- Añadir pruebas automatizadas (unitarias y end-to-end) para el flujo de subida y procesamiento.
-- Parametrizar el origen del CSV del ERP para trabajar sin dependencias externas en entornos de QA.
-
 ---
 
-Para dudas o mejoras adicionales, revisá los componentes dentro de `src/components/` y las utilidades de `src/lib/`, donde se concentra la lógica específica del dominio.
+Para dudas o mejoras adicionales, revisar los componentes dentro de `src/components/` y las utilidades de `src/lib/`, donde se concentra la lógica específica del dominio.
