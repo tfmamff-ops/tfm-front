@@ -1,5 +1,25 @@
 {
   "expected": {
+    "item": [
+      "DEBLAX-6CA7",
+      "EUTEBROL-A7E0",
+      "LURAZIC-1A36",
+      "LUSANDA-09F2",
+      "PARMITAL-D972",
+      "TECNOMET-A4CA",
+      "TEROVAN1-2EC9",
+      "TIMASFXR-4635"
+    ],
+    "itemDesc": [
+      "DEBLAX",
+      "EUTEBROL DUO",
+      "LURAZIC",
+      "LUSANDA",
+      "PARMITAL",
+      "TECNOMET",
+      "TEROVAN 100",
+      "TIM ASF XR"
+    ],
     "batch": [
       "L 97907",
       "L 100648",

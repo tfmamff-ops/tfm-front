@@ -10,6 +10,8 @@ export type ImageSource = "upload" | "camera";
 
 /** Types for expected values selected by the operator */
 export type Expected = {
+  item?: string;
+  itemDesc?: string;
   batch?: string;
   order?: string;
   expiry?: string;

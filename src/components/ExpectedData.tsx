@@ -34,6 +34,7 @@ export default function ExpectedData() {
     fetch("/api/expected")
       .then((r) => r.json())
       .then((resp) => {
+        console.log("expected data response", resp);
         setData(resp);
         setLoading(false);
       })
@@ -44,6 +45,30 @@ export default function ExpectedData() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <Label>Medicamento</Label>
+        {loading ? (
+          <div className="flex items-center justify-left h-10 px-3 py-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-green-600" />
+          </div>
+        ) : (
+          <Select
+            value={expected.itemDesc}
+            onValueChange={(v) => setExpected({ itemDesc: v })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar…" />
+            </SelectTrigger>
+            <SelectContent>
+              {data.itemDesc.map((x) => (
+                <SelectItem key={x} value={x}>
+                  {x}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
       <div>
         <Label>Lote esperado</Label>
         {loading ? (
