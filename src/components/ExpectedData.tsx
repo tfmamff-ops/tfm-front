@@ -34,7 +34,6 @@ export default function ExpectedData() {
     fetch("/api/expected")
       .then((r) => r.json())
       .then((resp) => {
-        console.log("expected data response", resp);
         setErpResp(resp);
         setIsErpRespLoaded(true);
       })
