@@ -19,7 +19,10 @@ export default function Page() {
 
   const isDisabledConfig = loading === true;
   const hasAllExpectedValues =
-    !!expected.batch && !!expected.order && !!expected.expiry;
+    !!expected.itemDesc &&
+    !!expected.batch &&
+    !!expected.order &&
+    !!expected.expiry;
   const isDisabledProcessing = !imagePreview || !hasAllExpectedValues;
 
   return (
