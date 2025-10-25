@@ -15,15 +15,8 @@ export function buildAnalyzeFormData(
   const form = new FormData();
   form.append("file", file);
 
-  // Normalize expected (avoid undefineds in JSON)
-  const normalizedExpected: Expected = {
-    ...(expected?.batch ? { batch: String(expected.batch).trim() } : {}),
-    ...(expected?.order ? { order: String(expected.order).trim() } : {}),
-    ...(expected?.expiry ? { expiry: String(expected.expiry).trim() } : {}),
-  };
-
   try {
-    form.append("expected", JSON.stringify(normalizedExpected));
+    form.append("expected", JSON.stringify(expected));
   } catch {
     // If serialization fails, send empty object (backend should handle defaulting)
     form.append("expected", "{}");

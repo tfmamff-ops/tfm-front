@@ -4,13 +4,15 @@ import { useAppStore } from "@/lib/store";
 
 export default function DataDetail() {
   const expected = useAppStore((s) => s.expected);
+  const visible =
+    !!expected.itemDesc ||
+    !!expected.batch ||
+    !!expected.expiry ||
+    !!expected.order;
 
   return (
     <>
-      {expected.itemDesc ||
-      expected.batch ||
-      expected.expiry ||
-      expected.order ? (
+      {visible && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <FieldChip
             label="Medicamento"
@@ -38,10 +40,6 @@ export default function DataDetail() {
             tone="cyan"
           />
         </div>
-      ) : (
-        <p className="text-sm text-slate-500">
-          Aún no hay una línea de producción seleccionada.
-        </p>
       )}
     </>
   );
