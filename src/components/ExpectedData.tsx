@@ -43,38 +43,57 @@ export default function ExpectedData() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Field keys we support
+  type FieldKey = "itemDesc" | "batch" | "expiry" | "order";
+
+  // Single source of truth for combos: used for rendering and for syncing values
+  const combos: Array<{
+    label: string;
+    key: FieldKey;
+    items: ExpectedItem[];
+    readOnly: boolean;
+  }> = [
+    {
+      label: "Medicamento",
+      key: "itemDesc",
+      items: data.itemDesc,
+      readOnly: false,
+    },
+    { label: "Lote esperado", key: "batch", items: data.batch, readOnly: true },
+    {
+      label: "Vencimiento esperado",
+      key: "expiry",
+      items: data.expiry,
+      readOnly: true,
+    },
+    {
+      label: "Orden esperada",
+      key: "order",
+      items: data.order,
+      readOnly: true,
+    },
+  ];
+
   const handleChange = (key: string, value: string, readOnly: boolean) => {
-    if (!readOnly) setExpected({ [key]: value });
+    if (readOnly) return;
+
+    // When any non-readOnly field changes, auto-select all other fields from the same row (same id)
+    const rowId = Number(value);
+    const updates: Record<string, string | undefined> = { [key]: value };
+
+    for (const combo of combos) {
+      if (combo.key !== (key as FieldKey)) {
+        const match = combo.items.find((x) => x.id === rowId);
+        updates[combo.key] = match ? String(match.id) : undefined;
+      }
+    }
+
+    setExpected(updates);
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {[
-        {
-          label: "Medicamento",
-          key: "itemDesc",
-          items: data.itemDesc,
-          readOnly: false,
-        },
-        {
-          label: "Lote esperado",
-          key: "batch",
-          items: data.batch,
-          readOnly: true,
-        },
-        {
-          label: "Vencimiento esperado",
-          key: "expiry",
-          items: data.expiry,
-          readOnly: true,
-        },
-        {
-          label: "Orden esperada",
-          key: "order",
-          items: data.order,
-          readOnly: true,
-        },
-      ].map(({ label, key, items, readOnly }) => {
+      {combos.map(({ label, key, items, readOnly }) => {
         const selectedId = expected[key as keyof typeof expected];
         return (
           <div key={key}>
