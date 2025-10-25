@@ -73,7 +73,7 @@ export default function ExpectedData() {
         <Label>Medicamento</Label>
         {isErpRespLoaded ? (
           <Select
-            value={selectedErpId}
+            value={selectedErpId || ""}
             onValueChange={(v) => {
               setSelectedErpId(v);
               const id = Number(v);
