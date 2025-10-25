@@ -11,12 +11,14 @@ import {
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
+type ExpectedItem = { id: number; value: string };
+
 type ExpectedResp = {
-  item: [];
-  itemDesc: [];
-  batch: string[];
-  order: string[];
-  expiry: string[];
+  item: ExpectedItem[];
+  itemDesc: ExpectedItem[];
+  batch: ExpectedItem[];
+  order: ExpectedItem[];
+  expiry: ExpectedItem[];
 };
 
 export default function ExpectedData() {
@@ -61,8 +63,8 @@ export default function ExpectedData() {
             </SelectTrigger>
             <SelectContent>
               {data.itemDesc.map((x) => (
-                <SelectItem key={x} value={x}>
-                  {x}
+                <SelectItem key={x.id} value={x.value}>
+                  {x.value}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -85,8 +87,8 @@ export default function ExpectedData() {
             </SelectTrigger>
             <SelectContent>
               {data.batch.map((x) => (
-                <SelectItem key={x} value={x}>
-                  {x}
+                <SelectItem key={x.id} value={x.value}>
+                  {x.value}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -109,8 +111,8 @@ export default function ExpectedData() {
             </SelectTrigger>
             <SelectContent>
               {data.expiry.map((x) => (
-                <SelectItem key={x} value={x}>
-                  {x}
+                <SelectItem key={x.id} value={x.value}>
+                  {x.value}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -133,8 +135,8 @@ export default function ExpectedData() {
             </SelectTrigger>
             <SelectContent>
               {data.order.map((x) => (
-                <SelectItem key={x} value={x}>
-                  {x}
+                <SelectItem key={x.id} value={x.value}>
+                  {x.value}
                 </SelectItem>
               ))}
             </SelectContent>

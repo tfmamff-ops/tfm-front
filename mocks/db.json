@@ -1,53 +1,172 @@
 {
-  "expected": {
-    "item": [
-      "DEBLAX-6CA7",
-      "EUTEBROL-A7E0",
-      "LURAZIC-1A36",
-      "LUSANDA-09F2",
-      "PARMITAL-D972",
-      "TECNOMET-A4CA",
-      "TEROVAN1-2EC9",
-      "TIMASFXR-4635"
-    ],
-    "itemDesc": [
-      "DEBLAX",
-      "EUTEBROL DUO",
-      "LURAZIC",
-      "LUSANDA",
-      "PARMITAL",
-      "TECNOMET",
-      "TEROVAN 100",
-      "TIM ASF XR"
-    ],
-    "batch": [
-      "L 97907",
-      "L 100648",
-      "S 101144",
-      "L 100100",
-      "LOTE 100252",
-      "L 100706",
-      "LOTE 101569",
-      "L 101195AA",
-      "LOTE 100740"
-    ],
-    "order": [
-      "M-AR-23-00219",
-      "F JUL/2025",
-      "E JUL/2025",
-      "FAB 05/2025",
-      "FAB 09/2025",
-      "F AGO/2025"
-    ],
-    "expiry": [
-      "V JUN/2026",
-      "V JUL/2027",
-      "V MAR2027",
-      "VAL 05/2027",
-      "V JUN/2027",
-      "VAL 09/2027",
-      "V AGO/2027",
-      "CAD DIC/2026"
-    ]
-  }
+  "item": [
+    {
+      "id": 2,
+      "value": "DEBLAX-6CA7"
+    },
+    {
+      "id": 3,
+      "value": "EUTEBROL-A7E0"
+    },
+    {
+      "id": 4,
+      "value": "LURAZIC-1A36"
+    },
+    {
+      "id": 5,
+      "value": "LUSANDA-09F2"
+    },
+    {
+      "id": 6,
+      "value": "PARMITAL-D972"
+    },
+    {
+      "id": 7,
+      "value": "TECNOMET-A4CA"
+    },
+    {
+      "id": 8,
+      "value": "TEROVAN1-2EC9"
+    },
+    {
+      "id": 9,
+      "value": "TIMASFXR-4635"
+    }
+  ],
+  "itemDesc": [
+    {
+      "id": 2,
+      "value": "DEBLAX"
+    },
+    {
+      "id": 3,
+      "value": "EUTEBROL DUO"
+    },
+    {
+      "id": 4,
+      "value": "LURAZIC"
+    },
+    {
+      "id": 5,
+      "value": "LUSANDA"
+    },
+    {
+      "id": 6,
+      "value": "PARMITAL"
+    },
+    {
+      "id": 7,
+      "value": "TECNOMET"
+    },
+    {
+      "id": 8,
+      "value": "TEROVAN 100"
+    },
+    {
+      "id": 9,
+      "value": "TIM ASF XR"
+    }
+  ],
+  "batch": [
+    {
+      "id": 2,
+      "value": "L 100648"
+    },
+    {
+      "id": 3,
+      "value": "S 101144"
+    },
+    {
+      "id": 4,
+      "value": "L 100100"
+    },
+    {
+      "id": 5,
+      "value": "LOTE 100252"
+    },
+    {
+      "id": 6,
+      "value": "L 100706"
+    },
+    {
+      "id": 7,
+      "value": "LOTE 101569"
+    },
+    {
+      "id": 8,
+      "value": "L 101195AA"
+    },
+    {
+      "id": 9,
+      "value": "LOTE 100740"
+    }
+  ],
+  "expiry": [
+    {
+      "id": 2,
+      "value": "V JUL/2027"
+    },
+    {
+      "id": 3,
+      "value": "V JUL/2027"
+    },
+    {
+      "id": 4,
+      "value": "V MAR/2027"
+    },
+    {
+      "id": 5,
+      "value": "VAL 05/2027"
+    },
+    {
+      "id": 6,
+      "value": "V JUN/2027"
+    },
+    {
+      "id": 7,
+      "value": "VAL 09/2027"
+    },
+    {
+      "id": 8,
+      "value": "V AGO/2027"
+    },
+    {
+      "id": 9,
+      "value": "CAD DIC/2026"
+    }
+  ],
+  "order": [
+    {
+      "id": 2,
+      "value": "F JUL/2025"
+    },
+    {
+      "id": 3,
+      "value": "E JUL/2025"
+    },
+    {
+      "id": 4,
+      "value": "N/A"
+    },
+    {
+      "id": 5,
+      "value": "FAB 05/2025"
+    },
+    {
+      "id": 6,
+      "value": "N/A"
+    },
+    {
+      "id": 7,
+      "value": "FAB 09/2025"
+    },
+    {
+      "id": 8,
+      "value": "F AGO/2025"
+    },
+    {
+      "id": 9,
+      "value": "N/A"
+    }
+  ]
 }

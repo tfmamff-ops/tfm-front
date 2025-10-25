@@ -28,18 +28,20 @@ export async function GET() {
     // Skip the first row (headers)
     const dataRows = records.slice(1);
 
-    // 4. Extract relevant columns
+    // 4. Extract relevant columns with row number as id
     const item = [];
     const itemDesc = [];
     const batch = [];
     const expiry = [];
     const order = [];
-    for (const row of dataRows) {
-      item.push(row[1]?.trim() || "");
-      itemDesc.push(row[2]?.trim() || "");
-      batch.push(row[3]?.trim() || "");
-      expiry.push(row[4]?.trim() || "");
-      order.push(row[5]?.trim() || "");
+    for (let i = 0; i < dataRows.length; i++) {
+      const row = dataRows[i];
+      const rowNumber = i + 2; // +2 because row 1 is header and array is 0-indexed
+      item.push({ id: rowNumber, value: row[1]?.trim() || "" });
+      itemDesc.push({ id: rowNumber, value: row[2]?.trim() || "" });
+      batch.push({ id: rowNumber, value: row[3]?.trim() || "" });
+      expiry.push({ id: rowNumber, value: row[4]?.trim() || "" });
+      order.push({ id: rowNumber, value: row[5]?.trim() || "" });
     }
 
     // 5. Return the expected shape
