@@ -69,7 +69,6 @@ export default function ExpectedData() {
   return (
     <div className="space-y-4">
       <div>
-        <Label>Medicamento</Label>
         {isErpRespLoaded ? (
           <Select
             value={selectedErpId || ""}
@@ -89,7 +88,7 @@ export default function ExpectedData() {
             >
               {data.itemDesc.map((it) => (
                 <SelectItem key={it.id} value={String(it.id)}>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col text-left">
                     <span className="font-medium text-slate-800">
                       {it.value}
                     </span>
