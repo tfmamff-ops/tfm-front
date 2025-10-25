@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FieldChip } from "@/components/ui/field-chip";
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 import DataDetail from "./ui/DataDetail";
@@ -25,7 +24,7 @@ type ExpectedResp = {
 };
 
 export default function ExpectedData() {
-  const { expected, setExpected } = useAppStore();
+  const { setExpected } = useAppStore();
   const [data, setData] = useState<ExpectedResp>({
     item: [],
     itemDesc: [],
