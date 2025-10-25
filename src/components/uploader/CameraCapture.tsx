@@ -18,7 +18,7 @@ export default function CameraCapture() {
     const blob = await res.blob();
     const f = new File([blob], "captura.jpg", { type: blob.type });
 
-    // achicar + comprimir antes de guardarlo
+    // Downscale + compress before storing
     const { file: compact, previewUrl } = await compressImageFile(f);
     setFilename(f.name);
     setFile(compact);
