@@ -146,7 +146,7 @@ Definir las siguientes variables en `.env` para habilitar la integración con Az
 | `AZURE_FUNC_KEY_HTTP_START` | API key para iniciar la Durable Function de procesamiento.                |
 | `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Tiempo máximo de espera del pipeline en milisegundos.          |
 | `AZURE_PIPELINE_POLL_MS`    | (Opcional) Intervalo entre sondeos de estado.                             |
-| `DATABASE_URL`              | Cadena de conexión PostgreSQL utilizada por Prisma.                       |
+| `DATABASE_URL`              | Cadena de conexión PostgreSQL utilizada por Prisma (uso futuro).          |
 | `ERP_CONTAINER`             | Nombre del contenedor en Azure Blob Storage donde reside el CSV del ERP.  |
 | `BLOB_ERP_QUAD`             | Nombre del archivo CSV exportado desde el ERP con los datos de productos. |
 
