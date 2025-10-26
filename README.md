@@ -41,15 +41,18 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 
    ```bash
    pnpm install
-   ```
+   ````
 
 2. Copiar `.env.example` a `.env.local` (crearlo si no existe) y definir las variables listadas en la sección de configuración.
+
 3. Inicializar los servicios auxiliares y el entorno de desarrollo:
 
    ```bash
    pnpm dev
    ```
+
    Este comando levanta PostgreSQL mediante Docker Compose y, en paralelo, ejecuta Next.js con Turbopack y el servidor mock (`json-server`) que emula las respuestas del ERP.
+
 4. Acceder a `http://localhost:3000`.
 
 ### Scripts disponibles
@@ -67,14 +70,14 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 
 Definir las siguientes variables en `.env.local` para habilitar la integración con Azure y la base de datos:
 
-| Variable | Descripción |
-| --- | --- |
-| `AZURE_FUNC_HOST` | Host de la Function App que expone los endpoints `sas` y `process`. |
-| `AZURE_FUNC_KEY_GET_SAS` | API key para el endpoint que genera SAS de lectura/escritura. |
-| `AZURE_FUNC_KEY_HTTP_START` | API key para iniciar la Durable Function de procesamiento. |
-| `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Tiempo máximo de espera del pipeline en milisegundos. |
-| `AZURE_PIPELINE_POLL_MS` | (Opcional) Intervalo entre sondeos de estado. |
-| `DATABASE_URL` | Cadena de conexión PostgreSQL utilizada por Prisma. |
+| Variable                    | Descripción                                                         |
+| --------------------------- | ------------------------------------------------------------------- |
+| `AZURE_FUNC_HOST`           | Host de la Function App que expone los endpoints `sas` y `process`. |
+| `AZURE_FUNC_KEY_GET_SAS`    | API key para el endpoint que genera SAS de lectura/escritura.       |
+| `AZURE_FUNC_KEY_HTTP_START` | API key para iniciar la Durable Function de procesamiento.          |
+| `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Tiempo máximo de espera del pipeline en milisegundos.    |
+| `AZURE_PIPELINE_POLL_MS`    | (Opcional) Intervalo entre sondeos de estado.                       |
+| `DATABASE_URL`              | Cadena de conexión PostgreSQL utilizada por Prisma.                 |
 
 Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adaptar los componentes a datos locales.
 
