@@ -4,36 +4,36 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 
 ## Características principales
 
-- **Experiencia guiada en dos pasos**: pestañas de _Configuración_ y _Procesamiento_ que ordenan el flujo operativo y bloquean acciones cuando faltan datos obligatorios.
-- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de productos y completar automáticamente lote, vencimiento y fecha de envasado.
-- **Múltiples fuentes de imagen**: subida de archivos JPG/PNG o captura directa desde la cámara del navegador con compresión previa para optimizar el envío.
-- **Previsualización y seguimiento**: paneles laterales reutilizables que muestran los datos configurados, la miniatura de la imagen actual y contadores de inspecciones OK/Rechazo.
-- **Orquestación en Azure**: la UI invoca un endpoint Next.js que solicita URLs SAS, sube la imagen al contenedor de entrada, dispara la Durable Function y espera el resultado final.
-- **Resultados enriquecidos**: despliegue de texto OCR, estado del código de barras, overlays generados por el backend y resumen de validaciones para una rápida toma de decisiones.
+- **Experiencia guiada en dos pasos**: pestañas de _Configuración_ y _Procesamiento_ que ordenan el flujo operativo y bloquean acciones cuando faltan datos obligatorios.  
+- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de productos y completar automáticamente lote, vencimiento y fecha de envasado.  
+- **Múltiples fuentes de imagen**: subida de archivos JPG/PNG o captura directa desde la cámara del navegador con compresión previa para optimizar el envío.  
+- **Previsualización y seguimiento**: paneles laterales reutilizables que muestran los datos configurados, la miniatura de la imagen actual y contadores de inspecciones OK/Rechazo.  
+- **Orquestación en Azure**: la UI invoca un endpoint Next.js que solicita URLs SAS, sube la imagen al contenedor de entrada, dispara la Durable Function y espera el resultado final.  
+- **Resultados enriquecidos**: despliegue de texto OCR, estado del código de barras, overlays generados por el backend y resumen de validaciones para una rápida toma de decisiones.  
 - **Persistencia preparada**: esquema Prisma listo para almacenar historiales de procesamiento y regiones de interés en una base PostgreSQL.
 
 ## Arquitectura
 
-- **Framework**: Next.js 15 con el _App Router_, React 19 y soporte server/client components.
-- **Estado global**: Zustand con middleware de persistencia y _devtools_ separados para el contexto de autenticación y el estado operativo de la inspección.
-- **UI**: Tailwind CSS 4, componentes Radix UI (tabs, selects, hover cards) y librerías auxiliares como `lucide-react`, `react-webcam` y `sonner`.
-- **Capa de servidor**: rutas API en `/app/api` para comunicarse con Azure Functions y normalizar las respuestas del pipeline; utilidades server-only en `src/server/`.
+- **Framework**: Next.js 15 con el _App Router_, React 19 y soporte server/client components.  
+- **Estado global**: Zustand con middleware de persistencia y _devtools_ separados para el contexto de autenticación y el estado operativo de la inspección.  
+- **UI**: Tailwind CSS 4, componentes Radix UI (tabs, selects, hover cards) y librerías auxiliares como `lucide-react`, `react-webcam` y `sonner`.  
+- **Capa de servidor**: rutas API en `/app/api` para comunicarse con Azure Functions y normalizar las respuestas del pipeline; utilidades server-only en `src/server/`.  
 - **Datos**: Prisma Client como ORM (modelo `Processing` + `ROI`) y mocks locales vía `json-server` para el endpoint `/api/expectedData` cuando no se dispone del entorno de nube.
 
 ## Flujo funcional
 
-1. La vista de Configuración descarga el CSV del ERP y permite seleccionar un producto para completar los valores esperados.
-2. El operador adjunta una imagen o toma una captura; la aplicación genera una URL de previsualización y almacena metadatos en el store.
-3. Al presionar **Procesar**, se construye un `FormData` con la imagen, los datos esperados y el contexto del usuario.
-4. El endpoint `/api/azure-analyze` solicita una SAS de carga, sube el archivo, inicia la Durable Function y comienza a consultar su estado.
-5. Una vez completado el pipeline, la API devuelve enlaces temporales a las imágenes procesadas, el resultado OCR, el estado del código de barras y las validaciones.
+1. La vista de Configuración descarga el CSV del ERP y permite seleccionar un producto para completar los valores esperados.  
+2. El operador adjunta una imagen o toma una captura; la aplicación genera una URL de previsualización y almacena metadatos en el store.  
+3. Al presionar **Procesar**, se construye un `FormData` con la imagen, los datos esperados y el contexto del usuario.  
+4. El endpoint `/api/azure-analyze` solicita una SAS de carga, sube el archivo, inicia la Durable Function y comienza a consultar su estado.  
+5. Una vez completado el pipeline, la API devuelve enlaces temporales a las imágenes procesadas, el resultado OCR, el estado del código de barras y las validaciones.  
 6. El store actualiza contadores, presenta los overlays y muestra mensajes de error en caso de fallos en cualquier etapa.
 
 ## Requisitos previos
 
-- Node.js 20 o superior.
-- PNPM 9.x.
-- Docker (opcional) para levantar la base de datos PostgreSQL local.
+- Node.js 20 o superior  
+- PNPM 9.x  
+- Docker (opcional) para levantar la base de datos PostgreSQL local
 
 ## Puesta en marcha
 
@@ -43,7 +43,7 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
    pnpm install
    ````
 
-2. Copiar `.env.example` a `.env.local` (crearlo si no existe) y definir las variables listadas en la sección de configuración.
+2. Copiar `.env.example` a `.env` y definir las variables listadas en la sección de configuración.
 
 3. Inicializar los servicios auxiliares y el entorno de desarrollo:
 
@@ -54,6 +54,71 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
    Este comando levanta PostgreSQL mediante Docker Compose y, en paralelo, ejecuta Next.js con Turbopack y el servidor mock (`json-server`) que emula las respuestas del ERP.
 
 4. Acceder a `http://localhost:3000`.
+
+## Despliegue con Docker y Azure App Service
+
+El frontend puede ejecutarse dentro de un contenedor Docker y desplegarse fácilmente en **Azure App Service**.
+
+### Construcción local de la imagen
+
+1. Verificar que el proyecto contenga los archivos `Dockerfile` y `.dockerignore` en la raíz.
+2. Ejecutar:
+
+   ```bash
+   docker build -t rotulado-frontend .
+   ```
+
+### Ejecución local
+
+Para probar la imagen localmente con las variables de entorno configuradas:
+
+```bash
+docker run --rm -p 3000:3000 --env-file .env rotulado-frontend
+```
+
+Para ejecutarlo en segundo plano (modo _detached_), usar:
+
+```bash
+docker run -d --rm -p 3000:3000 --env-file .env rotulado-frontend
+```
+
+El parámetro -d mantiene el contenedor activo sin bloquear la terminal.
+
+Abrir [http://localhost:3000](http://localhost:3000).
+
+### Publicación en Azure o Docker Hub
+
+#### Opción 1 – Docker Hub
+
+```bash
+docker tag rotulado-frontend tu_usuario/rotulado-frontend:latest
+docker push tu_usuario/rotulado-frontend:latest
+```
+
+#### Opción 2 – Azure Container Registry
+
+```bash
+az acr login --name <nombre_registry>
+docker tag rotulado-frontend <nombre_registry>.azurecr.io/rotulado-frontend:latest
+docker push <nombre_registry>.azurecr.io/rotulado-frontend:latest
+```
+
+### Configuración en Azure App Service
+
+1. Crear un **App Service (Linux, Docker container)**.
+2. En “Container settings”, indicar la imagen (de Docker Hub o ACR).
+3. En **Configuration → Application Settings**, definir las variables de entorno:
+
+   - `AZURE_FUNC_HOST`
+   - `AZURE_FUNC_KEY_GET_SAS`
+   - `AZURE_FUNC_KEY_HTTP_START`
+   - `AZURE_PIPELINE_TIMEOUT_MS`
+   - `AZURE_PIPELINE_POLL_MS`
+   - `DATABASE_URL`
+
+Azure descargará la imagen, abrirá el puerto 3000 y ejecutará automáticamente el contenedor del frontend.
+
+---
 
 ### Scripts disponibles
 
@@ -68,7 +133,7 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 
 ## Variables de entorno
 
-Definir las siguientes variables en `.env.local` para habilitar la integración con Azure y la base de datos:
+Definir las siguientes variables en `.env` para habilitar la integración con Azure y la base de datos:
 
 | Variable                    | Descripción                                                         |
 | --------------------------- | ------------------------------------------------------------------- |
@@ -102,7 +167,3 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 - Las llamadas a Azure están encapsuladas en `src/server/azure.ts`, facilitando el testeo con _stubs_ o servicios alternativos.
 - El layout raíz monta un _Hydration Gate_ y `AuthBootstrap` para preparar un contexto de usuario temporal hasta integrar un proveedor real.
 - Se fomenta el diseño responsivo: los paneles laterales son _sticky_ en escritorio y se apilan en pantallas pequeñas.
-
----
-
-Para dudas o mejoras adicionales, revisar los componentes dentro de `src/components/` y las utilidades de `src/lib/`, donde se concentra la lógica específica del dominio.
