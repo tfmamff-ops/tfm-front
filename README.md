@@ -38,11 +38,14 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 ## Puesta en marcha
 
 1. Instalar dependencias:
+
    ```bash
    pnpm install
    ```
+
 2. Copiar `.env.example` a `.env.local` (crearlo si no existe) y definir las variables listadas en la sección de configuración.
 3. Inicializar los servicios auxiliares y el entorno de desarrollo:
+
    ```bash
    pnpm dev
    ```
