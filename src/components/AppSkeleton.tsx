@@ -13,7 +13,7 @@ export default function AppSkeleton() {
 
       {/* Main content area */}
       <div className="space-y-4">
-        {/* Section 1: Production line or Configured data */}
+        {/* Section 1: Configured data */}
         <div className="rounded-2xl border bg-white shadow-md">
           <div className="flex items-center justify-between rounded-t-2xl border-b bg-green-50/80 px-4 py-3">
             <Skeleton className="h-5 w-48" />

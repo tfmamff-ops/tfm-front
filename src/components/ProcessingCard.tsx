@@ -10,7 +10,7 @@ import { SlidersHorizontal } from "lucide-react";
 import type React from "react";
 
 export default function ProcessingCard() {
-  const items = useAppStore((s) => s.ocr.items);
+  const items = useAppStore((s) => s.ocrResult.items);
   const error = useAppStore((s) => s.error);
   const loading = useAppStore((s) => s.loading);
   const { barcodeDetected, barcodeLegible, decodedValue, barcodeSymbology } =
@@ -54,12 +54,12 @@ export default function ProcessingCard() {
           />
         )}
         <ValidationSection
-          orderOK={validation.orderOK}
-          batchOK={validation.batchOK}
-          expiryOK={validation.expiryOK}
-          barcodeDetectedOK={validation.barcodeDetectedOK}
-          barcodeLegibleOK={validation.barcodeLegibleOK}
-          barcodeOK={validation.barcodeOK}
+          lotOk={validation.lotOk}
+          expDateOk={validation.expDateOk}
+          packDateOk={validation.packDateOk}
+          barcodeDetectedOk={validation.barcodeDetectedOk}
+          barcodeLegibleOk={validation.barcodeLegibleOk}
+          barcodeOk={validation.barcodeOk}
           validationSummary={validation.validationSummary}
         />
       </div>

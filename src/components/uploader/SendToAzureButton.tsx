@@ -113,9 +113,9 @@ export default function SendToAzureButton() {
     setLoading(true);
 
     try {
-      const expected = useAppStore.getState().expected ?? {};
+      const expectedData = useAppStore.getState().expectedData ?? {};
       const requestContext = useAuthStore.getState().requestContext;
-      const form = buildAnalyzeFormData(file, expected, requestContext);
+      const form = buildAnalyzeFormData(file, expectedData, requestContext);
 
       const result = await postAnalyze(form);
       if (!result.ok) {

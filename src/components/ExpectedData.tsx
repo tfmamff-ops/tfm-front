@@ -1,6 +1,5 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
 // Using a combobox-style Select for a cleaner UX
 import {
   Select,
@@ -9,14 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAppStore } from "@/lib/store";
 import type { ErpItem } from "@/lib/store";
+import { useAppStore } from "@/lib/store";
 import { useEffect } from "react";
 import DataDetail from "./DataDetail";
 
 export default function ExpectedData() {
   const {
-    setExpected,
+    setExpectedData,
     erpResp,
     isErpRespLoaded,
     setErpResp,
@@ -47,22 +46,22 @@ export default function ExpectedData() {
 
   // Get data from store or use empty default
   const data = erpResp || {
-    item: [],
-    itemDesc: [],
-    batch: [],
-    order: [],
-    expiry: [],
+    prodCode: [],
+    prodDesc: [],
+    lot: [],
+    packDate: [],
+    expDate: [],
   };
 
   // Select a row by id and propagate textual values to the store
   const selectRow = (rowId: number) => {
     const get = (arr: ErpItem[]) => arr.find((x) => x.id === rowId)?.value;
-    setExpected({
-      item: get(data.item),
-      itemDesc: get(data.itemDesc),
-      batch: get(data.batch),
-      expiry: get(data.expiry),
-      order: get(data.order),
+    setExpectedData({
+      prodCode: get(data.prodCode),
+      prodDesc: get(data.prodDesc),
+      lot: get(data.lot),
+      expDate: get(data.expDate),
+      packDate: get(data.packDate),
     });
   };
 
@@ -86,16 +85,16 @@ export default function ExpectedData() {
               position="popper"
               className="w-[--radix-select-trigger-width]"
             >
-              {data.itemDesc.map((it) => (
+              {data.prodDesc.map((it) => (
                 <SelectItem key={it.id} value={String(it.id)}>
                   <div className="flex flex-col text-left">
                     <span className="font-medium text-slate-800">
                       {it.value}
                     </span>
                     <span className="text-[11px] text-slate-500">
-                      {data.batch.find((x) => x.id === it.id)?.value} ·{" "}
-                      {data.expiry.find((x) => x.id === it.id)?.value} ·{" "}
-                      {data.order.find((x) => x.id === it.id)?.value}
+                      {data.lot.find((x) => x.id === it.id)?.value} ·{" "}
+                      {data.expDate.find((x) => x.id === it.id)?.value} ·{" "}
+                      {data.packDate.find((x) => x.id === it.id)?.value}
                     </span>
                   </div>
                 </SelectItem>

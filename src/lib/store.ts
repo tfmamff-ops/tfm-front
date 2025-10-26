@@ -9,12 +9,12 @@ import { persist, createJSONStorage, devtools } from "zustand/middleware";
 export type ImageSource = "upload" | "camera";
 
 /** Types for expected values selected by the operator */
-export type Expected = {
-  item?: string;
-  itemDesc?: string;
-  batch?: string;
-  order?: string;
-  expiry?: string;
+export type ExpectedData = {
+  prodCode?: string;
+  prodDesc?: string;
+  lot?: string;
+  expDate?: string;
+  packDate?: string;
 };
 
 /** Item from ERP API response */
@@ -22,11 +22,11 @@ export type ErpItem = { id: number; value: string };
 
 /** ERP response structure for expected data */
 export type ErpResp = {
-  item: ErpItem[];
-  itemDesc: ErpItem[];
-  batch: ErpItem[];
-  order: ErpItem[];
-  expiry: ErpItem[];
+  prodCode: ErpItem[];
+  prodDesc: ErpItem[];
+  lot: ErpItem[];
+  expDate: ErpItem[];
+  packDate: ErpItem[];
 };
 
 /** Aggregate counters displayed in the UI */
@@ -40,7 +40,7 @@ export type Counters = {
 export type OcrItem = { id: string; text: string };
 
 /** OCR result from processing */
-export type Ocr = {
+export type OcrResult = {
   items: OcrItem[];
 };
 
@@ -53,12 +53,12 @@ export type BarcodeState = {
 };
 
 export type Validation = {
-  orderOK: boolean;
-  batchOK: boolean;
-  expiryOK: boolean;
-  barcodeDetectedOK: boolean;
-  barcodeLegibleOK: boolean;
-  barcodeOK: boolean;
+  lotOk: boolean;
+  expDateOk: boolean;
+  packDateOk: boolean;
+  barcodeDetectedOk: boolean;
+  barcodeLegibleOk: boolean;
+  barcodeOk: boolean;
   validationSummary: boolean;
 };
 
@@ -77,8 +77,8 @@ type AppState = {
   /** Object URL for the current image preview */
   imagePreview?: string;
 
-  /** Expected values (batch/order/expiry) selected by the operator */
-  expected: Expected;
+  /** Expected values (prodCode, prodDesc, lot, expDate, packDate) selected by the operator */
+  expectedData: ExpectedData;
 
   /** ERP response data cached to avoid redundant API calls */
   erpResp?: ErpResp;
@@ -86,14 +86,14 @@ type AppState = {
   /** Flag to track if ERP data has been loaded */
   isErpRespLoaded: boolean;
 
-  /** ID of the selected ERP item (medicamento) */
+  /** ID of the selected ERP item */
   selectedErpId?: string;
 
   /** Totals shown in the dashboard */
   counters: Counters;
 
   /** OCR result from processing */
-  ocr: Ocr;
+  ocrResult: OcrResult;
 
   /** State of the Barcode process */
   barcode: BarcodeState;
@@ -116,7 +116,7 @@ type AppState = {
   setFile: (f?: File) => void;
   setFilename: (name?: string) => void;
   setPreview: (url?: string) => void;
-  setExpected: (patch: Partial<Expected>) => void;
+  setExpectedData: (patch: Partial<ExpectedData>) => void;
   setCounters: (patch: Partial<Counters>) => void;
   setOcrItems: (items: OcrItem[]) => void;
   setError: (msg?: string) => void;
@@ -129,9 +129,9 @@ type AppState = {
   setBarcodeRoiImgUrl: (url: string) => void;
   setBarcodeState: (barcode: BarcodeState) => void;
   clearBarcode: () => void;
-  setOrderOk: (ok: boolean) => void;
-  setBatchOk: (ok: boolean) => void;
-  setExpiryOk: (ok: boolean) => void;
+  setLotOk: (ok: boolean) => void;
+  setExpDateOk: (ok: boolean) => void;
+  setPackDateOk: (ok: boolean) => void;
   setBarcodeDetectedOk: (ok: boolean) => void;
   setBarcodeLegibleOk: (ok: boolean) => void;
   setBarcodeOk: (ok: boolean) => void;
@@ -153,7 +153,7 @@ type AppState = {
 const isDev = process.env.NODE_ENV !== "production";
 
 /** Initial OCR result */
-const INITIAL_OCR: Ocr = {
+const INITIAL_OCR_RESULT: OcrResult = {
   items: [],
 };
 
@@ -175,12 +175,12 @@ const INITIAL_BARCODE_STATE: BarcodeState = {
 
 /** Initial state for Validation */
 const INITIAL_VALIDATION_STATE: Validation = {
-  orderOK: false,
-  batchOK: false,
-  expiryOK: false,
-  barcodeDetectedOK: false,
-  barcodeLegibleOK: false,
-  barcodeOK: false,
+  packDateOk: false,
+  lotOk: false,
+  expDateOk: false,
+  barcodeDetectedOk: false,
+  barcodeLegibleOk: false,
+  barcodeOk: false,
   validationSummary: false,
 };
 
@@ -233,12 +233,12 @@ export const useAppStore = create<AppState>()(
         file: undefined,
         filename: undefined,
         imagePreview: undefined,
-        expected: {},
+        expectedData: {},
         erpResp: undefined,
         isErpRespLoaded: false,
         selectedErpId: undefined,
         counters: INITIAL_COUNTERS,
-        ocr: INITIAL_OCR,
+        ocrResult: INITIAL_OCR_RESULT,
         barcode: INITIAL_BARCODE_STATE,
         validation: INITIAL_VALIDATION_STATE,
         error: undefined,
@@ -259,7 +259,7 @@ export const useAppStore = create<AppState>()(
                   file: undefined,
                   filename: undefined,
                   imagePreview: undefined,
-                  ocr: INITIAL_OCR,
+                  ocrResult: INITIAL_OCR_RESULT,
                   barcode: INITIAL_BARCODE_STATE,
                   validation: INITIAL_VALIDATION_STATE,
                   error: undefined,
@@ -287,7 +287,7 @@ export const useAppStore = create<AppState>()(
               // When preview changes, reset OCR and processed images
               return {
                 imagePreview,
-                ocr: INITIAL_OCR,
+                ocrResult: INITIAL_OCR_RESULT,
                 barcode: INITIAL_BARCODE_STATE,
                 validation: INITIAL_VALIDATION_STATE,
                 error: undefined,
@@ -303,11 +303,11 @@ export const useAppStore = create<AppState>()(
         // EXPECTED VALUES & COUNTERS
         // ========================================================================
 
-        setExpected: (patch) =>
+        setExpectedData: (patch) =>
           set(
-            (state) => ({ expected: { ...state.expected, ...patch } }),
+            (state) => ({ expectedData: { ...state.expectedData, ...patch } }),
             false,
-            "setExpected"
+            "setExpectedData"
           ),
 
         setCounters: (patch) =>
@@ -330,11 +330,15 @@ export const useAppStore = create<AppState>()(
         // OCR ACTIONS
         // ========================================================================
         setOcrItems: (items) =>
-          set((s) => ({ ocr: { ...s.ocr, items } }), false, "setOcrItems"),
+          set(
+            (s) => ({ ocrResult: { ...s.ocrResult, items } }),
+            false,
+            "setOcrItems"
+          ),
 
         clearOcr: () =>
           set(
-            { ocr: INITIAL_OCR, error: undefined, loading: false },
+            { ocrResult: INITIAL_OCR_RESULT, error: undefined, loading: false },
             false,
             "clearOcr"
           ),
@@ -375,44 +379,44 @@ export const useAppStore = create<AppState>()(
         // VALIDATION ACTIONS
         // ========================================================================
 
-        setOrderOk: (ok: boolean) =>
+        setLotOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, orderOK: ok } }),
+            (s) => ({ validation: { ...s.validation, lotOk: ok } }),
             false,
-            "setOrderOk"
+            "setLotOk"
           ),
 
-        setBatchOk: (ok: boolean) =>
+        setExpDateOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, batchOK: ok } }),
+            (s) => ({ validation: { ...s.validation, expDateOk: ok } }),
             false,
-            "setBatchOk"
+            "setExpDateOk"
           ),
 
-        setExpiryOk: (ok: boolean) =>
+        setPackDateOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, expiryOK: ok } }),
+            (s) => ({ validation: { ...s.validation, packDateOk: ok } }),
             false,
-            "setExpiryOk"
+            "setPackDateOk"
           ),
 
         setBarcodeDetectedOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, barcodeDetectedOK: ok } }),
+            (s) => ({ validation: { ...s.validation, barcodeDetectedOk: ok } }),
             false,
             "setBarcodeDetectedOk"
           ),
 
         setBarcodeLegibleOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, barcodeLegibleOK: ok } }),
+            (s) => ({ validation: { ...s.validation, barcodeLegibleOk: ok } }),
             false,
             "setBarcodeLegibleOk"
           ),
 
         setBarcodeOk: (ok: boolean) =>
           set(
-            (s) => ({ validation: { ...s.validation, barcodeOK: ok } }),
+            (s) => ({ validation: { ...s.validation, barcodeOk: ok } }),
             false,
             "setBarcodeOk"
           ),
@@ -458,9 +462,9 @@ export const useAppStore = create<AppState>()(
               imagePreview: undefined,
               file: undefined,
               filename: undefined,
-              expected: {},
+              expectedData: {},
               counters: INITIAL_COUNTERS,
-              ocr: INITIAL_OCR,
+              ocrResult: INITIAL_OCR_RESULT,
               error: undefined,
               loading: false,
               barcode: INITIAL_BARCODE_STATE,
@@ -477,7 +481,7 @@ export const useAppStore = create<AppState>()(
         storage: createJSONStorage(() => getStorage()),
         // Persist only serializable slices
         partialize: (s) => ({
-          expected: s.expected,
+          expected: s.expectedData,
           counters: s.counters,
           imageSource: s.imageSource,
           erpResp: s.erpResp,

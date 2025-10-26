@@ -1,6 +1,6 @@
 // Server-only helpers for Azure Function interactions
 import { RequestContextUser } from "@/lib/auth-store";
-import type { Expected } from "@/lib/store";
+import type { ExpectedData } from "@/lib/store";
 
 export async function getSasUrlForRead(params: {
   host: string;
@@ -94,7 +94,7 @@ export async function startPipeline(params: {
   functionKey: string;
   container: string;
   blobName: string;
-  expectedData: Expected;
+  expectedData: ExpectedData;
   requestContext: RequestContextUser;
 }): Promise<string> {
   const {

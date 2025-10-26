@@ -4,8 +4,8 @@ import { parse } from "csv-parse/sync";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
-const CONTAINER = "erp";
-const BLOB_NAME = "ERP_QAD_export.csv";
+const ERP_CONTAINER = process.env.ERP_CONTAINER!;
+const BLOB_ERP_QUAD = process.env.BLOB_ERP_QUAD!;
 
 export async function GET() {
   try {
@@ -13,8 +13,8 @@ export async function GET() {
     const sasUrl = await getSasUrlForRead({
       host: HOST,
       functionKey: KEY_GET_SAS,
-      container: CONTAINER,
-      blobName: BLOB_NAME,
+      container: ERP_CONTAINER,
+      blobName: BLOB_ERP_QUAD,
       minutes: 10,
     });
 
@@ -29,23 +29,29 @@ export async function GET() {
     const dataRows = records.slice(1);
 
     // 4. Extract relevant columns with row number as id
-    const item = [];
-    const itemDesc = [];
-    const batch = [];
-    const expiry = [];
-    const order = [];
+    const prodCode = [];
+    const prodDesc = [];
+    const lot = [];
+    const expDate = [];
+    const packDate = [];
     for (let i = 0; i < dataRows.length; i++) {
       const row = dataRows[i];
       const rowNumber = i + 2; // +2 because row 1 is header and array is 0-indexed
-      item.push({ id: rowNumber, value: row[1]?.trim() || "" });
-      itemDesc.push({ id: rowNumber, value: row[2]?.trim() || "" });
-      batch.push({ id: rowNumber, value: row[3]?.trim() || "" });
-      expiry.push({ id: rowNumber, value: row[4]?.trim() || "" });
-      order.push({ id: rowNumber, value: row[5]?.trim() || "" });
+      prodCode.push({ id: rowNumber, value: row[1]?.trim() || "" });
+      prodDesc.push({ id: rowNumber, value: row[2]?.trim() || "" });
+      lot.push({ id: rowNumber, value: row[3]?.trim() || "" });
+      expDate.push({ id: rowNumber, value: row[4]?.trim() || "" });
+      packDate.push({ id: rowNumber, value: row[5]?.trim() || "" });
     }
 
     // 5. Return the expected shape
-    return NextResponse.json({ item, itemDesc, batch, expiry, order });
+    return NextResponse.json({
+      prodCode: prodCode,
+      prodDesc: prodDesc,
+      lot: lot,
+      expDate: expDate,
+      packDate: packDate,
+    });
   } catch (e) {
     console.error("Error in /api/expected:", e);
     return NextResponse.json(

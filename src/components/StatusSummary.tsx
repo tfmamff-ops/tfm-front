@@ -21,7 +21,7 @@ export default function StatusSummary() {
       />
       <StatCard
         icon={<BadgeCheck className="h-4 w-4" aria-hidden="true" />}
-        label="OK"
+        label="Ok"
         value={ok}
         tone="success"
       />

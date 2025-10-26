@@ -7,20 +7,20 @@ import { ShieldAlert, ShieldCheck, ShieldEllipsis } from "lucide-react";
 import { Button } from "../ui/button";
 
 export default function ValidationSection({
-  orderOK,
-  batchOK,
-  expiryOK,
-  barcodeDetectedOK,
-  barcodeLegibleOK,
-  barcodeOK,
+  lotOk,
+  expDateOk,
+  packDateOk,
+  barcodeDetectedOk,
+  barcodeLegibleOk,
+  barcodeOk,
   validationSummary,
 }: Readonly<{
-  orderOK: boolean;
-  batchOK: boolean;
-  expiryOK: boolean;
-  barcodeDetectedOK: boolean;
-  barcodeLegibleOK: boolean;
-  barcodeOK: boolean;
+  lotOk: boolean;
+  expDateOk: boolean;
+  packDateOk: boolean;
+  barcodeDetectedOk: boolean;
+  barcodeLegibleOk: boolean;
+  barcodeOk: boolean;
   validationSummary: boolean;
 }>) {
   const shieldIcon = validationSummary ? (
@@ -76,18 +76,15 @@ export default function ValidationSection({
             <div className="flex items-center gap-2">
               <dt className="text-sm text-slate-600">Lote</dt>
               <dd>
-                <BoolBadge
-                  value={batchOK}
-                  text={batchOK ? "Correcto" : "Error"}
-                />
+                <BoolBadge value={lotOk} text={lotOk ? "Correcto" : "Error"} />
               </dd>
             </div>
             <div className="flex items-center gap-2">
               <dt className="text-sm text-slate-600">Vencimiento</dt>
               <dd>
                 <BoolBadge
-                  value={expiryOK}
-                  text={expiryOK ? "Correcto" : "Error"}
+                  value={expDateOk}
+                  text={expDateOk ? "Correcto" : "Error"}
                 />
               </dd>
             </div>
@@ -95,8 +92,8 @@ export default function ValidationSection({
               <dt className="text-sm text-slate-600">Orden</dt>
               <dd>
                 <BoolBadge
-                  value={orderOK}
-                  text={orderOK ? "Correcto" : "Error"}
+                  value={packDateOk}
+                  text={packDateOk ? "Correcto" : "Error"}
                 />
               </dd>
             </div>
@@ -119,19 +116,19 @@ export default function ValidationSection({
             <div className="flex items-center gap-2">
               <dt className="text-sm text-slate-600">Detectado</dt>
               <dd>
-                <BoolBadge value={barcodeDetectedOK} />
+                <BoolBadge value={barcodeDetectedOk} />
               </dd>
             </div>
             <div className="flex items-center gap-2">
               <dt className="text-sm text-slate-600">Legible</dt>
               <dd>
-                <BoolBadge value={barcodeLegibleOK} />
+                <BoolBadge value={barcodeLegibleOk} />
               </dd>
             </div>
             <div className="flex items-center gap-2">
               <dt className="text-sm text-slate-600">Válido</dt>
               <dd>
-                <BoolBadge value={barcodeOK} />
+                <BoolBadge value={barcodeOk} />
               </dd>
             </div>
           </dl>

@@ -5,7 +5,7 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 ## Características principales
 
 - **Experiencia guiada en dos pasos**: pestañas de _Configuración_ y _Procesamiento_ que ordenan el flujo operativo y bloquean acciones cuando faltan datos obligatorios.
-- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de medicamento y completar automáticamente lote, orden y vencimiento.
+- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de medicamento y completar automáticamente lote, vencimiento y fecha de envasado.
 - **Múltiples fuentes de imagen**: subida de archivos JPG/PNG o captura directa desde la cámara del navegador con compresión previa para optimizar el envío.
 - **Previsualización y seguimiento**: paneles laterales reutilizables que muestran los datos configurados, la miniatura de la imagen actual y contadores de inspecciones OK/Rechazo.
 - **Orquestación en Azure**: la UI invoca un endpoint Next.js que solicita URLs SAS, sube la imagen al contenedor de entrada, dispara la Durable Function y espera el resultado final.

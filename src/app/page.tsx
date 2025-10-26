@@ -14,15 +14,15 @@ import {
 
 export default function Page() {
   const imagePreview = useAppStore((s) => s.imagePreview);
-  const expected = useAppStore((s) => s.expected);
+  const expectedData = useAppStore((s) => s.expectedData);
   const loading = useAppStore((s) => s.loading);
 
   const isDisabledConfig = loading === true;
   const hasAllExpectedValues =
-    !!expected.itemDesc &&
-    !!expected.batch &&
-    !!expected.order &&
-    !!expected.expiry;
+    !!expectedData.prodDesc &&
+    !!expectedData.lot &&
+    !!expectedData.packDate &&
+    !!expectedData.expDate;
   const isDisabledProcessing = !imagePreview || !hasAllExpectedValues;
 
   return (

@@ -1,5 +1,5 @@
 {
-  "item": [
+  "prodCode": [
     {
       "id": 2,
       "value": "DEBLAX-6CA7"
@@ -33,7 +33,7 @@
       "value": "TIMASFXR-4635"
     }
   ],
-  "itemDesc": [
+  "prodDesc": [
     {
       "id": 2,
       "value": "DEBLAX"
@@ -67,7 +67,7 @@
       "value": "TIM ASF XR"
     }
   ],
-  "batch": [
+  "lot": [
     {
       "id": 2,
       "value": "L 100648"
@@ -101,7 +101,7 @@
       "value": "LOTE 100740"
     }
   ],
-  "expiry": [
+  "expDate": [
     {
       "id": 2,
       "value": "V JUL/2027"
@@ -135,7 +135,7 @@
       "value": "CAD DIC/2026"
     }
   ],
-  "order": [
+  "packDate": [
     {
       "id": 2,
       "value": "F JUL/2025"

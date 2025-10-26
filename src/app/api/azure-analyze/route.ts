@@ -11,7 +11,7 @@ import {
 } from "@/server/azure";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import type { Expected } from "@/lib/store";
+import type { ExpectedData } from "@/lib/store";
 import { RequestContextUser } from "@/lib/auth-store";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
@@ -45,11 +45,11 @@ function toMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
-function parseExpectedFromForm(form: FormData): Expected | undefined {
+function parseExpectedFromForm(form: FormData): ExpectedData | undefined {
   try {
     const expectedRaw = form.get("expected");
     if (typeof expectedRaw === "string" && expectedRaw.trim().length > 0) {
-      return JSON.parse(expectedRaw) as Expected;
+      return JSON.parse(expectedRaw) as ExpectedData;
     }
   } catch (e) {
     console.warn("Failed to parse expected from form-data:", e);
@@ -102,7 +102,7 @@ async function startPipelineOrFail(params: {
   functionKey: string;
   container: string;
   blobName: string;
-  expectedData: Expected;
+  expectedData: ExpectedData;
   requestContext: RequestContextUser;
 }): Promise<string> {
   try {

@@ -11,11 +11,11 @@ model Processing {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   unit        String
-  batchOCR    String?
-  expiryOCR   String?
-  orderOCR    String?
+  lot         String?
+  exp_date    String?
+  pack_date   String?
   status      Status   @default(OK)
-  errors      String?  // Serialized JSON with failure details (ROI, ERP, etc.)
+  errors      String?  // Serialized JSON with failure details
   imageURL    String?  // Where the image is stored (later: Blob Storage)
   // Relationship with detected ROIs
   rois        ROI[]
@@ -24,7 +24,7 @@ model Processing {
 model ROI {
   id               String   @id @default(cuid())
   processingId     String
-  type             String   // {batch|expiry|order|barcode|datamatrix|legend}
+  type             String   // {lot|expiry date|pack date|barcode|datamatrix|legend}
   valueRead        String?
   isValid          Boolean  @default(false)
   bbox             String?  // "[x,y,w,h]" or JSON

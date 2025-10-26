@@ -1,4 +1,4 @@
-import type { Expected } from "@/lib/store";
+import type { ExpectedData } from "@/lib/store";
 import type { RequestContext } from "@/lib/auth-store";
 
 /**
@@ -9,17 +9,17 @@ import type { RequestContext } from "@/lib/auth-store";
  */
 export function buildAnalyzeFormData(
   file: File,
-  expected: Expected,
+  expectedData: ExpectedData,
   requestContext?: RequestContext
 ): FormData {
   const form = new FormData();
   form.append("file", file);
 
   try {
-    form.append("expected", JSON.stringify(expected));
+    form.append("expectedData", JSON.stringify(expectedData));
   } catch {
     // If serialization fails, send empty object (backend should handle defaulting)
-    form.append("expected", "{}");
+    form.append("expectedData", "{}");
   }
 
   if (requestContext) {
