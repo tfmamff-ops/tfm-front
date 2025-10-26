@@ -53,7 +53,7 @@ export async function GET() {
       packDate: packDate,
     });
   } catch (e) {
-    console.error("Error in /api/expected:", e);
+    console.error("Error in /api/expectedData:", e);
     return NextResponse.json(
       { error: "No se pudo obtener expectedData" },
       { status: 500 }

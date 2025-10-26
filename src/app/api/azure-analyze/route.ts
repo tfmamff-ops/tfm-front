@@ -45,14 +45,14 @@ function toMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
-function parseExpectedFromForm(form: FormData): ExpectedData | undefined {
+function parseExpectedDataFromForm(form: FormData): ExpectedData | undefined {
   try {
-    const expectedRaw = form.get("expected");
+    const expectedRaw = form.get("expectedData");
     if (typeof expectedRaw === "string" && expectedRaw.trim().length > 0) {
       return JSON.parse(expectedRaw) as ExpectedData;
     }
   } catch (e) {
-    console.warn("Failed to parse expected from form-data:", e);
+    console.warn("Failed to parse expected data from form-data:", e);
   }
   return undefined;
 }
@@ -187,11 +187,14 @@ export async function POST(req: NextRequest) {
     await uploadToSasOrFail(sasUrl, arrayBuf);
 
     // Start the pipeline with the blob reference, expected data and request context
-    const expectedParsed = parseExpectedFromForm(form);
+    const expectedDataParsed = parseExpectedDataFromForm(form);
     const requestContextParsed = parseRequestContextFromForm(form);
-    if (expectedParsed === undefined || requestContextParsed === undefined) {
+    if (
+      expectedDataParsed === undefined ||
+      requestContextParsed === undefined
+    ) {
       return NextResponse.json(
-        { error: "Missing expected payload or request context" },
+        { error: "Missing expected data payload or request context payload" },
         { status: 400 }
       );
     }
@@ -200,7 +203,7 @@ export async function POST(req: NextRequest) {
       functionKey: KEY_START,
       container: "input",
       blobName,
-      expectedData: expectedParsed,
+      expectedData: expectedDataParsed,
       requestContext: requestContextParsed,
     });
 

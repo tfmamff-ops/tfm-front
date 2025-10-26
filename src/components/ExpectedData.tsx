@@ -30,7 +30,7 @@ export default function ExpectedData() {
       return;
     }
 
-    fetch("/api/expected")
+    fetch("/api/expectedData")
       .then((r) => r.json())
       .then((resp) => {
         setErpResp(resp);
@@ -42,7 +42,7 @@ export default function ExpectedData() {
       });
   }, [isErpRespLoaded, setErpResp, setIsErpRespLoaded]);
 
-  // Note: We keep UI simple with a single combo for Medicamento and details below.
+  // Note: We keep UI simple with a single combo and details below.
 
   // Get data from store or use empty default
   const data = erpResp || {
@@ -78,7 +78,7 @@ export default function ExpectedData() {
             }}
           >
             <SelectTrigger className="w-full mt-1">
-              <SelectValue placeholder="Seleccione un medicamento" />
+              <SelectValue placeholder="Seleccione un producto" />
             </SelectTrigger>
             <SelectContent
               align="start"

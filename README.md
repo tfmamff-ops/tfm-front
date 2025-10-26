@@ -5,7 +5,7 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 ## Características principales
 
 - **Experiencia guiada en dos pasos**: pestañas de _Configuración_ y _Procesamiento_ que ordenan el flujo operativo y bloquean acciones cuando faltan datos obligatorios.
-- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de medicamento y completar automáticamente lote, vencimiento y fecha de envasado.
+- **Integración con ERP**: lectura de un CSV alojado en Azure Blob Storage para poblar el selector de productos y completar automáticamente lote, vencimiento y fecha de envasado.
 - **Múltiples fuentes de imagen**: subida de archivos JPG/PNG o captura directa desde la cámara del navegador con compresión previa para optimizar el envío.
 - **Previsualización y seguimiento**: paneles laterales reutilizables que muestran los datos configurados, la miniatura de la imagen actual y contadores de inspecciones OK/Rechazo.
 - **Orquestación en Azure**: la UI invoca un endpoint Next.js que solicita URLs SAS, sube la imagen al contenedor de entrada, dispara la Durable Function y espera el resultado final.
@@ -18,11 +18,11 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 - **Estado global**: Zustand con middleware de persistencia y _devtools_ separados para el contexto de autenticación y el estado operativo de la inspección.
 - **UI**: Tailwind CSS 4, componentes Radix UI (tabs, selects, hover cards) y librerías auxiliares como `lucide-react`, `react-webcam` y `sonner`.
 - **Capa de servidor**: rutas API en `/app/api` para comunicarse con Azure Functions y normalizar las respuestas del pipeline; utilidades server-only en `src/server/`.
-- **Datos**: Prisma Client como ORM (modelo `Processing` + `ROI`) y mocks locales vía `json-server` para el endpoint `/api/expected` cuando no se dispone del entorno de nube.
+- **Datos**: Prisma Client como ORM (modelo `Processing` + `ROI`) y mocks locales vía `json-server` para el endpoint `/api/expectedData` cuando no se dispone del entorno de nube.
 
 ## Flujo funcional
 
-1. La vista de Configuración descarga el CSV del ERP y permite seleccionar un medicamento para completar los valores esperados.
+1. La vista de Configuración descarga el CSV del ERP y permite seleccionar un producto para completar los valores esperados.
 2. El operador adjunta una imagen o toma una captura; la aplicación genera una URL de previsualización y almacena metadatos en el store.
 3. Al presionar **Procesar**, se construye un `FormData` con la imagen, los datos esperados y el contexto del usuario.
 4. El endpoint `/api/azure-analyze` solicita una SAS de carga, sube el archivo, inicia la Durable Function y comienza a consultar su estado.

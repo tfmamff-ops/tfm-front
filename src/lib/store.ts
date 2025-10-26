@@ -481,7 +481,7 @@ export const useAppStore = create<AppState>()(
         storage: createJSONStorage(() => getStorage()),
         // Persist only serializable slices
         partialize: (s) => ({
-          expected: s.expectedData,
+          expectedData: s.expectedData,
           counters: s.counters,
           imageSource: s.imageSource,
           erpResp: s.erpResp,
