@@ -83,7 +83,7 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 
 ## Estructura de carpetas
 
-```
+```txt
 ├── src
 │   ├── app/                # App Router, layout raíz y rutas API
 │   ├── components/         # Componentes UI (layout, uploader, procesamiento)
