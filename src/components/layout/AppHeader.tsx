@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
@@ -78,13 +79,7 @@ export default function AppHeader() {
                 onClick={() => setOpen(!open)}
                 className="inline-flex items-center gap-2 rounded-full border px-2.5 py-1 hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
               >
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">
-                  {user?.name
-                    ?.split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()}
-                </span>
+                <UserAvatar name={user?.name} imageUrl={undefined} size={24} />
                 <span className="text-sm sm:text-base font-medium hidden sm:inline">
                   {user?.name}
                 </span>
