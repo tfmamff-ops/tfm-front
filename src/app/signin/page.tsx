@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 
 /**
@@ -53,9 +54,18 @@ export default function SignInPage() {
         <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white/80 dark:bg-emerald-950/40 backdrop-blur px-6 py-8 shadow-lg shadow-emerald-200/40 dark:shadow-emerald-900/30">
           <div className="space-y-4">
             {!manualMode && !error && (
-              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                Redirigiendo…
-              </p>
+              <output
+                className="flex items-center justify-center gap-2"
+                aria-live="polite"
+              >
+                <Loader2
+                  className="h-5 w-5 animate-spin text-emerald-600 dark:text-emerald-300"
+                  aria-hidden="true"
+                />
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+                  Redirigiendo…
+                </span>
+              </output>
             )}
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
