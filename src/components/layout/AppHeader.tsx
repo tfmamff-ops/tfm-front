@@ -6,7 +6,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
-import { useAuthStore, clearPersistedAuth } from "@/lib/auth-store";
+import { useAuthStore } from "@/lib/auth-store";
 import {
   Globe,
   Mail,
@@ -21,7 +21,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
-import { clearPersistedStore } from "@/lib/store";
 
 export default function AppHeader() {
   const requestContext = useAuthStore((s) => s.requestContext);
@@ -186,8 +185,6 @@ export default function AppHeader() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    clearPersistedAuth();
-                    clearPersistedStore();
                     signOut({ callbackUrl: "/api/auth/b2c-logout" });
                   }}
                   className="gap-1.5"
