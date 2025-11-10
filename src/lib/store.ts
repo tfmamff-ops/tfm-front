@@ -463,6 +463,7 @@ export const useAppStore = create<AppState>()(
               file: undefined,
               filename: undefined,
               expectedData: {},
+              selectedErpId: undefined,
               counters: INITIAL_COUNTERS,
               ocrResult: INITIAL_OCR_RESULT,
               error: undefined,
