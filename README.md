@@ -246,7 +246,9 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 │   ├── components/         # Componentes UI (layout, uploader, procesamiento)
 │   ├── lib/                # Stores, utilidades de payload/imagen/OCR
 │   ├── server/             # Funciones server-only (Azure, Prisma)
-│   └── styles/             # Estilos globales
+│   ├── styles/             # Estilos globales
+│   ├── types/              # Tipos y augmentations (NextAuth, etc.)
+│   └── middleware.ts       # Middleware de autenticación y reenvío de la IP del cliente
 ├── prisma/                 # Esquema y migraciones del ORM
 ├── mocks/                  # JSON Server para datos ERP simulados
 ├── docker/                 # Docker Compose del entorno local
