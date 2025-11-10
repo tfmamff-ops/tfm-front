@@ -31,6 +31,74 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 5. Una vez completado el pipeline, la API devuelve enlaces temporales a las imágenes procesadas, el resultado OCR, el estado del código de barras y las validaciones.
 6. El store actualiza contadores, presenta los overlays y muestra mensajes de error en caso de fallos en cualquier etapa.
 
+## Autenticación (Azure AD B2C + NextAuth)
+
+La aplicación protege todas las rutas (páginas y `/api`) y fuerza inicio de sesión automático usando **Azure AD B2C** y **NextAuth**.
+
+### Resumen del flujo
+
+1. El visitante accede a `/` sin sesión.
+2. El `middleware` (`src/middleware.ts`) detecta ausencia de la cookie `next-auth.session-token` y redirige a `/signin` con `callbackUrl`.
+3. La página `/signin` dispara `signIn("azure-ad-b2c", { callbackUrl: "/" })`.
+4. Azure AD B2C autentica y devuelve al callback de NextAuth (`/api/auth/callback/azure-ad-b2c`).
+5. NextAuth crea la sesión y coloca la cookie; el usuario es redirigido a `/`.
+6. `AuthBootstrap` lee la sesión mediante `useSession()` y traduce los datos a `requestContext` vía `sessionToRequestContext`.
+7. Las APIs (`/api/azure-analyze`, `/api/expectedData`) validan de nuevo la sesión en servidor con `getServerSession(authOptions)` (defensa en profundidad).
+
+### Mapeo de claims
+
+La función `profile` del proveedor B2C:
+
+* Construye `email` con `emails[0]` ó `email` si existe.
+* Genera `name` usando `name` o `given_name + family_name`.
+* Conserva `sub` como `user.id` y `jobTitle` se normaliza a `user.role` en `jwt`/`session` callbacks.
+
+### Helper de sesión
+
+`sessionToRequestContext` (en `src/lib/session-to-context.ts`) crea un objeto estable con:
+
+* `user: { id, name, email?, role }`
+* `client: { appVersion, ip, userAgent }`
+
+### Rutas públicas
+
+Sólo se permiten sin sesión:
+`/signin`, `/api/auth/*`, `/_next/*`, `/images/*`, `/public/*`, `favicon.ico`, `robots.txt`, `sitemap.xml`.
+
+### Añadir nuevos claims
+
+1. Activar el claim en el User Flow de Azure AD B2C (Application claims).
+2. Si se requiere durante el registro, habilitarlo como *User attribute collected*.
+3. Extender el callback `jwt` y/o `profile` para introducir el claim en el token.
+4. Actualizar `sessionToRequestContext` si el claim se usará en el store.
+
+### Variables adicionales de Auth
+
+| Variable | Uso |
+|---------|-----|
+| `AZURE_AD_B2C_TENANT_NAME` | Nombre del tenant B2C (sin `.onmicrosoft.com`). |
+| `AZURE_AD_B2C_CLIENT_ID` | ID de la aplicación registrada. |
+| `AZURE_AD_B2C_CLIENT_SECRET` | Secreto del cliente (rotar regularmente). |
+| `AZURE_AD_B2C_PRIMARY_USER_FLOW` | User Flow principal (ej. `B2C_1_signupsigninflow`). |
+| `NEXTAUTH_URL` | URL base pública del frontend. |
+| `NEXTAUTH_SECRET` | Secreto para firmar JWT/estado. |
+
+### Rotación de secretos
+
+1. Generar nuevo Client Secret en la App Registration de B2C.
+2. Actualizar `.env.local` con el valor y nunca commitear.
+3. Regenerar `NEXTAUTH_SECRET` (por ejemplo `openssl rand -hex 32`).
+4. Reiniciar la aplicación.
+
+### Errores conocidos
+
+* `OAUTH_PARSE_PROFILE_ERROR` ocurría cuando faltaba el claim `emails`; se mitigó con `profile()` defensivo.
+* Loops en `/signin` se evitan forzando siempre `callbackUrl: '/'`.
+
+### Defensa en profundidad
+
+El middleware impide acceso sin cookie, y las APIs revalidan sesión con `getServerSession`. Esto cubre escenarios donde una ruta pública pudiera intentar invocar directamente un handler.
+
 ## Requisitos previos
 
 * Node.js 20 o superior
@@ -171,5 +239,5 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 
 * El store principal (`useAppStore`) persiste selectivamente datos sensibles en `sessionStorage` y limpia recursos (Object URLs) al cambiar la imagen.
 * Las llamadas a Azure están encapsuladas en `src/server/azure.ts`, facilitando el testeo con *stubs* o servicios alternativos.
-* El layout raíz monta un *Hydration Gate* y `AuthBootstrap` para preparar un contexto de usuario temporal hasta integrar un proveedor real.
+* El layout raíz monta un *Hydration Gate* y `AuthBootstrap` para hidratar el contexto de usuario autenticado.
 * Se fomenta el diseño responsivo: los paneles laterales son *sticky* en escritorio y se apilan en pantallas pequeñas.

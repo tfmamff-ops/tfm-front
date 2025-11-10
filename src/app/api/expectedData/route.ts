@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSasUrlForRead } from "@/server/azure";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { parse } from "csv-parse/sync";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
@@ -9,6 +11,11 @@ const BLOB_ERP_QUAD = process.env.BLOB_ERP_QUAD!;
 
 export async function GET() {
   try {
+    // Enforce authentication (middleware already does, but defense in depth)
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     // 1. Get SAS URL for the CSV
     const sasUrl = await getSasUrlForRead({
       host: HOST,

@@ -10,6 +10,8 @@ import {
   uploadBlobToSasUrl,
 } from "@/server/azure";
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { randomUUID } from "node:crypto";
 import type { ExpectedData } from "@/lib/store";
 import { RequestContextUser } from "@/lib/auth-store";
@@ -158,6 +160,11 @@ async function getReadSasOrWarn(
 
 export async function POST(req: NextRequest) {
   try {
+    // Enforce authentication server-side (defense in depth)
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     // Read file from form-data
     const form = await req.formData();
     const file = form.get("file") as File | null;
@@ -189,22 +196,26 @@ export async function POST(req: NextRequest) {
     // Start the pipeline with the blob reference, expected data and request context
     const expectedDataParsed = parseExpectedDataFromForm(form);
     const requestContextParsed = parseRequestContextFromForm(form);
-    if (
-      expectedDataParsed === undefined ||
-      requestContextParsed === undefined
-    ) {
+    if (expectedDataParsed === undefined) {
       return NextResponse.json(
-        { error: "Missing expected data payload or request context payload" },
+        { error: "Missing expected data payload" },
         { status: 400 }
       );
     }
+    // Prefer authenticated session's user context if present
+    const effectiveRequestContext = requestContextParsed || {
+      id: session.user.id,
+      name: session.user.name || "",
+      email: session.user.email || undefined,
+      role: session.user.role,
+    };
     const statusUrl = await startPipelineOrFail({
       host: HOST,
       functionKey: KEY_START,
       container: "input",
       blobName,
       expectedData: expectedDataParsed,
-      requestContext: requestContextParsed,
+      requestContext: effectiveRequestContext,
     });
 
     // Poll until Completed (or timeout)
