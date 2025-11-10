@@ -6,7 +6,7 @@ interface AzureB2CProfile {
   displayName?: string;
   email?: string;
   jobTitle?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Normalize a job title string into a simple role slug.
@@ -34,21 +34,24 @@ export const authOptions: NextAuthOptions = {
       // in the ID token depending on configuration. Avoid reading
       // `emails[0]` blindly and build a minimal profile object.
       profile(profile) {
-        const p = profile as Record<string, any>;
+        const p = profile as { [key: string]: unknown };
 
-        // Prefer `emails[0]`, fallback to `email`, else null
-        const email = Array.isArray(p.emails) ? p.emails[0] : p.email ?? null;
+        const email = Array.isArray(p["emails"])
+          ? (p["emails"] as string[])[0]
+          : (p["email"] as string | null) ?? null;
 
-        // Prefer `name`, else compose from given/family name, else null
-        const compositeName = [p.given_name, p.family_name]
+        const compositeName = [p["given_name"], p["family_name"]]
           .filter(Boolean)
+          .map(String)
           .join(" ")
           .trim();
 
-        const name = p.name ?? (compositeName.length ? compositeName : null);
+        const name =
+          (p["name"] as string | undefined) ??
+          (compositeName.length ? compositeName : null);
 
         return {
-          id: p.sub,
+          id: String(p["sub"]),
           name,
           email,
           image: null,

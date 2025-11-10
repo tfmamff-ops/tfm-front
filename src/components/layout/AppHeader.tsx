@@ -7,10 +7,20 @@ import {
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/lib/auth-store";
-import { Globe, Mail, MapPin, Monitor, Shield, User } from "lucide-react";
+import {
+  Globe,
+  Mail,
+  MapPin,
+  Monitor,
+  Shield,
+  User,
+  LogOut,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 export default function AppHeader() {
   const requestContext = useAuthStore((s) => s.requestContext);
@@ -168,6 +178,20 @@ export default function AppHeader() {
                     </div>
                   )}
                 </dl>
+              </div>
+              <Separator />
+              <div className="flex justify-end pt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    signOut({ callbackUrl: "/api/auth/b2c-logout" })
+                  }
+                  className="gap-1.5"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
               </div>
             </div>
           </HoverCardContent>

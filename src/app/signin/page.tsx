@@ -22,7 +22,7 @@ export default function SignInPage() {
       setManualMode(true);
     }, 3000);
 
-    // Force callbackUrl to root to avoid nesting /signin?callbackUrl=/signin loops
+    // Auto sign-in. Add prompt=login only if returning from explicit logout? Here only for non-manual.
     signIn("azure-ad-b2c", { callbackUrl: "/" }).catch((e) => {
       console.error("Auto sign-in failed", e);
       setError("Auto sign-in failed. Please use the button below.");
