@@ -27,7 +27,38 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_B2C_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_B2C_CLIENT_SECRET!,
       primaryUserFlow: process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW!,
-      // authorization: { params: { scope: "openid profile email offline_access" } },
+      // Request basic OIDC scopes so we can receive standard claims
+      authorization: { params: { scope: "openid profile email" } },
+
+      // Defensive profile mapping: Azure B2C might not include `emails`
+      // in the ID token depending on configuration. Avoid reading
+      // `emails[0]` blindly and build a minimal profile object.
+      profile(profile) {
+        const p = profile as Record<string, any>;
+
+        // Prefer `emails[0]`, fallback to `email`, else null
+        const email = Array.isArray(p.emails) ? p.emails[0] : p.email ?? null;
+
+        // Prefer `name`, else compose from given/family name, else null
+        const compositeName = [p.given_name, p.family_name]
+          .filter(Boolean)
+          .join(" ")
+          .trim();
+
+        const name = p.name ?? (compositeName.length ? compositeName : null);
+
+        return {
+          id: p.sub,
+          name,
+          email,
+          image: null,
+        } as {
+          id: string;
+          name: string | null;
+          email: string | null;
+          image: string | null;
+        };
+      },
     }),
   ],
   session: {

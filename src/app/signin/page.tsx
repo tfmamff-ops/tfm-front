@@ -22,7 +22,8 @@ export default function SignInPage() {
       setManualMode(true);
     }, 3000);
 
-    signIn("azure-ad-b2c").catch((e) => {
+    // Force callbackUrl to root to avoid nesting /signin?callbackUrl=/signin loops
+    signIn("azure-ad-b2c", { callbackUrl: "/" }).catch((e) => {
       console.error("Auto sign-in failed", e);
       setError("Auto sign-in failed. Please use the button below.");
       setManualMode(true);
@@ -46,7 +47,7 @@ export default function SignInPage() {
         {manualMode && (
           <div className="space-y-3">
             <button
-              onClick={() => signIn("azure-ad-b2c")}
+              onClick={() => signIn("azure-ad-b2c", { callbackUrl: "/" })}
               className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               Ingresar manualmente

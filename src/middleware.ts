@@ -1,4 +1,4 @@
-// middleware.ts
+// src/middleware.ts
 // Extremely simplified auth gate: if user lacks a NextAuth session cookie,
 // redirect to /signin. Adds an X-Auth-Middleware header for manual debugging.
 import { NextResponse } from "next/server";
@@ -41,7 +41,7 @@ export function middleware(req: NextRequest) {
   return res;
 }
 
-// Apply middleware to all paths; internal filtering happens above.
+// Apply middleware to all paths; filtering happens above.
 export const config = {
   matcher: ["/:path*"],
 };
