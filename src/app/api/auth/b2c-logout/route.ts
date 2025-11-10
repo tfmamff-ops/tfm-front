@@ -10,7 +10,7 @@ export async function GET() {
   const tenant = process.env.AZURE_AD_B2C_TENANT_NAME;
   const policy = process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW;
   const clientId = process.env.AZURE_AD_B2C_CLIENT_ID;
-  const nextAuthUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const nextAuthUrl = process.env.NEXTAUTH_URL;
 
   if (!tenant || !policy || !clientId) {
     return NextResponse.json(

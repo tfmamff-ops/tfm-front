@@ -29,8 +29,8 @@ export default function ExpectedData() {
     if (isErpRespLoaded) {
       return;
     }
-    // Mock API endpoint: http://localhost:4000/api/expectedDataMock
-    // Real API endpoint: http://localhost:3000/api/expectedData
+    // Mock API endpoint: http://server:4000/api/expectedDataMock
+    // Real API endpoint: http://server:3000/api/expectedData
     // See mocks/routes.json
     fetch("/api/expectedData")
       .then((r) => r.json())
