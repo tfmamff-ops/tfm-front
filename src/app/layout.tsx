@@ -4,7 +4,6 @@ import "../styles/globals.css";
 import HydrationGate from "@/components/HydrationGate";
 import AppSkeleton from "@/components/AppSkeleton";
 import HeaderIfAllowed from "@/components/layout/HeaderIfAllowed";
-import AppFooter from "@/components/layout/AppFooter";
 import AuthBootstrap from "@/components/AuthBootstrap";
 import AuthSessionProvider from "@/components/AuthSessionProvider";
 import MainContainer from "@/components/layout/MainContainer";
