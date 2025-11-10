@@ -1,4 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
+import { headers, cookies } from "next/headers";
 import AzureADB2CProvider from "next-auth/providers/azure-ad-b2c";
 
 interface AzureB2CProfile {
@@ -73,6 +74,24 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // Runs when token is created or updated.
     async jwt({ token, profile }) {
+      // Prefer cookie set by middleware; fallback to headers if absent (covers first auth hit)
+      try {
+        if (!token.clientIp) {
+          const c = await cookies();
+          const fromCookie = c.get("client-ip")?.value;
+          if (fromCookie) token.clientIp = fromCookie;
+        }
+        if (!token.clientIp) {
+          const h = await headers();
+          const fromHeader =
+            h.get("x-client-ip") ||
+            h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+            h.get("x-real-ip") ||
+            h.get("x-vercel-forwarded-for") ||
+            undefined;
+          if (fromHeader) token.clientIp = fromHeader;
+        }
+      } catch {}
       if (profile) {
         const p = profile as AzureB2CProfile;
         token.name = p.name || p.displayName || token.name;
@@ -86,6 +105,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.sub as string;
         session.user.role = normalizeJobTitle(token.jobTitle || null);
+        if (token.clientIp) session.user.ip = token.clientIp;
       }
       return session;
     },

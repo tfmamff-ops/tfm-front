@@ -6,6 +6,34 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Extract client IP from common headers or req.ip (platform dependent)
+  const fwd = req.headers.get("x-forwarded-for");
+  const real = req.headers.get("x-real-ip");
+  const vercel = req.headers.get("x-vercel-forwarded-for");
+  const clientIp =
+    (fwd ? fwd.split(",")[0].trim() : undefined) ||
+    real ||
+    vercel ||
+    (req as unknown as { ip?: string }).ip ||
+    undefined;
+
+  // Helper to forward request headers downstream (so handlers can read x-client-ip)
+  const passThrough = (tag: string) => {
+    const headers = new Headers(req.headers);
+    if (clientIp) headers.set("x-client-ip", clientIp);
+    // Also set a cookie so auth callbacks can read it reliably
+    const res = NextResponse.next({ request: { headers } });
+    if (clientIp) {
+      res.cookies.set("client-ip", clientIp, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+      });
+    }
+    res.headers.set("X-Auth-Middleware", tag);
+    return res;
+  };
+
   // Allow public/unprotected routes
   if (
     pathname === "/signin" ||
@@ -20,9 +48,7 @@ export function middleware(req: NextRequest) {
     pathname.endsWith(".png") ||
     pathname.endsWith(".jpg")
   ) {
-    const res = NextResponse.next();
-    res.headers.set("X-Auth-Middleware", "public-pass");
-    return res;
+    return passThrough("public-pass");
   }
 
   // Detect session cookie names (standard + secure prefix variant)
@@ -38,9 +64,7 @@ export function middleware(req: NextRequest) {
     return res;
   }
 
-  const res = NextResponse.next();
-  res.headers.set("X-Auth-Middleware", "auth-pass");
-  return res;
+  return passThrough("auth-pass");
 }
 
 // Apply middleware to all paths; filtering happens above.

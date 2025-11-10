@@ -9,6 +9,7 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       role: string;
+      ip?: string; // Anonymized client IP (a.b.c.xxx for IPv4)
     };
   }
 
@@ -20,5 +21,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     jobTitle?: string | null;
+    clientIp?: string; // Anonymized client IP stored in token
   }
 }

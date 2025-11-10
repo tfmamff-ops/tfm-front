@@ -16,8 +16,8 @@ export function sessionToRequestContext(
     },
     client: {
       appVersion: "web-1.0.0",
-      // IP can be enriched later from server-side headers
-      ip: "127.0.0.1",
+      // Prefer server-enriched IP from session (anonymized)
+      ip: session.user.ip || undefined,
       userAgent:
         typeof navigator === "undefined" ? undefined : navigator.userAgent,
     },
