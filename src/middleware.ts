@@ -17,7 +17,9 @@ export function middleware(req: NextRequest) {
     pathname === "/favicon.ico" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
-    pathname === "/logo.svg"
+    pathname.endsWith(".svg") ||
+    pathname.endsWith(".png") ||
+    pathname.endsWith(".jpg")
   ) {
     const res = NextResponse.next();
     res.headers.set("X-Auth-Middleware", "public-pass");
