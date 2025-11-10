@@ -8,6 +8,7 @@ import AppFooter from "@/components/layout/AppFooter";
 import AuthBootstrap from "@/components/AuthBootstrap";
 import AuthSessionProvider from "@/components/AuthSessionProvider";
 import MainContainer from "@/components/layout/MainContainer";
+import FooterIfAllowed from "@/components/layout/FooterIfAllowed";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -54,7 +55,8 @@ export default function RootLayout({
           </AuthSessionProvider>
         </HydrationGate>
 
-        <AppFooter />
+        {/* Footer hidden on /signin */}
+        <FooterIfAllowed />
       </body>
     </html>
   );

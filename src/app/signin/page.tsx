@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 /**
  * Auto sign-in page that immediately triggers Azure AD B2C login.
@@ -34,59 +36,64 @@ export default function SignInPage() {
   }, []);
 
   return (
-    <div className="relative isolate min-h-[60vh] flex flex-col items-center justify-center py-16">
-      {/* Decorative background */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-100 via-white to-emerald-50 dark:from-emerald-950 dark:via-neutral-950 dark:to-emerald-900"
-      />
-      <div className="absolute -z-10 top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-200/40 blur-3xl opacity-60 dark:bg-emerald-800/30" />
+    <div className="relative isolate min-h-dvh flex flex-col items-center justify-center py-16">
+      <div className="absolute -z-10 top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#8bd3b1]/20 dark:bg-[#6ea48a]/20 blur-3xl" />
       <div className="mx-auto w-full max-w-md space-y-8 text-center">
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
             Verificación Automática
           </h1>
           <p className="text-sm text-muted-foreground">
-            Autenticando con Azure AD B2C. Este paso asegura acceso seguro al
-            pipeline de procesamiento.
+            Autenticando usuario de forma segura a través de Azure AD B2C.
           </p>
         </div>
-        <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white/80 dark:bg-emerald-950/40 backdrop-blur px-6 py-8 shadow-lg shadow-emerald-200/40 dark:shadow-emerald-900/30">
-          <div className="space-y-4">
-            {!manualMode && !error && (
-              <output
-                className="flex items-center justify-center gap-2"
-                aria-live="polite"
-              >
-                <Loader2
-                  className="h-5 w-5 animate-spin text-emerald-600 dark:text-emerald-300"
-                  aria-hidden="true"
-                />
-                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                  Redirigiendo…
-                </span>
-              </output>
-            )}
-            {error && (
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-            )}
-            {manualMode && (
-              <div className="space-y-3">
-                <button
-                  onClick={() => signIn("azure-ad-b2c", { callbackUrl: "/" })}
-                  className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+        {/* Outer grid square (smaller, centered) */}
+        <div className="mx-auto w-full max-w-sm">
+          {/* Inner white card (smaller) */}
+          <div className="relative m-4 rounded-xl border border-emerald-200/60 dark:border-white/10 bg-white/90 dark:bg-emerald-950/60 px-6 py-5 shadow-sm">
+            <div className="flex flex-col items-center gap-3">
+              <Image
+                src="/logo.svg"
+                alt="Logo"
+                width={44}
+                height={44}
+                className="rounded-full"
+              />
+              {!manualMode && !error && (
+                <output
+                  className="flex items-center justify-center gap-2"
+                  aria-live="polite"
                 >
-                  Ingresar manualmente
-                </button>
-                <p className="text-xs text-muted-foreground">
-                  Si no ocurre nada, haz clic en el botón para iniciar sesión.
+                  <Loader2
+                    className="h-5 w-5 animate-spin text-emerald-600 dark:text-emerald-300"
+                    aria-hidden="true"
+                  />
+                  <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+                    Redirigiendo…
+                  </span>
+                </output>
+              )}
+              {error && (
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
                 </p>
-              </div>
-            )}
+              )}
+              {manualMode && (
+                <div className="space-y-2">
+                  <Button
+                    type="button"
+                    onClick={() => signIn("azure-ad-b2c", { callbackUrl: "/" })}
+                  >
+                    Ingresar manualmente
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <p className="text-[11px] text-muted-foreground">
-          © {new Date().getFullYear()} Rotulado. Seguridad y trazabilidad.
+        <p className="text-[11px] text-muted-foreground flex flex-col items-center leading-tight">
+          <span>© {new Date().getFullYear()} AGMCorp & Urbit</span>
+          <span>Seguridad y trazabilidad</span>
         </p>
       </div>
     </div>
