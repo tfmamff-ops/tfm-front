@@ -1,5 +1,6 @@
 // src/types/next-auth.d.ts
-import NextAuth from "next-auth";
+// Remove unused concrete import to avoid lint warning; module augmentation does not require it.
+import "next-auth";
 
 declare module "next-auth" {
   interface Session {

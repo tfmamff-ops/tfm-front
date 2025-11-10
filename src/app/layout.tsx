@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   title: "Rotulado",
   description: "Verificación Automática de Rotulado",
   icons: { icon: "/favicon.ico" },
+};
+
+// Next.js 15: themeColor must live in a separate viewport export instead of metadata
+export const viewport = {
   themeColor: "#10b981",
 };
 
