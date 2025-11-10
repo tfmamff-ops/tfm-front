@@ -33,71 +33,65 @@ Este repositorio contiene la interfaz web del proyecto **Rotulado**, una aplicac
 
 ## Autenticación (Azure AD B2C + NextAuth)
 
-La aplicación protege todas las rutas (páginas y `/api`) y fuerza inicio de sesión automático usando **Azure AD B2C** y **NextAuth**.
+Todas las páginas y rutas `/api` requieren sesión. El inicio de sesión es automático y el cierre limpia el contexto sin parpadeos visibles.
 
-### Resumen del flujo
+### Flujo resumido
 
-1. El visitante accede a `/` sin sesión.
-2. El `middleware` (`src/middleware.ts`) detecta ausencia de la cookie `next-auth.session-token` y redirige a `/signin` con `callbackUrl`.
-3. La página `/signin` dispara `signIn("azure-ad-b2c", { callbackUrl: "/" })`.
-4. Azure AD B2C autentica y devuelve al callback de NextAuth (`/api/auth/callback/azure-ad-b2c`).
-5. NextAuth crea la sesión y coloca la cookie; el usuario es redirigido a `/`.
-6. `AuthBootstrap` lee la sesión mediante `useSession()` y traduce los datos a `requestContext` vía `sessionToRequestContext`.
-7. Las APIs (`/api/azure-analyze`, `/api/expectedData`) validan de nuevo la sesión en servidor con `getServerSession(authOptions)` (defensa en profundidad).
+1. Visitante llega a `/` sin cookie de sesión.
+2. El `middleware` (`src/middleware.ts`) redirige a `/signin` adjuntando `callbackUrl`.
+3. `/signin` dispara `signIn("azure-ad-b2c", { callbackUrl: "/" })`.
+4. Azure AD B2C autentica y redirige al callback NextAuth (`/api/auth/callback/azure-ad-b2c`).
+5. NextAuth crea JWT + cookie y devuelve al `callbackUrl`.
+6. `AuthBootstrap` transforma la sesión en `requestContext` (ver `sessionToRequestContext`).
+7. Endpoints internos (ej. `/api/azure-analyze`) validan sesión otra vez con `getServerSession(authOptions)`.
 
-### Mapeo de claims
+### Mapeo y normalización
 
-La función `profile` del proveedor B2C:
+Proveedor B2C (`profile`):
 
-* Construye `email` con `emails[0]` ó `email` si existe.
-* Genera `name` usando `name` o `given_name + family_name`.
-* Conserva `sub` como `user.id` y `jobTitle` se normaliza a `user.role` en `jwt`/`session` callbacks.
+* Extrae `email` desde `emails[0]` o `email`.
+* Construye `name` usando `name` o `given_name + family_name`.
+* Usa `sub` como `user.id`.
+* `jobTitle` → role simplificado (`qa operator` → `qa_operator`).
+
+Callbacks `jwt` / `session`:
+
+* Guardan `role` normalizado.
+* Inyectan la IP del cliente (full) capturada por el middleware en `session.user.ip`.
 
 ### Helper de sesión
 
-`sessionToRequestContext` (en `src/lib/session-to-context.ts`) crea un objeto estable con:
+`sessionToRequestContext` (`src/lib/session-to-context.ts`):
 
-* `user: { id, name, email?, role }`
-* `client: { appVersion, ip, userAgent }`
+```ts
+user: { id, name, email?, role }
+client: { appVersion, ip, userAgent }
+```
 
-### Rutas públicas
+### Captura de IP
 
-Sólo se permiten sin sesión:
-`/signin`, `/api/auth/*`, `/_next/*`, `/images/*`, `/public/*`, `favicon.ico`, `robots.txt`, `sitemap.xml`.
+El middleware añade cabecera y cookie `client-ip`; el callback la copia a la sesión. La IP puede ser la pública detrás de un proxy. Si se requiere anonimización, aplicar máscara antes de exponerla.
 
-### Añadir nuevos claims
+### Rutas públicas / allowlist
 
-1. Activar el claim en el User Flow de Azure AD B2C (Application claims).
-2. Si se requiere durante el registro, habilitarlo como *User attribute collected*.
-3. Extender el callback `jwt` y/o `profile` para introducir el claim en el token.
-4. Actualizar `sessionToRequestContext` si el claim se usará en el store.
+Se permiten sin sesión (para assets y flujo de login):
+`/signin`, `/api/auth/*`, `/_next/*`, `/images/*`, `/public/*`, `/favicon.ico`, `/robots.txt`, `/sitemap.xml`, y archivos estáticos que terminan en `.svg`, `.png`, `.jpg`.
 
-### Variables adicionales de Auth
+### Logout
+
+`signOut({ callbackUrl: "/api/auth/b2c-logout" })` dispara endpoint que delega en el flujo `end_session` de Azure AD B2C y retorna a `/signin`. Durante el proceso se muestra un overlay "Cerrando sesión…".
+
+### Variables de autenticación (añadir a `.env`)
 
 | Variable | Uso |
 |---------|-----|
-| `AZURE_AD_B2C_TENANT_NAME` | Nombre del tenant B2C (sin `.onmicrosoft.com`). |
-| `AZURE_AD_B2C_CLIENT_ID` | ID de la aplicación registrada. |
-| `AZURE_AD_B2C_CLIENT_SECRET` | Secreto del cliente (rotar regularmente). |
-| `AZURE_AD_B2C_PRIMARY_USER_FLOW` | User Flow principal (ej. `B2C_1_signupsigninflow`). |
-| `NEXTAUTH_URL` | URL base pública del frontend. |
-| `NEXTAUTH_SECRET` | Secreto para firmar JWT/estado. |
-
-### Rotación de secretos
-
-1. Generar nuevo Client Secret en la App Registration de B2C.
-2. Actualizar `.env.local` con el valor y nunca commitear.
-3. Regenerar `NEXTAUTH_SECRET` (por ejemplo `openssl rand -hex 32`).
-4. Reiniciar la aplicación.
-
-### Errores conocidos
-
-* `OAUTH_PARSE_PROFILE_ERROR` ocurría cuando faltaba el claim `emails`; se mitigó con `profile()` defensivo.
-* Loops en `/signin` se evitan forzando siempre `callbackUrl: '/'`.
-
-### Defensa en profundidad
-
-El middleware impide acceso sin cookie, y las APIs revalidan sesión con `getServerSession`. Esto cubre escenarios donde una ruta pública pudiera intentar invocar directamente un handler.
+| `AZURE_AD_B2C_TENANT_NAME` | Tenant B2C (sin `.onmicrosoft.com`). |
+| `AZURE_AD_B2C_CLIENT_ID` | ID de la aplicación registrada en B2C. |
+| `AZURE_AD_B2C_CLIENT_SECRET` | Secreto del cliente (mantenerlo privado). |
+| `AZURE_AD_B2C_PRIMARY_USER_FLOW` | User Flow principal (ej. `B2C_1_signintfm`). |
+| `NEXTAUTH_URL` | URL pública base del frontend (https completo). |
+| `NEXTAUTH_SECRET` | Secreto para firmar JWT y estados; rotar periódicamente. |
+| `NEXTAUTH_DEBUG` | (Opcional) `true` para log detallado en desarrollo. |
 
 ## Requisitos previos
 
@@ -205,18 +199,42 @@ Azure descargará la imagen, abrirá el puerto 3000 y ejecutará automáticament
 
 ## Variables de entorno
 
-Definir las siguientes variables en `.env` para habilitar la integración con Azure, el ERP y la base de datos:
+Definir en `.env` todas las siguientes claves (agrupadas por función):
 
-| Variable                    | Descripción                                                               |
-| --------------------------- | ------------------------------------------------------------------------- |
-| `AZURE_FUNC_HOST`           | Host de la Function App que expone los endpoints `sas` y `process`.       |
-| `AZURE_FUNC_KEY_GET_SAS`    | API key para el endpoint que genera SAS de lectura/escritura.             |
-| `AZURE_FUNC_KEY_HTTP_START` | API key para iniciar la Durable Function de procesamiento.                |
-| `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Tiempo máximo de espera del pipeline en milisegundos.          |
-| `AZURE_PIPELINE_POLL_MS`    | (Opcional) Intervalo entre sondeos de estado.                             |
-| `DATABASE_URL`              | Cadena de conexión PostgreSQL utilizada por Prisma (uso futuro).          |
-| `ERP_CONTAINER`             | Nombre del contenedor en Azure Blob Storage donde reside el CSV del ERP.  |
-| `BLOB_ERP_QUAD`             | Nombre del archivo CSV exportado desde el ERP con los datos de productos. |
+### Pipeline y Azure Functions
+
+| Variable | Descripción |
+|----------|-------------|
+| `AZURE_FUNC_HOST` | Host de la Function App (sin `https://`). |
+| `AZURE_FUNC_KEY_GET_SAS` | Key para generar SAS de lectura/escritura. |
+| `AZURE_FUNC_KEY_HTTP_START` | Key para iniciar la Durable Function. |
+| `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Máximo tiempo de espera del pipeline. |
+| `AZURE_PIPELINE_POLL_MS` | (Opcional) Intervalo entre sondeos de estado. |
+
+### ERP / Datos configurados
+
+| Variable | Descripción |
+|----------|-------------|
+| `ERP_CONTAINER` | Contenedor Blob donde vive el CSV exportado del ERP. |
+| `BLOB_ERP_QUAD` | Nombre del archivo CSV con productos/lotes. |
+
+### Base de datos (Prisma)
+
+| Variable | Descripción |
+|----------|-------------|
+| `DATABASE_URL` | Cadena de conexión PostgreSQL (uso futuro/reportes). |
+
+### Autenticación
+
+| Variable | Descripción |
+|----------|-------------|
+| `AZURE_AD_B2C_TENANT_NAME` | Tenant B2C. |
+| `AZURE_AD_B2C_CLIENT_ID` | Client ID de la app B2C. |
+| `AZURE_AD_B2C_CLIENT_SECRET` | Secreto del cliente B2C. |
+| `AZURE_AD_B2C_PRIMARY_USER_FLOW` | User Flow principal. |
+| `NEXTAUTH_URL` | URL pública del frontend. |
+| `NEXTAUTH_SECRET` | Secreto NextAuth (rotar). |
+| `NEXTAUTH_DEBUG` | (Opcional) Activa logs debug. |
 
 Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adaptar los componentes a datos locales.
 
@@ -237,7 +255,9 @@ Para pruebas sin Azure se puede ejecutar solo el mock (`pnpm dev:mock`) y adapta
 
 ## Calidad y buenas prácticas
 
-* El store principal (`useAppStore`) persiste selectivamente datos sensibles en `sessionStorage` y limpia recursos (Object URLs) al cambiar la imagen.
-* Las llamadas a Azure están encapsuladas en `src/server/azure.ts`, facilitando el testeo con *stubs* o servicios alternativos.
-* El layout raíz monta un *Hydration Gate* y `AuthBootstrap` para hidratar el contexto de usuario autenticado.
-* Se fomenta el diseño responsivo: los paneles laterales son *sticky* en escritorio y se apilan en pantallas pequeñas.
+* El store principal (`useAppStore`) persiste selectivamente datos en `sessionStorage` y limpia Object URLs al cambiar la imagen.
+* Lógica Azure centralizada en `src/server/azure.ts` para facilitar pruebas y sustituciones.
+* `AuthBootstrap` + middleware garantizan que el usuario siempre esté autenticado antes de operar.
+* Captura de IP localizada en middleware y propagada a sesión (evita fetch adicional en cliente).
+* Diseño responsivo: paneles *sticky* en escritorio y layout compacto en móviles.
+* Separación clara entre UI cliente y lógica server-only.
