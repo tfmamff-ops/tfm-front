@@ -6,6 +6,7 @@ import AppSkeleton from "@/components/AppSkeleton";
 import AppHeader from "@/components/layout/AppHeader";
 import AppFooter from "@/components/layout/AppFooter";
 import AuthBootstrap from "@/components/AuthBootstrap";
+import AuthSessionProvider from "@/components/AuthSessionProvider";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -41,13 +42,15 @@ export default function RootLayout({
 
         {/* Content (client components inside) */}
         <HydrationGate fallback={<AppSkeleton />}>
-          {/* Initialize a temporary requestContext while login is pending */}
-          <AuthBootstrap />
-          <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6">
-            <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/5 shadow-lg shadow-emerald-900/5 p-4 sm:p-6 lg:p-8 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md">
-              {children}
-            </div>
-          </main>
+          <AuthSessionProvider>
+            {/* Initialize a temporary requestContext while login is pending */}
+            <AuthBootstrap />
+            <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-6">
+              <div className="rounded-3xl border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/5 shadow-lg shadow-emerald-900/5 p-4 sm:p-6 lg:p-8 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md">
+                {children}
+              </div>
+            </main>
+          </AuthSessionProvider>
         </HydrationGate>
 
         <AppFooter />
