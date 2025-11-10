@@ -164,17 +164,6 @@ export default function AppHeader() {
                         </dd>
                       </div>
                     )}
-                    {client?.ip && (
-                      <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
-                          <MapPin className="h-3 w-3" />
-                          IP:
-                        </dt>
-                        <dd className="font-mono text-[10px] sm:text-xs text-slate-700">
-                          {client.ip}
-                        </dd>
-                      </div>
-                    )}
                     {client?.userAgent && (
                       <div className="flex items-start gap-2">
                         <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">

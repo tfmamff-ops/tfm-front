@@ -11,7 +11,7 @@ export default function AppFooter() {
           <span className="block">Propiedad intelectual protegida</span>
         </p>
         <div className="flex items-center gap-4">
-          <span>v0.1.0</span>
+          <span>web-1.0.0</span>
           <Link href="/" className="hover:text-foreground">
             About
           </Link>

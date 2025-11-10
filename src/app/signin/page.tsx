@@ -55,8 +55,8 @@ export default function SignInPage() {
               <Image
                 src="/logo.svg"
                 alt="Logo"
-                width={44}
-                height={44}
+                width={80}
+                height={80}
                 className="rounded-full"
               />
               {!manualMode && !error && (

@@ -1,4 +1,3 @@
-// session-to-context.ts
 // Helper to convert a NextAuth session into RequestContext shape used by the app.
 // Keeps a single source of truth for mapping and normalization.
 import type { Session } from "next-auth";
@@ -17,8 +16,6 @@ export function sessionToRequestContext(
     },
     client: {
       appVersion: "web-1.0.0",
-      // IP can be enriched later from server-side headers
-      ip: "127.0.0.1",
       userAgent:
         typeof navigator === "undefined" ? undefined : navigator.userAgent,
     },
