@@ -1,28 +1,29 @@
 "use client";
 
+import { useAuthMode } from "@/components/AuthSessionProvider";
+import { Button } from "@/components/ui/button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { useAuthStore } from "@/lib/auth-store";
 import {
   Globe,
+  LogOut,
   Mail,
   MapPin,
   Monitor,
   Shield,
   User,
-  LogOut,
 } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import UserAvatar from "@/components/ui/UserAvatar";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AppHeader() {
   const requestContext = useAuthStore((s) => s.requestContext);
@@ -31,11 +32,13 @@ export default function AppHeader() {
   const [open, setOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+  const { loginEnabled } = useAuthMode();
 
   // Prefetch /signin to make logout redirect feel instant
   useEffect(() => {
+    if (!loginEnabled) return;
     router.prefetch("/signin");
-  }, [router]);
+  }, [router, loginEnabled]);
 
   return (
     <>
@@ -92,6 +95,11 @@ export default function AppHeader() {
               onInteractOutside={() => setOpen(false)}
             >
               <div className="space-y-3">
+                {!loginEnabled && (
+                  <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 text-center">
+                    Modo demo: autenticación deshabilitada
+                  </div>
+                )}
                 {/* User Section */}
                 <div>
                   <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2 flex items-center gap-1.5">
@@ -100,7 +108,7 @@ export default function AppHeader() {
                   </h4>
                   <dl className="space-y-1.5 text-sm">
                     <div className="flex items-start gap-2">
-                      <dt className="text-slate-600 min-w-14 sm:min-w-16 text-xs sm:text-sm">
+                      <dt className="text-slate-600 min-w-20 text-xs sm:text-sm">
                         Nombre:
                       </dt>
                       <dd className="font-medium text-slate-900 text-xs sm:text-sm">
@@ -108,7 +116,7 @@ export default function AppHeader() {
                       </dd>
                     </div>
                     <div className="flex items-start gap-2">
-                      <dt className="text-slate-600 min-w-14 sm:min-w-16 text-xs sm:text-sm">
+                      <dt className="text-slate-600 min-w-20 text-xs sm:text-sm">
                         ID:
                       </dt>
                       <dd className="font-medium text-slate-900 text-xs sm:text-sm">
@@ -117,7 +125,7 @@ export default function AppHeader() {
                     </div>
                     {user?.email && (
                       <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
+                        <dt className="text-slate-600 min-w-20 flex items-center gap-1 text-xs sm:text-sm">
                           <Mail className="h-3 w-3" />
                           Email:
                         </dt>
@@ -128,7 +136,7 @@ export default function AppHeader() {
                     )}
                     {user?.role && (
                       <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
+                        <dt className="text-slate-600 min-w-20 flex items-center gap-1 text-xs sm:text-sm">
                           <Shield className="h-3 w-3" />
                           Rol:
                         </dt>
@@ -151,7 +159,7 @@ export default function AppHeader() {
                   <dl className="space-y-1.5 text-sm">
                     {client?.appVersion && (
                       <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 text-xs sm:text-sm">
+                        <dt className="text-slate-600 min-w-20 text-xs sm:text-sm whitespace-nowrap">
                           Versión:
                         </dt>
                         <dd className="font-medium text-slate-900 text-xs sm:text-sm">
@@ -161,22 +169,22 @@ export default function AppHeader() {
                     )}
                     {client?.ip && (
                       <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
-                          <MapPin className="h-3 w-3" />
+                        <dt className="text-slate-600 min-w-20 text-xs sm:text-sm flex items-center gap-1 whitespace-nowrap shrink-0">
+                          <MapPin className="h-3 w-3 flex-shrink-0" />
                           IP:
                         </dt>
-                        <dd className="font-mono text-[10px] sm:text-xs text-slate-700">
+                        <dd className="font-medium font-mono text-slate-900 text-xs sm:text-sm">
                           {client.ip}
                         </dd>
                       </div>
                     )}
                     {client?.userAgent && (
                       <div className="flex items-start gap-2">
-                        <dt className="text-slate-600 min-w-14 sm:min-w-16 flex items-center gap-1 text-xs sm:text-sm">
-                          <Globe className="h-3 w-3" />
+                        <dt className="text-slate-600 min-w-20 text-xs sm:text-sm flex items-center gap-1 whitespace-nowrap shrink-0">
+                          <Globe className="h-3 w-3 flex-shrink-0" />
                           Browser:
                         </dt>
-                        <dd className="text-[10px] sm:text-xs text-slate-700 break-all line-clamp-3 sm:line-clamp-2">
+                        <dd className="font-medium text-slate-900 text-xs sm:text-sm break-words">
                           {client.userAgent}
                         </dd>
                       </div>
@@ -184,31 +192,32 @@ export default function AppHeader() {
                   </dl>
                 </div>
                 <Separator />
-                <div className="flex justify-end pt-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      if (isLoggingOut) return;
-                      setIsLoggingOut(true);
-                      setOpen(false);
-                      // Best-effort prefetch (already prefetched on mount), then sign out
-                      router.prefetch("/signin");
-                      signOut({ callbackUrl: "/api/auth/b2c-logout" });
-                    }}
-                    className="gap-1.5"
-                    disabled={isLoggingOut}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </Button>
-                </div>
+                {loginEnabled && (
+                  <div className="flex justify-end pt-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        if (isLoggingOut) return;
+                        setIsLoggingOut(true);
+                        setOpen(false);
+                        router.prefetch("/signin");
+                        signOut({ callbackUrl: "/api/auth/b2c-logout" });
+                      }}
+                      className="gap-1.5"
+                      disabled={isLoggingOut}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </Button>
+                  </div>
+                )}
               </div>
             </HoverCardContent>
           </HoverCard>
         </div>
       </header>
-      {isLoggingOut && (
+      {loginEnabled && isLoggingOut && (
         <div
           aria-live="polite"
           className="fixed inset-0 z-[9999] bg-white/80 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center"

@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useAuthStore, clearPersistedAuth } from "@/lib/auth-store";
 import { clearPersistedStore } from "@/lib/store";
 import { sessionToRequestContext } from "@/lib/session-to-context";
+import { FALLBACK_REQUEST_CONTEXT } from "@/lib/mock-request-context";
+import { useAuthMode } from "@/components/AuthSessionProvider";
 
-/**
- * Bridges the authenticated NextAuth session into the internal requestContext store.
- * Removes temporary dummy user bootstrap. Only runs client-side.
- */
-export default function AuthBootstrap() {
+function AuthenticatedBootstrap() {
   const { data: session, status } = useSession();
   const requestContext = useAuthStore((s) => s.requestContext);
   const setRequestContext = useAuthStore((s) => s.setRequestContext);
@@ -41,4 +39,38 @@ export default function AuthBootstrap() {
   }, [status, requestContext]);
 
   return null;
+}
+
+function MockBootstrap() {
+  const setRequestContext = useAuthStore((s) => s.setRequestContext);
+  const context = useMemo(() => {
+    return {
+      user: { ...FALLBACK_REQUEST_CONTEXT.user },
+      client: {
+        ...FALLBACK_REQUEST_CONTEXT.client,
+        userAgent:
+          typeof navigator === "undefined"
+            ? FALLBACK_REQUEST_CONTEXT.client.userAgent
+            : navigator.userAgent,
+      },
+    };
+  }, []);
+
+  useEffect(() => {
+    setRequestContext(context);
+  }, [context, setRequestContext]);
+
+  return null;
+}
+
+/**
+ * Bridges the authenticated NextAuth session into the internal requestContext store.
+ * Also supports a mock request context when LOGIN_ENABLED is false.
+ */
+export default function AuthBootstrap() {
+  const { loginEnabled } = useAuthMode();
+  if (!loginEnabled) {
+    return <MockBootstrap />;
+  }
+  return <AuthenticatedBootstrap />;
 }

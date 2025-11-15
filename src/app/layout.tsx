@@ -8,6 +8,7 @@ import AuthBootstrap from "@/components/AuthBootstrap";
 import AuthSessionProvider from "@/components/AuthSessionProvider";
 import MainContainer from "@/components/layout/MainContainer";
 import FooterIfAllowed from "@/components/layout/FooterIfAllowed";
+import { isLoginEnabled } from "@/config/auth";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -31,6 +32,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const loginEnabled = isLoginEnabled();
   return (
     <html lang="es" className="h-full">
       <body
@@ -42,20 +44,18 @@ export default function RootLayout({
           className="fixed inset-0 -z-20 bg-[#e8f5f0] dark:bg-[#0a1a14]"
         />
 
-        {/* Header hidden on /signin */}
-        <HeaderIfAllowed />
-
         {/* Content (client components inside) */}
         <HydrationGate fallback={<AppSkeleton />}>
-          <AuthSessionProvider>
+          <AuthSessionProvider loginEnabled={loginEnabled}>
             {/* Initialize a temporary requestContext while login is pending */}
             <AuthBootstrap />
+            {/* Header hidden on /signin */}
+            <HeaderIfAllowed />
             <MainContainer>{children}</MainContainer>
+            {/* Footer hidden on /signin */}
+            <FooterIfAllowed />
           </AuthSessionProvider>
         </HydrationGate>
-
-        {/* Footer hidden on /signin */}
-        <FooterIfAllowed />
       </body>
     </html>
   );

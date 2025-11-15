@@ -2,6 +2,7 @@
 // redirect to /signin. Adds an X-Auth-Middleware header for manual debugging.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { LOGIN_ENABLED } from "@/config/auth";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -49,6 +50,10 @@ export function middleware(req: NextRequest) {
     pathname.endsWith(".jpg")
   ) {
     return passThrough("public-pass");
+  }
+
+  if (!LOGIN_ENABLED) {
+    return passThrough("auth-disabled");
   }
 
   // Detect session cookie names (standard + secure prefix variant)

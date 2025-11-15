@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSasUrlForRead } from "@/server/azure";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { parse } from "csv-parse/sync";
+import { getSessionOrMock } from "@/server/auth-session";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
@@ -12,7 +11,7 @@ const BLOB_ERP_QUAD = process.env.BLOB_ERP_QUAD!;
 export async function GET() {
   try {
     // Enforce authentication (middleware already does, but defense in depth)
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMock();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

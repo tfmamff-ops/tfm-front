@@ -10,11 +10,10 @@ import {
   uploadBlobToSasUrl,
 } from "@/server/azure";
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { randomUUID } from "node:crypto";
 import type { ExpectedData } from "@/lib/store";
 import { RequestContextUser } from "@/lib/auth-store";
+import { getSessionOrMock } from "@/server/auth-session";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
@@ -161,7 +160,7 @@ async function getReadSasOrWarn(
 export async function POST(req: NextRequest) {
   try {
     // Enforce authentication server-side (defense in depth)
-    const session = await getServerSession(authOptions);
+    const session = await getSessionOrMock();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

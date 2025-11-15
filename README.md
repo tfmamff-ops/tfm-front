@@ -32,6 +32,7 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 ## Autenticación y control de acceso
 
 - Todo el contenido, incluidas las rutas API, requiere sesión válida.
+- La variable `LOGIN_ENABLED` controla si la autenticación está activa (`true`, valor por defecto) o si se usa un usuario demo hardcodeado (`false`) para entornos locales.
 - El middleware (`src/middleware.ts`) redirige a `/signin` cuando falta la cookie de sesión y adjunta `callbackUrl` para regresar al flujo principal.
 - El proveedor Azure AD B2C entrega los datos del perfil que se normalizan en los callbacks `jwt` y `session`, donde también se incorpora la dirección IP obtenida por el middleware.
 - `sessionToRequestContext` traduce la sesión a la estructura que espera el backend (`user` y `client`), incluyendo rol simplificado (`qa operator` → `qa_operator`).
@@ -73,6 +74,7 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 | `NEXTAUTH_URL` | URL pública del frontend accesible por los usuarios. |
 | `NEXTAUTH_SECRET` | Secreto para firmar JWT y estados en NextAuth. |
 | `NEXTAUTH_DEBUG` | (Opcional) Activa el modo detallado de logging. |
+| `LOGIN_ENABLED` | `true` para forzar autenticación; `false` usa usuario demo sin login (solo entornos locales). |
 
 ## Requisitos previos
 
