@@ -57,7 +57,7 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 | `ERP_CONTAINER` | Contenedor Blob que aloja el CSV exportado del ERP. |
 | `BLOB_ERP_QUAD` | Nombre del archivo CSV con productos y lotes. |
 
-### Base de datos (Prisma)
+### Base de datos (Prisma - reservado para uso futuro)
 
 | Variable | Descripción |
 |----------|-------------|
@@ -140,7 +140,7 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 │   ├── styles/             # Estilos globales
 │   ├── types/              # Tipos compartidos y augmentations (NextAuth, etc.)
 │   └── middleware.ts       # Middleware para autenticación y propagación de IP
-├── prisma/                 # Esquema y migraciones del ORM
+├── prisma/                 # Esquema y migraciones del ORM (reservado para uso futuro)
 ├── mocks/                  # Configuración de json-server para datos simulados del ERP
 ├── docker/                 # Docker Compose para PostgreSQL local
 └── public/                 # Recursos estáticos como logos e íconos
