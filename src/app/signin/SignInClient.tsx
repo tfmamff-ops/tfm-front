@@ -1,91 +1,52 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 export default function SignInClient() {
   const startedRef = useRef(false);
-  const [error, setError] = useState<string | null>(null);
-  const [manualMode, setManualMode] = useState(false);
+  const [error, setError] = useState<boolean>(true);
 
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
 
-    const timer = setTimeout(() => {
-      setManualMode(true);
-    }, 5000);
-
     signIn("azure-ad-b2c", { callbackUrl: "/" }).catch((e) => {
       console.error("Auto sign-in failed", e);
-      setError("Auto sign-in failed. Please use the button below.");
-      setManualMode(true);
+      setError(true);
     });
-
-    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="relative isolate min-h-dvh flex flex-col items-center justify-center py-16">
-      <div className="absolute -z-10 top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#8bd3b1]/20 dark:bg-[#6ea48a]/20 blur-3xl" />
-      <div className="mx-auto w-full max-w-md space-y-8 text-center">
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
-            Verificación Automática
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Autenticando usuario de forma segura a través de Azure AD B2C.
-          </p>
-        </div>
-        <div className="mx-auto w-full max-w-sm">
-          <div className="relative m-4 rounded-xl border border-emerald-200/60 dark:border-white/10 bg-white/90 dark:bg-emerald-950/60 px-6 py-5 shadow-sm">
-            <div className="flex flex-col items-center gap-3">
-              <Image
-                src="/logo.svg"
-                alt="Logo"
-                width={80}
-                height={80}
-                className="rounded-full"
-              />
-              {!manualMode && !error && (
-                <output
-                  className="flex items-center justify-center gap-2"
-                  aria-live="polite"
-                >
-                  <Loader2
-                    className="h-5 w-5 animate-spin text-emerald-600 dark:text-emerald-300"
-                    aria-hidden="true"
-                  />
-                  <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                    Redirigiendo…
-                  </span>
-                </output>
-              )}
-              {error && (
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {error}
-                </p>
-              )}
-              {manualMode && (
-                <div className="space-y-2">
-                  <Button
-                    type="button"
-                    onClick={() => signIn("azure-ad-b2c", { callbackUrl: "/" })}
-                  >
-                    Ingresar manualmente
-                  </Button>
-                </div>
-              )}
-            </div>
+    <div
+      aria-live="polite"
+      className="fixed inset-0 z-[9999] bg-white/80 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center"
+    >
+      <div className="flex flex-col items-center gap-4 rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 bg-white/90 dark:bg-emerald-950/60 px-6 py-5 shadow-lg text-center">
+        {!error && (
+          <>
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-emerald-300 border-t-emerald-600" />
+            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
+              Redirigiendo…
+            </p>
+          </>
+        )}
+        {error && (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
+              <span className="block">
+                Error en el inicio de sesión automático.
+              </span>
+            </p>
+            <Button
+              type="button"
+              onClick={() => signIn("azure-ad-b2c", { callbackUrl: "/" })}
+            >
+              Ingresar manualmente
+            </Button>
           </div>
-        </div>
-        <p className="text-[11px] text-muted-foreground flex flex-col items-center leading-tight">
-          <span>© {new Date().getFullYear()} AGMCorp & Urbit</span>
-          <span>Seguridad y trazabilidad</span>
-        </p>
+        )}
       </div>
     </div>
   );
