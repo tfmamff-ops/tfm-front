@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SignInClient() {
   const startedRef = useRef(false);
-  const [error, setError] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     if (startedRef.current) return;
