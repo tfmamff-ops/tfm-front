@@ -6,7 +6,7 @@ import ProcessImagesSection from "@/components/processing/ProcessImagesSection";
 import ValidationSection from "@/components/processing/ValidationSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
-import { SlidersHorizontal } from "lucide-react";
+import { Loader2, SlidersHorizontal } from "lucide-react";
 import type React from "react";
 import ReportSection from "./processing/ReportSection";
 
@@ -22,14 +22,26 @@ export default function ProcessingCard() {
   const barcodeRoiImgUrl = useAppStore((s) => s.barcodeRoiImgUrl);
   const validation = useAppStore((s) => s.validation);
 
+  const hasItems = Boolean(items && items.length > 0);
+
+  if (!loading && !error && !hasItems) {
+    return null;
+  }
+
   let content: React.ReactNode = null;
 
   if (loading) {
-    content = <p className="text-base text-muted-foreground">Procesando…</p>;
+    content = (
+      <div className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-700">
+        <Loader2
+          className="h-4 w-4 animate-spin text-emerald-500"
+          aria-hidden="true"
+        />
+        <span>Procesando…</span>
+      </div>
+    );
   } else if (error) {
     content = <p className="text-red-600 text-base">{error}</p>;
-  } else if (!items || items.length === 0) {
-    content = <p className="text-base text-muted-foreground">Sin datos</p>;
   } else {
     const hasAnyLink =
       Boolean(processedImgUrl) ||

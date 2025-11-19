@@ -4,7 +4,6 @@ import SectionHeader from "@/components/processing/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { useAppStore } from "@/lib/store";
 import {
   ExternalLink,
   FileCog,
@@ -18,13 +17,11 @@ import { useEffect, useState, type ReactNode } from "react";
 const MAX_LENGTH = 300;
 
 export default function ReportSection() {
-  //   const reportError = useAppStore((s) => s.reportError);
-  //   const reportLoading = useAppStore((s) => s.reportLoading);
-  //     const reportUrl = useAppStore((s) => s.reportUrl);
-
+  // debo trancar el boton config durante la generacion del reporte
+  // debo escapear los comentarios en el backend.
   const [reportStarted, setReportStarted] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
-  const [reportError, setReportError] = useState<string | null>(null);
+  const [reportError] = useState<string | null>(null);
   const [reportLoading, setReportLoading] = useState<boolean>(false);
   const [reportUrl, setReportUrl] = useState<string>("");
 
@@ -123,7 +120,7 @@ export default function ReportSection() {
             <FileText className="h-4 w-4" />
           )}
         {reportLoading && (
-          <div className="flex items-center gap-2 rounded-lg border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          <div className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-700">
             <Loader2
               className="h-4 w-4 animate-spin text-emerald-500"
               aria-hidden="true"
