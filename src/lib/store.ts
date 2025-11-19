@@ -105,11 +105,18 @@ type AppState = {
   error?: string;
   loading: boolean;
 
-  /** URLs of processed images returned from the backend */
+  /** URLs of processed images returned by the backend */
   processedImgUrl?: string;
   ocrOverlayImgUrl?: string;
   barcodeOverlayImgUrl?: string;
   barcodeRoiImgUrl?: string;
+
+  /** Report generation state: error and loading */
+  reportError?: string;
+  reportLoading: boolean;
+
+  /** Report URL returned by the backend */
+  reportUrl?: string;
 
   /** Actions */
   setImageSource: (src: ImageSource) => void;
@@ -138,6 +145,12 @@ type AppState = {
   setValidationSummary: (ok: boolean) => void;
   setValidation: (validation: Validation) => void;
   clearValidation: () => void;
+
+  /** Report actions */
+  setReportError: (msg?: string) => void;
+  setReportLoading: (v: boolean) => void;
+  setReportUrl: (url?: string) => void;
+  clearReport: () => void;
 
   setErpResp: (data: ErpResp) => void;
   setIsErpRespLoaded: (loaded: boolean) => void;
@@ -243,6 +256,9 @@ export const useAppStore = create<AppState>()(
         validation: INITIAL_VALIDATION_STATE,
         error: undefined,
         loading: false,
+        reportError: undefined,
+        reportLoading: false,
+        reportUrl: undefined,
 
         // ========================================================================
         // IMAGE SOURCE & FILE ACTIONS
@@ -264,6 +280,9 @@ export const useAppStore = create<AppState>()(
                   validation: INITIAL_VALIDATION_STATE,
                   error: undefined,
                   loading: false,
+                  reportError: undefined,
+                  reportLoading: false,
+                  reportUrl: undefined,
                   ...getCleanProcessedImagesState(),
                 };
               }
@@ -292,6 +311,9 @@ export const useAppStore = create<AppState>()(
                 validation: INITIAL_VALIDATION_STATE,
                 error: undefined,
                 loading: false,
+                reportError: undefined,
+                reportLoading: false,
+                reportUrl: undefined,
                 ...getCleanProcessedImagesState(),
               };
             },
@@ -439,6 +461,29 @@ export const useAppStore = create<AppState>()(
           ),
 
         // ========================================================================
+        // REPORT ACTIONS
+        // ========================================================================
+
+        setReportError: (msg) =>
+          set({ reportError: msg || undefined }, false, "setReportError"),
+
+        setReportLoading: (reportLoading) =>
+          set({ reportLoading }, false, "setReportLoading"),
+
+        setReportUrl: (reportUrl) => set({ reportUrl }, false, "setReportUrl"),
+
+        clearReport: () =>
+          set(
+            {
+              reportError: undefined,
+              reportLoading: false,
+              reportUrl: undefined,
+            },
+            false,
+            "clearReport"
+          ),
+
+        // ========================================================================
         // ERP DATA ACTIONS
         // ========================================================================
 
@@ -470,6 +515,9 @@ export const useAppStore = create<AppState>()(
               loading: false,
               barcode: INITIAL_BARCODE_STATE,
               validation: INITIAL_VALIDATION_STATE,
+              reportError: undefined,
+              reportLoading: false,
+              reportUrl: undefined,
               ...getCleanProcessedImagesState(),
             },
             false,

@@ -32,7 +32,7 @@ export default function ProcessImagesSection({
 
   const renderExternalLink = (
     href?: string,
-    label: ReactNode = "Imagen procesada",
+    label: ReactNode = "Imagen",
     icon: React.ReactNode = <ImageIcon className="h-4 w-4" />
   ) => (
     <>

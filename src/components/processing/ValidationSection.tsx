@@ -4,7 +4,6 @@ import BoolBadge from "@/components/processing/BoolBadge";
 import SectionHeader from "@/components/processing/SectionHeader";
 import { Separator } from "@/components/ui/separator";
 import { ShieldAlert, ShieldCheck, ShieldEllipsis } from "lucide-react";
-import { Button } from "../ui/button";
 
 export default function ValidationSection({
   lotOk,
@@ -156,22 +155,11 @@ export default function ValidationSection({
           </span>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-          <p className="text-sm text-slate-600">
-            {validationSummary
-              ? "Todos los controles fueron exitosos."
-              : "Alguno de los controles no fue satisfactorio."}
-          </p>
-          <Button
-            type="button"
-            onClick={() => {
-              alert("No implementado aún");
-            }}
-            className="md:ml-auto"
-          >
-            Generar informe
-          </Button>
-        </div>
+        <p className="mt-2 text-sm text-slate-600">
+          {validationSummary
+            ? "Todos los controles fueron exitosos."
+            : "Alguno de los controles no fue satisfactorio."}
+        </p>
       </div>
     </div>
   );

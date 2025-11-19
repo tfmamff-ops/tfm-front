@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
 import { SlidersHorizontal } from "lucide-react";
 import type React from "react";
+import ReportSection from "./processing/ReportSection";
 
 export default function ProcessingCard() {
   const items = useAppStore((s) => s.ocrResult.items);
@@ -62,6 +63,7 @@ export default function ProcessingCard() {
           barcodeOk={validation.barcodeOk}
           validationSummary={validation.validationSummary}
         />
+        <ReportSection />
       </div>
     );
   }
