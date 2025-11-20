@@ -161,3 +161,31 @@ export async function pollPipeline(
     await sleep(pollMs);
   }
 }
+
+export async function generateReport(params: {
+  host: string;
+  functionKey: string;
+  instanceId: string;
+  userComment: string;
+  accepted: boolean;
+}): Promise<{
+  reportBlob: { container: string; blobNamePDF: string; blobNameDOCX: string };
+}> {
+  const { host, functionKey, instanceId, userComment, accepted } = params;
+
+  const res = await fetch(`https://${host}/api/generate-report`, {
+    method: "POST",
+    headers: {
+      "x-functions-key": functionKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ instanceId, userComment, accepted }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`generateReport failed: ${text}`);
+  }
+
+  return res.json();
+}
