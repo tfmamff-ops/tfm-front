@@ -92,6 +92,9 @@ type AppState = {
   /** Totals shown in the dashboard */
   counters: Counters;
 
+  /** Unique processing instance ID */
+  instanceId?: string;
+
   /** OCR result from processing */
   ocrResult: OcrResult;
 
@@ -131,6 +134,7 @@ type AppState = {
   clearOcr: () => void;
   incCounter: (key: keyof Counters, by?: number) => void;
   setProcessedImageUrl: (url: string) => void;
+  setInstanceId: (id?: string) => void;
   setOcrOverlayImgUrl: (url: string) => void;
   setBarcodeOverlayImgUrl: (url: string) => void;
   setBarcodeRoiImgUrl: (url: string) => void;
@@ -251,6 +255,7 @@ export const useAppStore = create<AppState>()(
         isErpRespLoaded: false,
         selectedErpId: undefined,
         counters: INITIAL_COUNTERS,
+        instanceId: undefined,
         ocrResult: INITIAL_OCR_RESULT,
         barcode: INITIAL_BARCODE_STATE,
         validation: INITIAL_VALIDATION_STATE,
@@ -306,6 +311,9 @@ export const useAppStore = create<AppState>()(
               // When preview changes, reset OCR and processed images
               return {
                 imagePreview,
+                file: undefined,
+                filename: undefined,
+                instanceId: undefined,
                 ocrResult: INITIAL_OCR_RESULT,
                 barcode: INITIAL_BARCODE_STATE,
                 validation: INITIAL_VALIDATION_STATE,
@@ -347,6 +355,12 @@ export const useAppStore = create<AppState>()(
             false,
             "incCounter"
           ),
+
+        // ========================================================================
+        // INSTANCE ID ACTIONS
+        // ========================================================================
+        setInstanceId: (id?: string) =>
+          set({ instanceId: id }, false, "setInstanceId"),
 
         // ========================================================================
         // OCR ACTIONS
@@ -510,11 +524,12 @@ export const useAppStore = create<AppState>()(
               expectedData: {},
               selectedErpId: undefined,
               counters: INITIAL_COUNTERS,
+              instanceId: undefined,
               ocrResult: INITIAL_OCR_RESULT,
-              error: undefined,
-              loading: false,
               barcode: INITIAL_BARCODE_STATE,
               validation: INITIAL_VALIDATION_STATE,
+              error: undefined,
+              loading: false,
               reportError: undefined,
               reportLoading: false,
               reportUrl: undefined,
