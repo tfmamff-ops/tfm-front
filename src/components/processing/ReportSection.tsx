@@ -4,6 +4,7 @@ import SectionHeader from "@/components/processing/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useAppStore } from "@/lib/store";
 import {
   ExternalLink,
   FileCog,
@@ -11,6 +12,7 @@ import {
   Image as ImageIcon,
   Loader2,
 } from "lucide-react";
+import App from "next/app";
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -19,6 +21,7 @@ const MAX_LENGTH = 300;
 export default function ReportSection() {
   // debo trancar el boton config durante la generacion del reporte
   // debo escapear los comentarios en el backend.
+  const instanceId = useAppStore((s) => s.instanceId);
   const [reportStarted, setReportStarted] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [reportError] = useState<string | null>(null);
@@ -85,6 +88,7 @@ export default function ReportSection() {
               rows={4}
               maxLength={MAX_LENGTH}
             />
+            instancia: {instanceId}
             <div className="text-xs text-muted-foreground mt-1">
               {comment.length}/{MAX_LENGTH}
             </div>

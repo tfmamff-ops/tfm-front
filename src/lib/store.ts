@@ -218,8 +218,6 @@ const getCleanProcessedImagesState = () => ({
 
 /** Helper to reset processing-related state while allowing a new preview */
 const getProcessingResetState = (imagePreview?: string) => ({
-  file: undefined,
-  filename: undefined,
   imagePreview,
   instanceId: undefined,
   ocrResult: INITIAL_OCR_RESULT,
@@ -532,6 +530,8 @@ export const useAppStore = create<AppState>()(
           set(
             {
               ...getProcessingResetState(),
+              file: undefined,
+              filename: undefined,
               expectedData: {},
               selectedErpId: undefined,
               counters: INITIAL_COUNTERS,
