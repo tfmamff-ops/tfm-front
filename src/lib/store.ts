@@ -126,21 +126,28 @@ type AppState = {
   setFile: (f?: File) => void;
   setFilename: (name?: string) => void;
   setPreview: (url?: string) => void;
+
   setExpectedData: (patch: Partial<ExpectedData>) => void;
   setCounters: (patch: Partial<Counters>) => void;
+  incCounter: (key: keyof Counters, by?: number) => void;
+
+  setInstanceId: (id?: string) => void;
+  clearInstanceId: () => void;
+
   setOcrItems: (items: OcrItem[]) => void;
+  clearOcr: () => void;
+
   setError: (msg?: string) => void;
   setLoading: (v: boolean) => void;
-  clearInstanceId: () => void;
-  clearOcr: () => void;
-  incCounter: (key: keyof Counters, by?: number) => void;
+
   setProcessedImageUrl: (url: string) => void;
-  setInstanceId: (id?: string) => void;
   setOcrOverlayImgUrl: (url: string) => void;
   setBarcodeOverlayImgUrl: (url: string) => void;
   setBarcodeRoiImgUrl: (url: string) => void;
+
   setBarcodeState: (barcode: BarcodeState) => void;
   clearBarcode: () => void;
+
   setLotOk: (ok: boolean) => void;
   setExpDateOk: (ok: boolean) => void;
   setPackDateOk: (ok: boolean) => void;
@@ -151,7 +158,6 @@ type AppState = {
   setValidation: (validation: Validation) => void;
   clearValidation: () => void;
 
-  /** Report actions */
   setReportError: (msg?: string) => void;
   setReportLoading: (v: boolean) => void;
   setReportUrl: (url?: string) => void;

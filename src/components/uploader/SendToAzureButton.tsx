@@ -85,10 +85,13 @@ function updateCounters(
 
 export default function SendToAzureButton() {
   const hasImage = useAppStore((s) => !!s.file);
-  const setOcrItems = useAppStore((s) => s.setOcrItems);
-  const setError = useAppStore((s) => s.setError);
+
   const setLoading = useAppStore((s) => s.setLoading);
+  const setError = useAppStore((s) => s.setError);
+  const setInstanceId = useAppStore((s) => s.setInstanceId);
+  const setOcrItems = useAppStore((s) => s.setOcrItems);
   const setBarcodeState = useAppStore((s) => s.setBarcodeState);
+  const setValidation = useAppStore((s) => s.setValidation);
   const incCounter = useAppStore((s) => s.incCounter);
 
   const clearInstanceId = useAppStore((s) => s.clearInstanceId);
@@ -101,7 +104,6 @@ export default function SendToAzureButton() {
   const setOcrOverlayImgUrl = useAppStore((s) => s.setOcrOverlayImgUrl);
   const setBarcodeOverlayImgUrl = useAppStore((s) => s.setBarcodeOverlayImgUrl);
   const setBarcodeRoiImgUrl = useAppStore((s) => s.setBarcodeRoiImgUrl);
-  const setValidation = useAppStore((s) => s.setValidation);
 
   const [clicking, setClicking] = useState(false);
 
@@ -138,6 +140,7 @@ export default function SendToAzureButton() {
         setBarcodeRoiImgUrl,
       });
 
+      if (data.instanceId) setInstanceId(data.instanceId);
       const lines = parseOcrLines(data.ocrResult);
       setOcrItems(buildOcrItems(lines.length ? lines : ["(No text detected)"]));
       if (data.barcodeData) setBarcodeState(data.barcodeData);
