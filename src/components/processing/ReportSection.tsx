@@ -80,7 +80,7 @@ export default function ReportSection() {
           <div className="flex flex-col gap-3">
             <Textarea
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value.slice(0, MAX_LENGTH))}
               placeholder="Motivo u observaciones (opcional)"
               rows={4}
               maxLength={MAX_LENGTH}
