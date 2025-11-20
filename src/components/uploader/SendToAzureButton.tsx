@@ -10,11 +10,12 @@ import { buildAnalyzeFormData } from "@/lib/payload";
 
 type ApiResponse = {
   imageUrl?: string;
-  barcodeOverlayImageUrl?: string;
-  ocrOverlayImageUrl?: string;
-  barcodeRoiImageUrl?: string;
+  instanceId?: string;
   ocrResult?: unknown;
+  ocrOverlayImageUrl?: string;
   barcodeData?: BarcodeState;
+  barcodeOverlayImageUrl?: string;
+  barcodeRoiImageUrl?: string;
   validationData?: Validation;
 };
 
@@ -89,9 +90,13 @@ export default function SendToAzureButton() {
   const setLoading = useAppStore((s) => s.setLoading);
   const setBarcodeState = useAppStore((s) => s.setBarcodeState);
   const incCounter = useAppStore((s) => s.incCounter);
+
+  const clearInstanceId = useAppStore((s) => s.clearInstanceId);
   const clearOcr = useAppStore((s) => s.clearOcr);
   const clearBarcode = useAppStore((s) => s.clearBarcode);
   const clearValidation = useAppStore((s) => s.clearValidation);
+  const clearReport = useAppStore((s) => s.clearReport);
+
   const setProcessedImageUrl = useAppStore((s) => s.setProcessedImageUrl);
   const setOcrOverlayImgUrl = useAppStore((s) => s.setOcrOverlayImgUrl);
   const setBarcodeOverlayImgUrl = useAppStore((s) => s.setBarcodeOverlayImgUrl);
@@ -107,9 +112,11 @@ export default function SendToAzureButton() {
     if (!file) return;
 
     setClicking(true);
+    clearInstanceId();
     clearOcr();
     clearBarcode();
     clearValidation();
+    clearReport();
     setLoading(true);
 
     try {

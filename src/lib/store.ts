@@ -131,6 +131,7 @@ type AppState = {
   setOcrItems: (items: OcrItem[]) => void;
   setError: (msg?: string) => void;
   setLoading: (v: boolean) => void;
+  clearInstanceId: () => void;
   clearOcr: () => void;
   incCounter: (key: keyof Counters, by?: number) => void;
   setProcessedImageUrl: (url: string) => void;
@@ -207,6 +208,23 @@ const getCleanProcessedImagesState = () => ({
   ocrOverlayImgUrl: undefined,
   barcodeOverlayImgUrl: undefined,
   barcodeRoiImgUrl: undefined,
+});
+
+/** Helper to reset processing-related state while allowing a new preview */
+const getProcessingResetState = (imagePreview?: string) => ({
+  file: undefined,
+  filename: undefined,
+  imagePreview,
+  instanceId: undefined,
+  ocrResult: INITIAL_OCR_RESULT,
+  barcode: INITIAL_BARCODE_STATE,
+  validation: INITIAL_VALIDATION_STATE,
+  error: undefined,
+  loading: false,
+  reportError: undefined,
+  reportLoading: false,
+  reportUrl: undefined,
+  ...getCleanProcessedImagesState(),
 });
 
 /** Helper to safely revoke object URL */
@@ -309,21 +327,7 @@ export const useAppStore = create<AppState>()(
                 revokeObjectURL(state.imagePreview);
               }
               // When preview changes, reset OCR and processed images
-              return {
-                imagePreview,
-                file: undefined,
-                filename: undefined,
-                instanceId: undefined,
-                ocrResult: INITIAL_OCR_RESULT,
-                barcode: INITIAL_BARCODE_STATE,
-                validation: INITIAL_VALIDATION_STATE,
-                error: undefined,
-                loading: false,
-                reportError: undefined,
-                reportLoading: false,
-                reportUrl: undefined,
-                ...getCleanProcessedImagesState(),
-              };
+              return getProcessingResetState(imagePreview);
             },
             false,
             "setPreview"
@@ -361,6 +365,9 @@ export const useAppStore = create<AppState>()(
         // ========================================================================
         setInstanceId: (id?: string) =>
           set({ instanceId: id }, false, "setInstanceId"),
+
+        clearInstanceId: () =>
+          set({ instanceId: undefined }, false, "clearInstanceId"),
 
         // ========================================================================
         // OCR ACTIONS
@@ -518,22 +525,10 @@ export const useAppStore = create<AppState>()(
           revokeObjectURL(get().imagePreview);
           set(
             {
-              imagePreview: undefined,
-              file: undefined,
-              filename: undefined,
+              ...getProcessingResetState(),
               expectedData: {},
               selectedErpId: undefined,
               counters: INITIAL_COUNTERS,
-              instanceId: undefined,
-              ocrResult: INITIAL_OCR_RESULT,
-              barcode: INITIAL_BARCODE_STATE,
-              validation: INITIAL_VALIDATION_STATE,
-              error: undefined,
-              loading: false,
-              reportError: undefined,
-              reportLoading: false,
-              reportUrl: undefined,
-              ...getCleanProcessedImagesState(),
             },
             false,
             "reset"
