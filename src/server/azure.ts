@@ -149,9 +149,9 @@ export async function pollPipeline(
       const text = await statusRes.text();
       throw new Error(`status poll failed: ${text}`);
     }
-    const statusJson = await statusRes.json();
-    const st = statusJson?.runtimeStatus;
-    if (st === "Completed") return statusJson?.output;
+    const outputJson = await statusRes.json();
+    const st = outputJson?.runtimeStatus;
+    if (st === "Completed") return outputJson;
     if (st === "Failed" || st === "Terminated") {
       throw new Error(`Pipeline ${st}`);
     }

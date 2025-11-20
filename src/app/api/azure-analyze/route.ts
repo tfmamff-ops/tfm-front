@@ -23,15 +23,18 @@ const POLL_MS = Number(process.env.AZURE_PIPELINE_POLL_MS ?? 2000);
 
 // Minimal structure we rely on from the pipeline output
 type PipelineOutput = {
-  processedImageBlob?: { blobName?: string };
-  ocrOverlayBlob?: { blobName?: string };
-  ocrResult?: unknown;
-  barcode?: {
-    barcodeData?: { barcodeDetected?: boolean };
-    barcodeOverlayBlob?: { blobName?: string };
-    barcodeRoiBlob?: { blobName?: string };
+  instanceId: string;
+  output: {
+    processedImageBlob?: { blobName?: string };
+    ocrOverlayBlob?: { blobName?: string };
+    ocrResult?: unknown;
+    barcode?: {
+      barcodeData?: { barcodeDetected?: boolean };
+      barcodeOverlayBlob?: { blobName?: string };
+      barcodeRoiBlob?: { blobName?: string };
+    };
+    validation?: unknown;
   };
-  validation?: unknown;
 };
 
 class HttpError extends Error {
@@ -218,7 +221,18 @@ export async function POST(req: NextRequest) {
     });
 
     // Poll until Completed (or timeout)
-    const output = await pollPipelineOrFail(statusUrl, TIMEOUT_MS, POLL_MS);
+    const outputJson = await pollPipelineOrFail(statusUrl, TIMEOUT_MS, POLL_MS);
+
+    // Instance ID
+    const instanceId = outputJson?.instanceId;
+    if (!instanceId) {
+      return NextResponse.json(
+        { error: "Missing instanceId in pipeline output" },
+        { status: 502 }
+      );
+    }
+
+    const output = outputJson?.output;
 
     // Read final blob (SAS read)
     const outBlob = output?.processedImageBlob?.blobName;
@@ -260,11 +274,12 @@ export async function POST(req: NextRequest) {
 
     const jsonResp = {
       imageUrl, // temporary SAS URL to view/download the final image
+      instanceId, // pipeline instance ID
+      ocrResult, // JSON returned by OCR
       ocrOverlayImageUrl, // temporary SAS URL to view/download the OCR overlay image
+      barcodeData, // JSON returned by barcode analysis
       barcodeOverlayImageUrl, // temporary SAS URL to view/download the barcode overlay image
       barcodeRoiImageUrl, // temporary SAS URL to view/download the barcode ROI image
-      ocrResult, // JSON returned by OCR
-      barcodeData, // JSON returned by barcode analysis
       validationData, // JSON returned by validation
     };
 
