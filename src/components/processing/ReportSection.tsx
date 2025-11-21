@@ -117,10 +117,11 @@ export default function ReportSection() {
             <div className="text-xs text-muted-foreground mt-1 text-right">
               {comment.length}/{MAX_LENGTH}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex w-full flex-wrap gap-2">
               <Button
                 type="button"
                 variant="default"
+                className="flex-1"
                 onClick={() => handleGenerateReport(true)}
               >
                 Aceptar resultado
@@ -128,6 +129,7 @@ export default function ReportSection() {
               <Button
                 type="button"
                 variant="destructive"
+                className="flex-1"
                 onClick={() => handleGenerateReport(false)}
               >
                 Rechazar resultado
