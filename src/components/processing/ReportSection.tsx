@@ -146,7 +146,7 @@ export default function ReportSection() {
         {!reportLoading &&
           renderExternalLink(
             reportUrl,
-            "PDF",
+            "Ver Reporte PDF",
             <FileText className="h-4 w-4" />
           )}
 

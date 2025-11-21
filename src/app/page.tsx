@@ -16,8 +16,9 @@ export default function Page() {
   const imagePreview = useAppStore((s) => s.imagePreview);
   const expectedData = useAppStore((s) => s.expectedData);
   const loading = useAppStore((s) => s.loading);
+  const reportLoading = useAppStore((s) => s.reportLoading);
 
-  const isDisabledConfig = loading === true;
+  const isDisabledConfig = loading === true || reportLoading === true;
   const hasAllExpectedValues =
     !!expectedData.prodDesc &&
     !!expectedData.lot &&
