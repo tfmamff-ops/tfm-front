@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 const MAX_LENGTH = 300;
 
@@ -29,6 +29,15 @@ export default function ReportSection() {
 
   const [comment, setComment] = useState<string>("");
   const [hasDecided, setHasDecided] = useState(false);
+
+  useEffect(() => {
+    setComment("");
+    setHasDecided(false);
+  }, [instanceId]);
+
+  if (!instanceId) {
+    return null;
+  }
 
   const handleGenerateReport = async (accepted: boolean) => {
     setHasDecided(true);
@@ -104,7 +113,6 @@ export default function ReportSection() {
               rows={4}
               maxLength={MAX_LENGTH}
             />
-            instancia: {instanceId}
             <div className="text-xs text-muted-foreground mt-1">
               {comment.length}/{MAX_LENGTH}
             </div>
