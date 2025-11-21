@@ -114,7 +114,7 @@ export default function ReportSection() {
               rows={4}
               maxLength={MAX_LENGTH}
             />
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 text-right">
               {comment.length}/{MAX_LENGTH}
             </div>
             <div className="flex flex-wrap gap-2">
