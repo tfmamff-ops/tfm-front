@@ -1,8 +1,9 @@
-import { getSasUrlForRead, generateReport } from "@/server/azure";
-import { NextRequest, NextResponse } from "next/server";
 import { getSessionOrMock } from "@/server/auth-session";
+import { generateReport, getSasUrlForRead, SAS_MINUTES } from "@/server/azure";
+import { NextRequest, NextResponse } from "next/server";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
+const KEY_GENERATE_REPORT = process.env.AZURE_FUNC_KEY_GENERATE_REPORT!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
 
 export async function POST(req: NextRequest) {
@@ -14,7 +15,6 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const { instanceId, comment, accepted } = body;
-
     if (!instanceId) {
       return NextResponse.json(
         { error: "Missing instanceId" },
@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
 
     // 1. Generate report via Azure Function
     const reportRes = await generateReport({
+      host: HOST,
+      functionKey: KEY_GENERATE_REPORT,
       instanceId,
       userComment: comment || "",
       accepted: !!accepted,
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
       functionKey: KEY_GET_SAS,
       container,
       blobName: blobNamePDF,
-      minutes: 15,
+      minutes: SAS_MINUTES,
     });
 
     return NextResponse.json({ url: sasUrl });

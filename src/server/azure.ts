@@ -2,6 +2,8 @@
 import { RequestContextUser } from "@/lib/auth-store";
 import type { ExpectedData } from "@/lib/store";
 
+export const SAS_MINUTES = 15;
+
 export async function getSasUrlForRead(params: {
   host: string;
   functionKey: string;
@@ -9,7 +11,7 @@ export async function getSasUrlForRead(params: {
   blobName: string;
   minutes?: number;
 }): Promise<string> {
-  const { host, functionKey, container, blobName, minutes = 15 } = params;
+  const { host, functionKey, container, blobName, minutes } = params;
 
   const res = await fetch(`https://${host}/api/sas`, {
     method: "POST",
@@ -40,14 +42,8 @@ export async function getSasUrlForUpload(params: {
   minutes?: number;
   contentType?: string;
 }): Promise<string> {
-  const {
-    host,
-    functionKey,
-    container,
-    blobName,
-    minutes = 15,
-    contentType,
-  } = params;
+  const { host, functionKey, container, blobName, minutes, contentType } =
+    params;
   const payload: Record<string, unknown> = {
     container,
     blobName,

@@ -12,21 +12,59 @@ import {
   Image as ImageIcon,
   Loader2,
 } from "lucide-react";
-import App from "next/app";
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 const MAX_LENGTH = 300;
 
 export default function ReportSection() {
-  // debo trancar el boton config durante la generacion del reporte
-  // debo escapear los comentarios en el backend.
   const instanceId = useAppStore((s) => s.instanceId);
-  const [reportStarted, setReportStarted] = useState<boolean>(false);
+  const reportLoading = useAppStore((s) => s.reportLoading);
+  const reportUrl = useAppStore((s) => s.reportUrl);
+  const reportError = useAppStore((s) => s.reportError);
+
+  const setReportLoading = useAppStore((s) => s.setReportLoading);
+  const setReportUrl = useAppStore((s) => s.setReportUrl);
+  const setReportError = useAppStore((s) => s.setReportError);
+
   const [comment, setComment] = useState<string>("");
-  const [reportError] = useState<string | null>(null);
-  const [reportLoading, setReportLoading] = useState<boolean>(false);
-  const [reportUrl, setReportUrl] = useState<string>("");
+  const [hasDecided, setHasDecided] = useState(false);
+
+  const handleGenerateReport = async (accepted: boolean) => {
+    setHasDecided(true);
+    setReportLoading(true);
+    setReportError(undefined);
+
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          instanceId,
+          comment,
+          accepted,
+        }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error || "Error al generar el reporte");
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        setReportUrl(data.url);
+      } else {
+        throw new Error("No se recibió la URL del reporte");
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Error desconocido";
+      setReportError(msg);
+      // Allow retrying if it failed
+      setHasDecided(false);
+    } finally {
+      setReportLoading(false);
+    }
+  };
 
   const renderExternalLink = (
     href?: string,
@@ -49,28 +87,6 @@ export default function ReportSection() {
     </>
   );
 
-  useEffect(() => {
-    if (reportLoading) {
-      // Simulate report generation delay
-      const timer = setTimeout(() => {
-        setReportLoading(false);
-        setReportUrl("abcdefg.pdf");
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-
-    if (reportUrl) {
-      const timer2 = setTimeout(() => {
-        setReportLoading(false);
-        setReportStarted(false);
-        setReportUrl("");
-      }, 5000);
-
-      return () => clearTimeout(timer2);
-    }
-  }, [reportLoading, reportStarted, reportUrl]);
-
   return (
     <div className="rounded-xl border border-green-100 bg-white/70 p-4 lg:col-span-2">
       <SectionHeader
@@ -79,7 +95,7 @@ export default function ReportSection() {
       />
       <Separator className="my-3" />
       <div className="flex flex-col gap-1">
-        {!reportStarted && (
+        {!hasDecided && !reportUrl && (
           <div className="flex flex-col gap-3">
             <Textarea
               value={comment}
@@ -96,33 +112,20 @@ export default function ReportSection() {
               <Button
                 type="button"
                 variant="default"
-                onClick={() => {
-                  setReportStarted(true);
-                  setReportLoading(true);
-                }}
+                onClick={() => handleGenerateReport(true)}
               >
                 Aceptar resultado
               </Button>
               <Button
                 type="button"
                 variant="destructive"
-                onClick={() => {
-                  setReportStarted(true);
-                  setReportLoading(true);
-                }}
+                onClick={() => handleGenerateReport(false)}
               >
                 Rechazar resultado
               </Button>
             </div>
           </div>
         )}
-        {!reportError &&
-          !reportLoading &&
-          renderExternalLink(
-            reportUrl,
-            "PDF",
-            <FileText className="h-4 w-4" />
-          )}
         {reportLoading && (
           <div className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-700">
             <Loader2
@@ -132,6 +135,13 @@ export default function ReportSection() {
             <span>Generando reporte…</span>
           </div>
         )}
+        {!reportLoading &&
+          renderExternalLink(
+            reportUrl,
+            "PDF",
+            <FileText className="h-4 w-4" />
+          )}
+
         {reportError && <p className="text-red-600 text-base">{reportError}</p>}
       </div>
     </div>

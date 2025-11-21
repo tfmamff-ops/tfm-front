@@ -2,22 +2,23 @@
 // Handles file upload to Azure Blob Storage, orchestrates the OCR/barcode/validation pipeline,
 // polls for completion, and returns temporary SAS (Shared Access Signature) URLs for processed images and analysis results.
 
+import { RequestContextUser } from "@/lib/auth-store";
+import type { ExpectedData } from "@/lib/store";
+import { getSessionOrMock } from "@/server/auth-session";
 import {
   getSasUrlForRead,
   getSasUrlForUpload,
   pollPipeline,
+  SAS_MINUTES,
   startPipeline,
   uploadBlobToSasUrl,
 } from "@/server/azure";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import type { ExpectedData } from "@/lib/store";
-import { RequestContextUser } from "@/lib/auth-store";
-import { getSessionOrMock } from "@/server/auth-session";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
-const KEY_START = process.env.AZURE_FUNC_KEY_HTTP_START!;
+const KEY_HTTP_START = process.env.AZURE_FUNC_KEY_HTTP_START!;
 const TIMEOUT_MS = Number(process.env.AZURE_PIPELINE_TIMEOUT_MS ?? 90000);
 const POLL_MS = Number(process.env.AZURE_PIPELINE_POLL_MS ?? 2000);
 
@@ -135,7 +136,7 @@ async function getReadSasOrFail(blobName: string): Promise<string> {
       functionKey: KEY_GET_SAS,
       container: "output",
       blobName,
-      minutes: 15,
+      minutes: SAS_MINUTES,
     });
   } catch (e) {
     throw new HttpError(502, toMessage(e));
@@ -152,7 +153,7 @@ async function getReadSasOrWarn(
       functionKey: KEY_GET_SAS,
       container: "output",
       blobName,
-      minutes: 15,
+      minutes: SAS_MINUTES,
     });
   } catch (e) {
     console.warn("Failed to fetch read SAS:", e);
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
       functionKey: KEY_GET_SAS,
       container: "input",
       blobName,
-      minutes: 15,
+      minutes: SAS_MINUTES,
       contentType,
     });
 
@@ -213,7 +214,7 @@ export async function POST(req: NextRequest) {
     };
     const statusUrl = await startPipelineOrFail({
       host: HOST,
-      functionKey: KEY_START,
+      functionKey: KEY_HTTP_START,
       container: "input",
       blobName,
       expectedData: expectedDataParsed,

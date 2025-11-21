@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import { getSasUrlForRead } from "@/server/azure";
-import { parse } from "csv-parse/sync";
 import { getSessionOrMock } from "@/server/auth-session";
+import { getSasUrlForRead, SAS_MINUTES } from "@/server/azure";
+import { parse } from "csv-parse/sync";
+import { NextResponse } from "next/server";
 
 const HOST = process.env.AZURE_FUNC_HOST!;
 const KEY_GET_SAS = process.env.AZURE_FUNC_KEY_GET_SAS!;
@@ -21,7 +21,7 @@ export async function GET() {
       functionKey: KEY_GET_SAS,
       container: ERP_CONTAINER,
       blobName: BLOB_ERP_QUAD,
-      minutes: 10,
+      minutes: SAS_MINUTES,
     });
 
     // 2. Download the CSV
