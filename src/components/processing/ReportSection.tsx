@@ -45,12 +45,13 @@ export default function ReportSection() {
     setReportError(undefined);
 
     try {
+      const normalizedComment = comment.trim();
       const res = await fetch("/api/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           instanceId,
-          comment,
+          comment: normalizedComment || undefined,
           accepted,
         }),
       });
