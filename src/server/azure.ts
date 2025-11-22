@@ -165,7 +165,7 @@ export async function generateReport(params: {
   userComment: string;
   accepted: boolean;
 }): Promise<{
-  reportBlob: { container: string; blobNamePDF: string; blobNameDOCX: string };
+  reportBlob: { container: string; blobNamePDF: string };
 }> {
   const { host, functionKey, instanceId, userComment, accepted } = params;
 

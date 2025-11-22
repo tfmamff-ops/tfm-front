@@ -47,7 +47,7 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 | `AZURE_FUNC_HOST` | Host de la Function App (sin prefijo de protocolo). |
 | `AZURE_FUNC_KEY_GET_SAS` | Clave de la función para generar SAS de lectura/escritura. |
 | `AZURE_FUNC_KEY_HTTP_START` | Clave para iniciar la Durable Function de procesamiento. |
-| `AZURE_FUNC_KEY_GENERATE_REPORT` | Clave para la función serverless que genera el informe (PDF/DOCX) asociado a una inspección. |
+| `AZURE_FUNC_KEY_GENERATE_REPORT` | Clave para la función serverless que genera el informe (PDF) asociado a una inspección. |
 | `AZURE_PIPELINE_TIMEOUT_MS` | (Opcional) Límite de espera del pipeline antes de lanzar error. |
 | `AZURE_PIPELINE_POLL_MS` | (Opcional) Intervalo entre sondeos del estado del pipeline. |
 
