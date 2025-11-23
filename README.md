@@ -158,6 +158,5 @@ Rotulado es la interfaz web de un sistema de visión artificial diseñado para a
 
 ## Próximos pasos sugeridos
 
-- Persistir los resultados de inspección utilizando Prisma y PostgreSQL para trazabilidad avanzada.
 - Incorporar pruebas automatizadas del flujo crítico de procesamiento y del pipeline de Azure.
 - Ampliar la cobertura de roles y políticas en Azure AD B2C para granularidad de permisos.
