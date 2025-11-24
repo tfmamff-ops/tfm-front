@@ -25,6 +25,16 @@ export default function Page() {
     !!expectedData.packDate &&
     !!expectedData.expDate;
   const isDisabledProcessing = !imagePreview || !hasAllExpectedValues;
+  let processingDisabledMessage: string | null = null;
+  if (isDisabledProcessing) {
+    if (imagePreview) {
+      processingDisabledMessage =
+        "Selecciona una línea de producción para habilitar el proceso.";
+    } else {
+      processingDisabledMessage =
+        "Agrega una imagen antes de iniciar el proceso.";
+    }
+  }
 
   return (
     <TooltipProvider>
@@ -76,8 +86,8 @@ export default function Page() {
                 </TabsTrigger>
               </div>
             </TooltipTrigger>
-            {isDisabledProcessing && (
-              <TooltipContent>Suba una imagen para procesar.</TooltipContent>
+            {processingDisabledMessage && (
+              <TooltipContent>{processingDisabledMessage}</TooltipContent>
             )}
           </Tooltip>
         </TabsList>
