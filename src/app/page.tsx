@@ -29,10 +29,10 @@ export default function Page() {
   if (isDisabledProcessing) {
     if (imagePreview) {
       processingDisabledMessage =
-        "Selecciona una línea de producción para habilitar el proceso.";
+        "Seleccione una línea de producción para habilitar el proceso.";
     } else {
       processingDisabledMessage =
-        "Agrega una imagen antes de iniciar el proceso.";
+        "Agregue una imagen antes de iniciar el proceso.";
     }
   }
 
