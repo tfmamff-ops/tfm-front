@@ -7,6 +7,7 @@ type AuthModeContextValue = {
   loginEnabled: boolean;
 };
 
+// Default value if used outside the Provider (see layout.tsx)
 const AuthModeContext = createContext<AuthModeContextValue>({
   loginEnabled: true,
 });
