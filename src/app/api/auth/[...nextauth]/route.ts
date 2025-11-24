@@ -29,7 +29,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AZURE_AD_B2C_CLIENT_SECRET!,
       primaryUserFlow: process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW!,
       // Request basic OIDC scopes so we can receive standard claims
-      authorization: { params: { scope: "openid profile email" } },
+      authorization: {
+        params: { scope: "openid profile email", ui_locales: "es" },
+      },
 
       // Defensive profile mapping: Azure B2C might not include `emails`
       // in the ID token depending on configuration. Avoid reading
