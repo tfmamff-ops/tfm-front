@@ -1,5 +1,3 @@
-// Extremely simplified auth gate: if user lacks a NextAuth session cookie,
-// redirect to /signin. Adds an X-Auth-Middleware header for manual debugging.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isLoginEnabled } from "@/config/auth";
@@ -35,9 +33,28 @@ export function middleware(req: NextRequest) {
     return res;
   };
 
-  // Allow public/unprotected routes
+  // --- 1. HANDLE LOGIN DISABLED GUARD ---
+
+  const loginEnabled = isLoginEnabled();
+
+  if (!loginEnabled) {
+    // If login is disabled, and the user tries to access the /signin page, redirect to the root.
+    if (pathname === "/signin") {
+      const url = req.nextUrl.clone();
+      url.pathname = "/";
+      const res = NextResponse.redirect(url);
+      res.headers.set("X-Auth-Middleware", "redirect-root-auth-disabled");
+      return res;
+    }
+
+    // If login is disabled, allow access to all other pages (they should not require authentication).
+    return passThrough("auth-disabled");
+  }
+
+  // --- 2. HANDLE PUBLIC/UNPROTECTED ROUTES (WHEN LOGIN IS ENABLED) ---
+
+  // Allow public/unprotected routes (like NextAuth API, static assets, etc.)
   if (
-    pathname === "/signin" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/images/") ||
@@ -47,16 +64,14 @@ export function middleware(req: NextRequest) {
     pathname === "/sitemap.xml" ||
     pathname.endsWith(".svg") ||
     pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg")
+    pathname.endsWith(".jpg") ||
+    // Allow the /signin page itself to load if login IS enabled.
+    pathname === "/signin"
   ) {
     return passThrough("public-pass");
   }
 
-  const loginEnabled = isLoginEnabled();
-  // Middleware runs per request, so reading the helper here keeps the flag in sync with runtime env vars.
-  if (!loginEnabled) {
-    return passThrough("auth-disabled");
-  }
+  // --- 3. HANDLE AUTHENTICATION REQUIREMENT (WHEN LOGIN IS ENABLED) ---
 
   // Detect session cookie names (standard + secure prefix variant)
   const sessionCookie =
@@ -64,6 +79,7 @@ export function middleware(req: NextRequest) {
     req.cookies.get("__Secure-next-auth.session-token");
 
   if (!sessionCookie) {
+    // If no session exists, redirect to /signin.
     const target = new URL("/signin", req.url);
     target.searchParams.set("callbackUrl", req.nextUrl.href);
     const res = NextResponse.redirect(target);
@@ -71,6 +87,7 @@ export function middleware(req: NextRequest) {
     return res;
   }
 
+  // User is authenticated, allow access to protected routes.
   return passThrough("auth-pass");
 }
 

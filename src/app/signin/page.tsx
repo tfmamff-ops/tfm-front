@@ -1,18 +1,7 @@
-"use client";
-
-import { redirect } from "next/navigation";
 import SignInClient from "./SignInClient";
-import { useEffect } from "react";
-import { useAuthMode } from "@/components/AuthSessionProvider";
 
 export default function SignInPage() {
-  const { loginEnabled } = useAuthMode();
-
-  useEffect(() => {
-    if (!loginEnabled) {
-      redirect("/");
-    }
-  }, [loginEnabled]);
-
+  // The middleware now handles the redirection if the login is disabled.
+  // If we reach here, the login must be enabled.
   return <SignInClient />;
 }
