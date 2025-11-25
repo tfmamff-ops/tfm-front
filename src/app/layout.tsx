@@ -32,6 +32,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Layouts run on the server, so we can resolve the env-based flag here.
   const loginEnabled = isLoginEnabled();
   return (
     <html lang="es" className="h-full">
@@ -46,7 +47,7 @@ export default function RootLayout({
 
         {/* Content (client components inside) */}
         <HydrationGate fallback={<AppSkeleton />}>
-          <AuthSessionProvider loginEnabled={loginEnabled}>
+          <AuthSessionProvider initialLoginEnabled={loginEnabled}>
             {/* Initialize a temporary requestContext while login is pending */}
             <AuthBootstrap />
             {/* Header hidden on /signin */}

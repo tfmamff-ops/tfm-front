@@ -2,7 +2,7 @@
 // redirect to /signin. Adds an X-Auth-Middleware header for manual debugging.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { LOGIN_ENABLED } from "@/config/auth";
+import { isLoginEnabled } from "@/config/auth";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -52,7 +52,9 @@ export function middleware(req: NextRequest) {
     return passThrough("public-pass");
   }
 
-  if (!LOGIN_ENABLED) {
+  const loginEnabled = isLoginEnabled();
+  // Middleware runs per request, so reading the helper here keeps the flag in sync with runtime env vars.
+  if (!loginEnabled) {
     return passThrough("auth-disabled");
   }
 

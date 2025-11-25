@@ -1,13 +1,19 @@
-const rawLoginEnabled = (
-  process.env.LOGIN_ENABLED ??
-  process.env.NEXT_PUBLIC_LOGIN_ENABLED ??
-  "true"
-).toLowerCase();
-
 const disabledValues = new Set(["false", "0", "off", "no"]);
 
-export const LOGIN_ENABLED = !disabledValues.has(rawLoginEnabled.trim());
-
+/**
+ * Source of truth for the login toggle.
+ *
+ * - Server components, middleware, and API routes call this helper so the env
+ *   var is evaluated at request/runtime rather than build time.
+ * - The root layout passes its return value as `initialLoginEnabled` to the
+ *   AuthSessionProvider, which hydrates client components.
+ * - Client components read the final value through `useAuthMode`, which the
+ *   provider keeps in sync by calling `/api/auth/config`.
+ */
 export function isLoginEnabled(): boolean {
-  return LOGIN_ENABLED;
+  if (process.env.LOGIN_ENABLED) {
+    return !disabledValues.has(process.env.LOGIN_ENABLED.toLowerCase().trim());
+  }
+
+  return false;
 }
