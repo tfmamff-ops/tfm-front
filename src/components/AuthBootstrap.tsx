@@ -71,6 +71,7 @@ export default function AuthBootstrap() {
   const { loginEnabled } = useAuthMode();
   const requestContext = useAuthStore((s) => s.requestContext);
 
+  // If we switched from mock mode to real login, clear any persisted mock auth.
   if (
     loginEnabled &&
     requestContext?.user?.id === FALLBACK_REQUEST_CONTEXT.user.id
@@ -78,6 +79,7 @@ export default function AuthBootstrap() {
     clearPersistedAuth();
   }
 
+  // Render the appropriate bootstrapper based on login mode.
   if (!loginEnabled) {
     return <MockBootstrap />;
   }
