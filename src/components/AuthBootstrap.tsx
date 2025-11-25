@@ -69,6 +69,15 @@ function MockBootstrap() {
  */
 export default function AuthBootstrap() {
   const { loginEnabled } = useAuthMode();
+  const requestContext = useAuthStore((s) => s.requestContext);
+
+  if (
+    loginEnabled &&
+    requestContext?.user?.id === FALLBACK_REQUEST_CONTEXT.user.id
+  ) {
+    clearPersistedAuth();
+  }
+
   if (!loginEnabled) {
     return <MockBootstrap />;
   }
